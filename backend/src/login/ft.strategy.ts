@@ -36,9 +36,11 @@ export class FtStrategy extends PassportStrategy(Strategy, '42') {
 
   async login(user: any) {
     const payload = { username: user.username, sub: user.userId };
+	// console.log('username: ', user.username, 'userId: ', user.userId);
+	// console.log('jwt: ', this.jwtService.sign(payload));
     return {
-     // access_token: this.jwtService.sign(payload)
-     access_token: "this.jwtService.sign(payload)"
+     access_token: this.jwtService.sign(payload)
+    //  access_token: "this.jwtService.sign(payload)"
      
     };
   }
