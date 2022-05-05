@@ -11,7 +11,7 @@ export class LoginController {
 
     @Get('42/return')
     @UseGuards(FtOauthGuard)
-    @Redirect('/')
+    @Redirect('http://localhost:3001/Profile')
     ftAuthCallback() {
         return ;
     }
