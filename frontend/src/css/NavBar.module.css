@@ -1,0 +1,47 @@
+.Container {
+  border-style: solid;
+  border-color: white;
+  width: 13%;
+  position: absolute;
+  top: 10%;
+  left: 1%;
+  border-width: 2px;
+  border-radius: 15px;
+}
+
+.Container a {
+  text-decoration: none;
+  color: white;
+  transition: 300ms;
+}
+
+a:hover {
+  margin-right: 10px;
+  color: lightgreen;
+}
+
+.MiddleNavBar {
+  margin: 7% 10% 25% 15%;
+  width: 70%;
+}
+
+.Settings {
+  margin: 5%;
+}
+
+.LongHR {
+  width: 95%;
+}
+
+.PlayGame {
+  margin: 5%;
+  font-weight: bold;
+}
+
+.Container hr {
+  background-color: white;
+}
+
+/* .Container .MiddleNavBar div:hover, .PlayGame:hover, .Settings:hover {
+	background-color: rgb(35, 40, 45);
+} */
