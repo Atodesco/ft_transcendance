@@ -1,0 +1,74 @@
+.Header {
+	margin-left: 17%;
+	margin-top: 7vh;
+	margin-bottom: 2vh;
+	display: flex;
+}
+
+.Header img {
+	width: 15%;
+	height: 12%;
+	border: 3px;
+	border-color: black;
+	border-style: solid;
+}
+
+.Header .Infos {
+	margin-left: 3%;
+}
+
+.Header .Infos .Buttons > div {
+	padding: 15px 30px;
+	margin-left: 0px;
+}
+.Header h1 {
+	margin-top: 0px;
+}
+
+.ProfileInfo {
+	margin-left: 17%;
+	margin-top: 7vh;
+	display: flex;
+}
+
+.MatchHistory {
+	border-style: solid;
+	border-color: darkgray;
+	width: 13%;
+	border-width: 5px;
+	overflow: hidden;
+	max-height: 380px;
+	padding: 5px;
+}
+
+.MatchHistory > div {
+	margin-top: 5px;
+	margin-bottom: 5px;
+	margin-left: 5px;
+	margin-right: 5px;
+	border-style: solid;
+	border-color: white;
+	border-width: 1px;
+	padding: 5px;
+	transition: 300ms;
+}
+
+.MatchHistory > div:hover {
+}
+
+.Rank {
+	border-radius: 50%;
+	/* width: 200px;
+	height: 200px; */
+	padding-top: 40px;
+	width: 8vw;
+	height: 14.3vh;
+	margin-left: 50px;
+	border: 2px solid #000;
+	text-align: center;
+	/* font: 32px Arial, sans-serif; */
+}
+
+.Rank hr {
+	width: 50%;
+}
