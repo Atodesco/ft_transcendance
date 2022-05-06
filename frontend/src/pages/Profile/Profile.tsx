@@ -1,6 +1,9 @@
-import styles from "../css/Profile.module.css";
-import image from "../image/JAKEHEARPHONES.jpg";
-import Button from "../components/Button";
+import styles from "../../css/Profile.module.css";
+import image from "../../image/JAKEHEARPHONES.jpg";
+import Button from "../../components/Button";
+import Cookies from "js-cookie";
+import TextField from "@mui/material/TextField";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	faCirclePlus,
@@ -11,6 +14,9 @@ import {
 
 import ProgressBar from "react-animated-progress-bar";
 import { PieChart } from "react-minimal-pie-chart";
+
+import Profiles from "./Users";
+import { Data } from "../Leaderboard/database";
 
 interface History {
 	username: string;
@@ -39,10 +45,31 @@ const history: History[] = [
 ];
 
 export default function Profile() {
-	console.log("url: ", window.location.href);
-	const params = new URLSearchParams(window.location.search);
-	const paramValue = params.get("code");
-	console.log("paramValue: ", paramValue);
+	if (Cookies.get("token") === undefined) {
+		const params = new URLSearchParams(window.location.search);
+		const paramValue = params.get("code");
+		if (paramValue !== null) {
+			Cookies.set("token", paramValue, { expires: 1 });
+		}
+	}
+
+	const [inputText, setInputText] = useState("");
+	let inputHandler = (e: any) => {
+		//convert input text to lower case
+		var lowerCase = e.target.value.toLowerCase();
+		setInputText(lowerCase);
+	};
+
+	const filteredData = Data.filter((el) => {
+		//if no input the return the original
+		if (inputText === "") {
+			return el;
+		}
+		//return the item which contains the user input
+		else {
+			return el.name.toLowerCase().includes(inputText);
+		}
+	});
 
 	const status: string = "Online";
 	return (
@@ -107,7 +134,6 @@ export default function Profile() {
 					</div>
 					<div className={styles.Ratio}>
 						<PieChart
-							// radius={4}
 							lineWidth={60}
 							label={({ dataEntry }) => Math.round(dataEntry.percentage) + "%"}
 							labelPosition={100 - 60 / 2}
@@ -123,7 +149,16 @@ export default function Profile() {
 						/>
 					</div>
 				</div>
-				{/* <div className={styles.Achievements}></div> */}
+				<div className={styles.SearchBar}>
+					<TextField
+						className={styles.Search}
+						variant="outlined"
+						fullWidth
+						label="Search"
+						onChange={inputHandler}
+					/>
+					<Profiles Leaderboard={filteredData} />
+				</div>
 			</div>
 		</div>
 	);

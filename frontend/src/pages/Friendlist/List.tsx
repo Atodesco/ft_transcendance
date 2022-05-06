@@ -1,5 +1,4 @@
 import Profiles from "../Leaderboard/profile";
-// import data from "./ListData.json";
 import { Data } from "../Leaderboard/database";
 
 interface Props {
