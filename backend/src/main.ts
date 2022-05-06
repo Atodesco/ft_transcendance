@@ -1,24 +1,30 @@
-import { NestFactory } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
-import { AppModule } from './app.module';
-import * as session from 'express-session';
-import * as passport from 'passport';
-import { ConfigService } from '@nestjs/config';
+import { NestFactory } from "@nestjs/core";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { AppModule } from "./app.module";
+import * as session from "express-session";
+import * as passport from "passport";
+import { ConfigService } from "@nestjs/config";
+// import cookieParser from "cookie-parser";
 
-
+var cookieParser = require("cookie-parser");
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+	const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.enableCors();
+	// app.enableCors();
+	const configService: ConfigService = app.get(ConfigService);
+	app.enableCors({
+		origin: "http://localhost:3001",
+		credentials: true,
+	});
 
-  app.use(
-    session({ resave: false, saveUninitialized: false, secret: '!Kiwi' }),
-  );
-  app.use(passport.initialize());
-  app.use(passport.session());
+	app.use(
+		session({ resave: false, saveUninitialized: false, secret: "!Kiwi" })
+	);
+	app.use(passport.initialize());
+	app.use(passport.session());
+	app.use(cookieParser());
 
-  await app.listen(3000);
+	await app.listen(3000);
 }
 bootstrap();

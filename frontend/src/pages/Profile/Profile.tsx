@@ -46,6 +46,8 @@ const history: History[] = [
 
 export default function Profile() {
 	const [inputText, setInputText] = useState("");
+	const [username, setUsername] = useState("");
+	const [picture, setPicture] = useState("");
 	let inputHandler = (e: any) => {
 		//convert input text to lower case
 		var lowerCase = e.target.value.toLowerCase();
@@ -63,14 +65,34 @@ export default function Profile() {
 		}
 	});
 
+	const getUsername = async () => {
+		const username = await fetch("http://localhost:3000/user/username", {
+			credentials: "include", //this is what I need to tell the browser to include cookies
+		});
+		const data = await username.json();
+		setUsername(data.username);
+	};
+
+	const getPicture = async () => {
+		const picture = await fetch("http://localhost:3000/user/picture", {
+			credentials: "include", //this is what I need to tell the browser to include cookies
+		});
+		const data = await picture.json();
+		setPicture(data.picture);
+	};
+
+	getUsername();
+	getPicture();
 	const status: string = "Online";
 	return (
 		<div className={styles.Container}>
 			<div className={styles.Header}>
-				<img src={image} />
+				{/* <img src={image} /> */}
+				<img src={picture} />
 				<div className={styles.Infos}>
 					<div>
-						<h1>Lacruype</h1>
+						{/* <h1>Lacruype</h1> */}
+						<h1>{username}</h1>
 						<h2>Status: {status} </h2>
 					</div>
 					<div className={styles.Buttons}>
