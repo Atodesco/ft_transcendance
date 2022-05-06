@@ -6,6 +6,7 @@ import {
 	faCirclePlus,
 	faMessage,
 	faBan,
+	faRankingStar,
 } from "@fortawesome/free-solid-svg-icons";
 
 import ProgressBar from "react-animated-progress-bar";
@@ -45,7 +46,7 @@ export default function Profile() {
 
 	const status: string = "Online";
 	return (
-		<>
+		<div className={styles.Container}>
 			<div className={styles.Header}>
 				<img src={image} />
 				<div className={styles.Infos}>
@@ -83,12 +84,12 @@ export default function Profile() {
 				</div>
 				<div className={styles.Stats}>
 					<div className={styles.Rank}>
-						Rank
-						<hr />
-						Leaderboard
+						<FontAwesomeIcon icon={faRankingStar} />
+						<h2>1</h2>
+						<h3>er</h3>
 					</div>
-					<div>
-						Current Level
+					<div className={styles.LevelProgress}>
+						<span>3</span>
 						<ProgressBar
 							className={styles.Level}
 							width="200px"
@@ -102,20 +103,28 @@ export default function Profile() {
 							bgColor="#333333"
 							trackBorderColor="grey"
 						/>
-						Level to Reach
+						<span>4</span>
 					</div>
-					<PieChart
-						className={styles.Ratio}
-						radius={4}
-						lineWidth={10}
-						data={[
-							{ title: "Win", value: 100, color: "green" },
-							{ title: "Lose", value: 75, color: "red" },
-						]}
-					/>
+					<div className={styles.Ratio}>
+						<PieChart
+							// radius={4}
+							lineWidth={60}
+							label={({ dataEntry }) => Math.round(dataEntry.percentage) + "%"}
+							labelPosition={100 - 60 / 2}
+							labelStyle={{
+								fill: "#fff",
+								opacity: 0.75,
+								pointerEvents: "none",
+							}}
+							data={[
+								{ title: "Win", value: 10, color: "green" },
+								{ title: "Lose", value: 1, color: "red" },
+							]}
+						/>
+					</div>
 				</div>
 				{/* <div className={styles.Achievements}></div> */}
 			</div>
-		</>
+		</div>
 	);
 }

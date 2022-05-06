@@ -1,3 +1,7 @@
+.Container {
+	margin-left: 5%;
+}
+
 .Header {
 	margin-left: 17%;
 	margin-top: 7vh;
@@ -56,19 +60,53 @@
 .MatchHistory > div:hover {
 }
 
-.Rank {
-	border-radius: 50%;
-	/* width: 200px;
-	height: 200px; */
-	padding-top: 40px;
-	width: 8vw;
-	height: 14.3vh;
-	margin-left: 50px;
-	border: 2px solid #000;
-	text-align: center;
-	/* font: 32px Arial, sans-serif; */
+.ProfileInfo .Stats {
+	margin-left: 3%;
+	border-style: solid;
+	border-color: darkgray;
+	border-width: 5px;
+	padding: 8px;
+	width: 16%;
+	height: 380px;
 }
 
-.Rank hr {
-	width: 50%;
+.ProfileInfo .Stats .Rank {
+	display: flex;
+}
+
+.ProfileInfo .Stats .Rank > svg {
+	font-size: 60px;
+	margin: 5%;
+}
+
+.ProfileInfo .Stats .Rank h2 {
+	margin: 20px;
+	font-size: 50px;
+}
+
+.ProfileInfo .Stats .Rank h3 {
+	font-size: 30px;
+	margin-top: 15px;
+	margin-left: -20px;
+}
+
+.Stats .Ratio > svg {
+	width: 120px;
+	height: 120px;
+	display: block;
+	margin: 15% auto;
+	border-style: solid;
+	border-color: rgb(0, 0, 0);
+	border-width: 3px;
+	border-radius: 50%;
+}
+
+.Stats .LevelProgress {
+	display: flex;
+	margin-top: 10%;
+}
+
+.Stats .LevelProgress > span {
+	margin-top: 15px;
+	margin-right: 10px;
 }
