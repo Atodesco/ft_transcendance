@@ -1,0 +1,12 @@
+.game .Buttons {
+    margin-left: 35%;
+    margin-top: 15%
+}
+
+.game #timer {
+    margin-left: 40.5%;
+    margin-top: -1%;
+    font-size: 35px;
+    opacity: 0;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
