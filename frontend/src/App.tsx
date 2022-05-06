@@ -42,6 +42,7 @@ function App() {
 						<Route path="/Credits" element={<Credits />} />
 						{/* DANS SETTINGS IL Y AURA LOGOUT*/}
 						<Route path="/Settings" element={<Settings />} />
+						<Route path="/" element={<Navigate replace to="/Profile" />} />
 						<Route path="*" element={<div>404</div>} />
 					</Route>
 				</Routes>
