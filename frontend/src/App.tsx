@@ -23,7 +23,7 @@ function App() {
 				{Cookies.get("token") !== undefined ? (
 					<Outlet />
 				) : (
-					<Navigate replace to="/" />
+					<Navigate replace to="/Login" />
 				)}
 			</>
 		);
@@ -33,25 +33,34 @@ function App() {
 			<div>
 				<NavBar />
 				<Routes>
-					{/* <Route path="*" element={<ProtectedRoutes />}> */}
-					<Route path="/PlayGame" element={<PlayGame />} />
-					<Route path="/Profile" element={<Profile />} />
-					<Route path="/Leaderboard" element={<Leaderboard />} />
-					<Route path="/Friendlist" element={<Friendlist />} />
-					<Route path="/Chat" element={<Chat />} />
-					<Route path="/Credits" element={<Credits />} />
-					{/* DANS SETTINGS IL Y AURA LOGOUT*/}
-					<Route path="/Settings" element={<Settings />} />
-					<Route path="*" element={<div>404</div>} />
-					{/* </Route> */}
+					<Route path="/" element={<ProtectedRoutes />}>
+						<Route path="/PlayGame" element={<PlayGame />} />
+						<Route path="/Profile" element={<Profile />} />
+						<Route path="/Leaderboard" element={<Leaderboard />} />
+						<Route path="/Friendlist" element={<Friendlist />} />
+						<Route path="/Chat" element={<Chat />} />
+						<Route path="/Credits" element={<Credits />} />
+						{/* DANS SETTINGS IL Y AURA LOGOUT*/}
+						<Route path="/Settings" element={<Settings />} />
+						<Route path="*" element={<div>404</div>} />
+					</Route>
 				</Routes>
 			</div>
 		);
 	};
+	// get the jwt token from the url and put it into a cookie
+	if (Cookies.get("token") === undefined) {
+		const params = new URLSearchParams(window.location.search);
+		const paramValue = params.get("code");
+		if (paramValue !== null) {
+			Cookies.set("token", paramValue, { expires: 1 });
+			window.location.href = "http://localhost:3001/Profile";
+		}
+	}
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route path="/" element={<Login />} />
+				<Route path="/Login" element={<Login />} />
 				<Route path="*" element={<DefaultRoutes />} />
 			</Routes>
 		</BrowserRouter>

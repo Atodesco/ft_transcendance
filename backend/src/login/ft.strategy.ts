@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Profile, VerifyCallback } from 'passport-42';
-import { JwtService } from '@nestjs/jwt'
-
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class FtStrategy extends PassportStrategy(Strategy, '42') {
-  constructor(private readonly configService: ConfigService,
-              private jwtService: JwtService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private jwtService: JwtService,
+  ) {
     super({
       clientID: configService.get<string>('FORTYTWO_CLIENT_ID'),
       clientSecret: configService.get<string>('FORTYTWO_CLIENT_SECRET'),
@@ -35,13 +36,13 @@ export class FtStrategy extends PassportStrategy(Strategy, '42') {
   }
 
   async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
-	// console.log('username: ', user.username, 'userId: ', user.userId);
-	// console.log('jwt: ', this.jwtService.sign(payload));
+    const payload = {
+      username: user.username,
+      id: user.userId,
+      picture: user.profileUrl,
+    };
     return {
-     access_token: this.jwtService.sign(payload)
-    //  access_token: "this.jwtService.sign(payload)"
-     
+      access_token: this.jwtService.sign(payload),
     };
   }
 }

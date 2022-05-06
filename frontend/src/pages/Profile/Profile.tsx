@@ -45,14 +45,6 @@ const history: History[] = [
 ];
 
 export default function Profile() {
-	if (Cookies.get("token") === undefined) {
-		const params = new URLSearchParams(window.location.search);
-		const paramValue = params.get("code");
-		if (paramValue !== null) {
-			Cookies.set("token", paramValue, { expires: 1 });
-		}
-	}
-
 	const [inputText, setInputText] = useState("");
 	let inputHandler = (e: any) => {
 		//convert input text to lower case
