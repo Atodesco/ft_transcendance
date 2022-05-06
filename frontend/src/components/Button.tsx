@@ -12,7 +12,11 @@ interface Props {
 export default function Button(props: Props) {
 	return (
 		<>
-			<div id={props.id} className={`${styles.button2} ${props.className}`}>
+			<div
+				id={props.id}
+				className={`${styles.button2} ${props.className}`}
+				onClick={props.onClick}
+			>
 				<span></span>
 				<span></span>
 				<span></span>
