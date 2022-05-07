@@ -12,7 +12,6 @@ RUN apt-get update && \
 WORKDIR /app
 
 RUN npm -g install @nestjs/cli
-# RUN npm -g install npm@latest
 
 EXPOSE 3000
 

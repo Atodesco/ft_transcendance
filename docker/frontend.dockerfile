@@ -11,8 +11,7 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-RUN export PORT=3001
-# RUN npm -g install npm@latest
+# RUN export PORT=3001
 
 EXPOSE 3001
 

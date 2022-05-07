@@ -12,7 +12,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Response } from "express";
 import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
-import { CheckJwtGuard } from "./guards/jwt.guard";
 import { UserService } from "./user.service";
 
 @Controller("user")
@@ -25,7 +24,6 @@ export class UserController {
 	) {}
 
 	@Get("username")
-	@UseGuards(CheckJwtGuard)
 	getUsername(@Request() req, @Res() response: Response) {
 		const token: any = this.jwtService.decode(req.cookies.token);
 
@@ -35,7 +33,6 @@ export class UserController {
 	}
 
 	@Get("picture")
-	@UseGuards(CheckJwtGuard)
 	getPicture(@Request() req, @Res() response: Response) {
 		const token: any = this.jwtService.decode(req.cookies.token);
 		response.status(200).json({
@@ -44,13 +41,11 @@ export class UserController {
 	}
 
 	@Get("/")
-	@UseGuards(CheckJwtGuard)
 	getAllUsers(): Promise<User[]> {
 		return this.userService.getAllUsers();
 	}
 
 	@Get("/:id")
-	@UseGuards(CheckJwtGuard)
 	getUser(@Param("id", ParseIntPipe) id: number): Promise<User> {
 		return this.userService.getUser(id);
 	}

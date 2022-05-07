@@ -10,7 +10,8 @@ import { User } from "src/user/entities/user.entity";
 			inject: [ConfigService],
 			useFactory: () => ({
 				type: process.env.DATABASE_TYPE as "aurora-mysql",
-				host: process.env.DATABASE_HOST,
+				// host: process.env.DATABASE_HOST,
+				host: "localhost",
 				port: Number(process.env.DATABASE_PORT),
 				username: process.env.DATABASE_USERNAME,
 				password: process.env.DATABASE_PASSWORD,

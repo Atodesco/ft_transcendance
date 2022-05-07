@@ -7,16 +7,23 @@ import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from "./jwt.strategy";
 import { User } from "src/user/entities/user.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { jwtConstants } from "./constant";
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([User]),
 		JwtModule.register({
-			secret: process.env.SECRET_JWT,
+			secret: jwtConstants.secret,
 			signOptions: { expiresIn: "1d" },
 		}),
 	],
 	controllers: [LoginController],
-	providers: [ConfigService, FtStrategy, SessionSerializer, JwtStrategy],
+	providers: [
+		ConfigService,
+		FtStrategy,
+		SessionSerializer,
+		JwtStrategy,
+		ConfigService,
+	],
 })
 export class LoginModule {}
