@@ -4,6 +4,7 @@ import {
 	BrowserRouter,
 	Outlet,
 	Navigate,
+	useNavigate,
 } from "react-router-dom";
 import Chat from "./pages/Chat";
 import Profile from "./pages/Profile/Profile";

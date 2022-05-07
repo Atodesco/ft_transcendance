@@ -4,13 +4,15 @@ import { FtStrategy } from "./ft.strategy";
 import { LoginController } from "./login.controller";
 import { SessionSerializer } from "./session.serializer";
 import { JwtModule } from "@nestjs/jwt";
-import { jwtConstants } from "./constants";
 import { JwtStrategy } from "./jwt.strategy";
+import { User } from "src/user/entities/user.entity";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
 	imports: [
+		TypeOrmModule.forFeature([User]),
 		JwtModule.register({
-			secret: jwtConstants.secret,
+			secret: process.env.SECRET_JWT,
 			signOptions: { expiresIn: "1d" },
 		}),
 	],
