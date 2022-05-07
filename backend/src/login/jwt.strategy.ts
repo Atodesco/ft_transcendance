@@ -5,6 +5,7 @@ import { Request } from "express";
 import { User } from "src/user/entities/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { jwtConstants } from "./constant";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
@@ -13,7 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
 		private readonly userRepository: Repository<User>
 	) {
 		super({
-			secretOrKey: process.env.SECRET_JWT,
+			secretOrKey: jwtConstants.secret,
 			jwtFromRequest: ExtractJwt.fromExtractors([
 				(request: Request) => {
 					let accessToken = request?.cookies["token"];
