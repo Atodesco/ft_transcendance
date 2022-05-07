@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Amis",
+    "nameOfLast": "Remi",
+    "lastMessage": "Salut c'est moi"
+  },
+  {
+    "name": "Ennemis",
+    "nameOfLast": "Atodesco",
+    "lastMessage": "Salut connard"
+  },
+  {
+    "name": "Public",
+    "nameOfLast": "Lacruype",
+    "lastMessage": "Salut c'est encore moi"
+  }
+]
