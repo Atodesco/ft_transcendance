@@ -2,7 +2,6 @@ import styles from "../../css/Leaderboard.module.css";
 import { useState } from "react";
 import Profiles from "./profile";
 import { Data } from "./database";
-// import "./style.css";
 
 export default function Leaderboard() {
   const [period, setPeriod] = useState(0);

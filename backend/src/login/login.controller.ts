@@ -20,7 +20,7 @@ export class LoginController {
 		const url = new URL(`${req.protocol}:${req.hostname}`);
 		url.port = "3001";
 		url.pathname = "Profile";
-		url.searchParams.set("code", token.access_token);
+		url.searchParams.set("code", token);
 
 		response.status(302).redirect(url.href);
 	}
