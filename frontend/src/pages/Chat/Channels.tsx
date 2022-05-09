@@ -1,20 +1,17 @@
 import styles from "../../css/Chat.module.css";
-import Data from "databaseChannels.json";
 import { useState } from "react";
 
 export default function channels({ myChats }: any) {
   return <div id={styles.channel}>{Item(myChats)}</div>;
 }
 
-function changeColor() {}
-
 function Item(
-  data: [{ name: string; nameOfLast: string; lastMessage: string }]
+  dataChannels: [{ name: string; nameOfLast: string; lastMessage: string }]
 ) {
   const [selectedChat, setSelectedChat] = useState("");
   return (
     <>
-      {data.map((value, index) => (
+      {dataChannels.map((value, index) => (
         <div
           className={styles.flex}
           key={index}
