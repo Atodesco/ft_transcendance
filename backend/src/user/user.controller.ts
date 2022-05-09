@@ -48,11 +48,27 @@ export class UserController {
 		return this.userService.addFriend(id, friendId);
 	}
 
+	@Get("/:id/removeFriend/:friendId")
+	removeFriend(
+		@Param("id", ParseIntPipe) id: number,
+		@Param("friendId", ParseIntPipe) friendId: number
+	): Promise<User> {
+		return this.userService.removeFriend(id, friendId);
+	}
+
 	@Get("/:id/blockUser/:userId")
 	blockUser(
 		@Param("id", ParseIntPipe) id: number,
 		@Param("userId", ParseIntPipe) userId: number
 	): Promise<User> {
 		return this.userService.blockUser(id, userId);
+	}
+
+	@Get("/:id/unblockUser/:userId")
+	unblockUser(
+		@Param("id", ParseIntPipe) id: number,
+		@Param("userId", ParseIntPipe) userId: number
+	): Promise<User> {
+		return this.userService.unblockUser(id, userId);
 	}
 }

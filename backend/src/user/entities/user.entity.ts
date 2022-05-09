@@ -37,6 +37,9 @@ export class User {
 	@Column("int", { array: true, default: [] })
 	friends: number[];
 
+	@Column("int", { array: true, default: [] })
+	blocked: number[];
+
 	// @ManyToMany(() => Game)
 	// @JoinTable()
 	// game: Game[];
@@ -49,7 +52,4 @@ export class User {
 
 	@Column("int", { default: 0 })
 	lvl: number;
-
-	@Column("int", { array: true, default: [] })
-	blockedusers: number[];
 }

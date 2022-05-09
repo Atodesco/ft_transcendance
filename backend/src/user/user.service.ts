@@ -25,9 +25,25 @@ export class UserService {
 		return user;
 	}
 
+	async removeFriend(id: number, friendId: number): Promise<User> {
+		const user = await this.userRepository.findOne({ where: { ft_id: id } });
+		user.friends = user.friends.filter((friend) => friend !== friendId);
+		await this.userRepository.save(user);
+		return user;
+	}
+
 	async blockUser(id: number, blockedId: number): Promise<User> {
 		const user = await this.userRepository.findOne({ where: { ft_id: id } });
-		user.blockedusers.push(blockedId);
+		user.blocked.push(blockedId);
+		await this.userRepository.save(user);
+		return user;
+	}
+
+	async unblockUser(id: number, unblockedId: number): Promise<User> {
+		const user = await this.userRepository.findOne({ where: { ft_id: id } });
+		user.blocked = user.blocked.filter(
+			(blockedUser) => blockedUser !== unblockedId
+		);
 		await this.userRepository.save(user);
 		return user;
 	}

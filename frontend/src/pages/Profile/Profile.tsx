@@ -70,7 +70,6 @@ export default function Profile() {
 	const Var: any = {};
 	const aVar: any = [{}];
 	const [inputText, setInputText] = useState("");
-
 	const [myData, setMyData] = useState<User>({
 		ft_id: 0,
 		username: "",
@@ -98,6 +97,9 @@ export default function Profile() {
 		levelProgress: 0,
 	});
 	const [users, setUsers] = useState(aVar);
+	const [addFriend, setAddFriend] = useState(true);
+	const [blockedUser, setBlockedUser] = useState(true);
+
 	let inputHandler = (e: any) => {
 		//convert input text to lower case
 		var lowerCase = e.target.value.toLowerCase();
@@ -148,13 +150,9 @@ export default function Profile() {
 				picture: el.picture,
 				ft_id: el.ft_id,
 			};
-			getMyData();
-			//if no input the return the original
 			if (inputText === "") {
 				return otherUser;
-			}
-			//return the item which contains the user input
-			else {
+			} else {
 				if (el.username.toLowerCase().includes(inputText)) {
 					return otherUser;
 				}
@@ -170,7 +168,7 @@ export default function Profile() {
 			"/user/";
 		link += id ? id : "me";
 		const rawData = await fetch(link, {
-			credentials: "include", //this is what I need to tell the browser to include cookies
+			credentials: "include",
 		});
 
 		const data = await rawData.json();
@@ -198,11 +196,26 @@ export default function Profile() {
 		});
 		const data2 = await rawData2.json();
 		setUsers(data2);
+		getMyData();
 	};
+
 	const { id } = useParams();
 	useEffect(() => {
 		getData(Number(id));
 	}, [id]);
+	useEffect(() => {
+		setAddFriend(
+			myData.friends && myData.friends.length > 0
+				? !myData.friends.includes(userData.ft_id)
+				: true
+		);
+		setBlockedUser(
+			myData.blocked && myData.blocked.length > 0
+				? !myData.blocked.includes(userData.ft_id)
+				: true
+		);
+	}, [myData]);
+
 	return (
 		<div className={styles.Container}>
 			<div className={styles.Header}>
@@ -215,20 +228,24 @@ export default function Profile() {
 					{id && (
 						<div className={styles.Buttons}>
 							<Button
-								text=" Add user"
+								text={addFriend ? " Add user" : " Remove user"}
 								onClick={() => {
+									const addOrRemove = addFriend
+										? "/addFriend/"
+										: "/removeFriend/";
 									fetch(
 										process.env.REACT_APP_BACK_URL +
 											":" +
 											process.env.REACT_APP_BACK_PORT +
 											"/user/" +
 											myData.ft_id +
-											"/addFriend/" +
+											addOrRemove +
 											id,
 										{
 											credentials: "include",
 										}
 									);
+									setAddFriend(!addFriend);
 								}}
 							>
 								<FontAwesomeIcon icon={faCirclePlus} />
@@ -237,20 +254,24 @@ export default function Profile() {
 								<FontAwesomeIcon icon={faMessage} />
 							</Button>
 							<Button
-								text="Block user"
+								text={blockedUser ? " Block user" : " Unblock user"}
 								onClick={() => {
+									const blockOrUnblock = blockedUser
+										? "/blockUser/"
+										: "/unblockUser/";
 									fetch(
 										process.env.REACT_APP_BACK_URL +
 											":" +
 											process.env.REACT_APP_BACK_PORT +
 											"/user/" +
 											myData.ft_id +
-											"/blockUser/" +
+											blockOrUnblock +
 											id,
 										{
 											credentials: "include",
 										}
 									);
+									setBlockedUser(!blockedUser);
 								}}
 							>
 								<FontAwesomeIcon icon={faBan} />
@@ -322,7 +343,7 @@ export default function Profile() {
 						label="Search"
 						onChange={inputHandler}
 					/>
-					<Profiles Leaderboard={filteredData} />
+					<Profiles Data={filteredData} myData={myData} />
 				</div>
 			</div>
 		</div>
