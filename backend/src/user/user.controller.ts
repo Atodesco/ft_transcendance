@@ -39,4 +39,20 @@ export class UserController {
 	getUser(@Param("id", ParseIntPipe) id: number): Promise<User> {
 		return this.userService.getUser(id);
 	}
+
+	@Get("/:id/addFriend/:friendId")
+	addFriend(
+		@Param("id", ParseIntPipe) id: number,
+		@Param("friendId", ParseIntPipe) friendId: number
+	): Promise<User> {
+		return this.userService.addFriend(id, friendId);
+	}
+
+	@Get("/:id/blockUser/:userId")
+	blockUser(
+		@Param("id", ParseIntPipe) id: number,
+		@Param("userId", ParseIntPipe) userId: number
+	): Promise<User> {
+		return this.userService.blockUser(id, userId);
+	}
 }
