@@ -14,7 +14,7 @@ async function bootstrap() {
 	// app.enableCors();
 	const configService: ConfigService = app.get(ConfigService);
 	app.enableCors({
-		origin: "http://localhost:3001",
+		origin: process.env.FRONT_URL + ":" + process.env.FRONT_PORT,
 		credentials: true,
 	});
 

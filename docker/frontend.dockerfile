@@ -11,8 +11,9 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# RUN export PORT=3001
+RUN npm install -g serve
 
 EXPOSE 3001
 
-ENTRYPOINT ["/bin/sh", "-c", "npm install --non-interactive && npm start"]
+# ENTRYPOINT ["/bin/sh", "-c", "npm install --non-interactive && npm start"]
+ENTRYPOINT ["/bin/sh", "-c", "npm install --non-interactive && npm run build && serve -s build"]

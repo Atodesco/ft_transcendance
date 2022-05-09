@@ -6,20 +6,23 @@ export class User {
 	@PrimaryGeneratedColumn()
 	id: number;
 
+	@Column({ unique: true, nullable: true })
+	ft_id: number;
+
 	@Column("text", { default: "" })
 	username: string;
 
 	@Column("text", { default: "empty" })
-	profile_picture: string;
+	picture: string;
 
-	// @Column("int", { default: 1000 })
-	// elo: number;
-
-	@Column("int", { default: 0 })
-	game_won: number;
+	@Column("int", { default: 1000 })
+	elo: number;
 
 	@Column("int", { default: 0 })
-	lost_game: number;
+	win: number;
+
+	@Column("int", { default: 0 })
+	lose: number;
 
 	@Column("text", { default: "Offline" })
 	status: UserStatus;
