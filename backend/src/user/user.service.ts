@@ -17,4 +17,18 @@ export class UserService {
 	async getUser(id: number): Promise<User> {
 		return this.userRepository.findOne({ where: { ft_id: id } });
 	}
+
+	async addFriend(id: number, friendId: number): Promise<User> {
+		const user = await this.userRepository.findOne({ where: { ft_id: id } });
+		user.friends.push(friendId);
+		await this.userRepository.save(user);
+		return user;
+	}
+
+	async blockUser(id: number, blockedId: number): Promise<User> {
+		const user = await this.userRepository.findOne({ where: { ft_id: id } });
+		user.blockedusers.push(blockedId);
+		await this.userRepository.save(user);
+		return user;
+	}
 }

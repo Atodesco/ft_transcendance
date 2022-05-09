@@ -130,11 +130,6 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
 
-/* * > * {
-	font-family: "Poppins", cursive;
-	margin: 0;
-} */
-
 :root {
 	--color-dark: #2c3131;
 	--color-light: #f3f3f2;

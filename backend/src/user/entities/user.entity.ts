@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Channel } from "src/chat/entities/channel.entity";
+import {
+	Entity,
+	Column,
+	PrimaryGeneratedColumn,
+	ManyToMany,
+	JoinTable,
+} from "typeorm";
 import { UserStatus } from "../../interfaces/user-status.enum";
 
 @Entity()
@@ -26,4 +33,23 @@ export class User {
 
 	@Column("text", { default: "Offline" })
 	status: UserStatus;
+
+	@Column("int", { array: true, default: [] })
+	friends: number[];
+
+	// @ManyToMany(() => Game)
+	// @JoinTable()
+	// game: Game[];
+
+	@ManyToMany((type) => Channel, (channel) => channel.users, {
+		cascade: true,
+	})
+	@JoinTable()
+	channels: Channel[];
+
+	@Column("int", { default: 0 })
+	lvl: number;
+
+	@Column("int", { array: true, default: [] })
+	blockedusers: number[];
 }
