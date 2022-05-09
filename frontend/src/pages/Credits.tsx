@@ -1,27 +1,21 @@
+import Button from "../components/Button";
 import styles from "../css/Credits.module.css";
 
 export default function Credits() {
-	return (
-		<div>
-			<button
-				onClick={() => {
-					fetch(
-						process.env.REACT_APP_BACK_URL +
-							":" +
-							process.env.REACT_APP_BACK_PORT +
-							"/user/",
-						{
-							credentials: "include",
-						}
-					)
-						.then((res) => res.json())
-						.then((data) => {
-							console.log(data);
-						});
-				}}
-			>
-				CLICK
-			</button>
-		</div>
-	);
+  return (
+    <div>
+      Credits
+      <button
+        onClick={async () => {
+          const username = await fetch("http://localhost:3000/user/", {
+            credentials: "include",
+          });
+          const data = await username.json();
+          console.log(data);
+        }}
+      >
+        CLICK
+      </button>
+    </div>
+  );
 }
