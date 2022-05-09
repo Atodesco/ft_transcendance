@@ -1,0 +1,34 @@
+[
+  {
+    "sender": { "username": "Rledrin", "ft_id": 1 },
+    "message": "Salut c'est moi remi"
+  },
+  {
+    "sender": { "username": "Rledrin", "ft_id": 2 },
+    "message": "Salut c'est moi remi"
+  },
+  {
+    "sender": { "username": "Rledrin", "ft_id": 1 },
+    "message": "Salut c'est moi remi"
+  },
+  {
+    "sender": { "username": "Rledrin", "ft_id": 2 },
+    "message": "Salut c'est moi remi"
+  },
+  {
+    "sender": { "username": "Rledrin", "ft_id": 2 },
+    "message": "Salut c'est moi remi"
+  },
+  {
+    "sender": { "username": "Rledrin", "ft_id": 2 },
+    "message": "Salut c'est moi remi"
+  },
+  {
+    "sender": { "username": "Rledrin", "ft_id": 2 },
+    "message": "Salut c'est moi remi"
+  },
+  {
+    "sender": { "username": "Rledrin", "ft_id": 3 },
+    "message": "Salut c'est moi remi"
+  }
+]
