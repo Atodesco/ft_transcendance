@@ -47,14 +47,14 @@ export class FtStrategy extends PassportStrategy(Strategy, "42") {
 		};
 
 		const db_user = await this.userRepository.findOne({
-			where: { id: payload.id },
+			where: { ft_id: payload.id },
 		});
 
 		if (!db_user) {
 			let u = this.userRepository.create();
-			u.id = payload.id;
+			u.ft_id = payload.id;
 			u.username = payload.username;
-			u.profile_picture = payload.picture;
+			u.picture = payload.picture;
 			this.userRepository.save(u);
 		}
 

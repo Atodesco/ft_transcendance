@@ -1,9 +1,7 @@
-import styles from "../../css/Profile.module.css";
-import image from "../../image/JAKEHEARPHONES.jpg";
-import Button from "../../components/Button";
-import Cookies from "js-cookie";
-import TextField from "@mui/material/TextField";
 import { useState } from "react";
+import styles from "../../css/Profile.module.css";
+import Button from "../../components/Button";
+import TextField from "@mui/material/TextField";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	faCirclePlus,
@@ -17,6 +15,7 @@ import { PieChart } from "react-minimal-pie-chart";
 
 import Profiles from "./Users";
 import { Data } from "../Leaderboard/database";
+import { useParams } from "react-router";
 
 interface History {
 	username: string;
@@ -48,6 +47,8 @@ export default function Profile() {
 	const [inputText, setInputText] = useState("");
 	const [username, setUsername] = useState("");
 	const [picture, setPicture] = useState("");
+	const [win, setWin] = useState(0);
+	const [lose, setLose] = useState(0);
 	let inputHandler = (e: any) => {
 		//convert input text to lower case
 		var lowerCase = e.target.value.toLowerCase();
@@ -65,24 +66,24 @@ export default function Profile() {
 		}
 	});
 
-	const getUsername = async () => {
-		const username = await fetch("http://localhost:3000/user/username", {
+	const getData = async (id?: number) => {
+		let link =
+			process.env.REACT_APP_BACK_URL +
+			":" +
+			process.env.REACT_APP_BACK_PORT +
+			"/user/";
+		link += id ? id : "me";
+		const rawData = await fetch(link, {
 			credentials: "include", //this is what I need to tell the browser to include cookies
 		});
-		const data = await username.json();
+		const data = await rawData.json();
+		setPicture(data.picture);
+		setLose(data.lose);
+		setWin(data.win);
 		setUsername(data.username);
 	};
-
-	const getPicture = async () => {
-		const picture = await fetch("http://localhost:3000/user/picture", {
-			credentials: "include", //this is what I need to tell the browser to include cookies
-		});
-		const data = await picture.json();
-		setPicture(data.picture);
-	};
-
-	getUsername();
-	getPicture();
+	const { id } = useParams();
+	getData(Number(id));
 	const status: string = "Online";
 	return (
 		<div className={styles.Container}>
@@ -157,8 +158,8 @@ export default function Profile() {
 								pointerEvents: "none",
 							}}
 							data={[
-								{ title: "Win", value: 10, color: "green" },
-								{ title: "Lose", value: 1, color: "red" },
+								{ title: "Win", value: win, color: "green" },
+								{ title: "Lose", value: lose, color: "red" },
 							]}
 						/>
 					</div>

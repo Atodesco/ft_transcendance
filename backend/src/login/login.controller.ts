@@ -16,9 +16,8 @@ export class LoginController {
 	@UseGuards(FtOauthGuard)
 	async ftAuthCallback(@Request() req, @Res() response: Response) {
 		const token = await this.ftstrategy.login(req.user);
-		// console.log(req.user);
 		const url = new URL(`${req.protocol}:${req.hostname}`);
-		url.port = "3001";
+		url.port = process.env.FRONT_PORT;
 		url.pathname = "Profile";
 		url.searchParams.set("code", token);
 

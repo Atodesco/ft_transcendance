@@ -23,21 +23,11 @@ export class UserController {
 		private readonly userRepository: Repository<User>
 	) {}
 
-	@Get("username")
-	getUsername(@Request() req, @Res() response: Response) {
+	@Get("me")
+	getMyData(@Request() req): Promise<User> {
 		const token: any = this.jwtService.decode(req.cookies.token);
 
-		response.status(200).json({
-			username: token.username,
-		});
-	}
-
-	@Get("picture")
-	getPicture(@Request() req, @Res() response: Response) {
-		const token: any = this.jwtService.decode(req.cookies.token);
-		response.status(200).json({
-			picture: token.picture,
-		});
+		return this.userService.getUser(token.id);
 	}
 
 	@Get("/")
