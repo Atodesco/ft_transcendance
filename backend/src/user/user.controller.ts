@@ -1,16 +1,13 @@
 import {
+	Body,
 	Controller,
 	Get,
 	Param,
 	ParseIntPipe,
+	Post,
 	Request,
-	Res,
-	UseGuards,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Response } from "express";
-import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
 import { UserService } from "./user.service";
 
@@ -18,9 +15,7 @@ import { UserService } from "./user.service";
 export class UserController {
 	constructor(
 		private readonly jwtService: JwtService,
-		private readonly userService: UserService,
-		@InjectRepository(User)
-		private readonly userRepository: Repository<User>
+		private readonly userService: UserService
 	) {}
 
 	@Get("me")
@@ -78,5 +73,13 @@ export class UserController {
 		@Param("elo", ParseIntPipe) elo: number
 	): Promise<User> {
 		return this.userService.setElo(id, elo);
+	}
+
+	@Post("/:id/createChannel")
+	createChannel(
+		@Param("id", ParseIntPipe) id: number,
+		@Body() channelData: any
+	) {
+		return this.userService.createChannel(id, channelData);
 	}
 }

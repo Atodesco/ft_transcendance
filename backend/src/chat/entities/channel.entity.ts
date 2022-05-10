@@ -7,7 +7,9 @@ import {
 	JoinTable,
 	JoinColumn,
 	ManyToMany,
+	OneToMany,
 } from "typeorm";
+import { Message } from "./message.entity";
 
 @Entity()
 export class Channel {
@@ -27,12 +29,22 @@ export class Channel {
 	@JoinColumn({ referencedColumnName: "ft_id" })
 	owner: User;
 
-	// @OneToMany(() => Message, { onDelete: "CASCADE", eager: true })
-	// @JoinColumn()
-	// message: Message[];
+	@OneToMany(() => Message, (message) => message.channel)
+	@JoinColumn()
+	message: Message[];
 
 	@ManyToMany((type) => User, (user) => user.channels)
-	@JoinTable()
+	@JoinTable({
+		name: "user-channels", // table name for the junction table of this relation
+		joinColumn: {
+			name: "id", // name of the column in the junction table
+			referencedColumnName: "id",
+		},
+		inverseJoinColumn: {
+			name: "ft_id", // name of the column in the junction table
+			referencedColumnName: "ft_id",
+		},
+	})
 	users: User[];
 
 	@ManyToMany((type) => User, (user) => user.channels)

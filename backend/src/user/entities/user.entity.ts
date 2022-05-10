@@ -41,13 +41,31 @@ export class User {
 	blocked: number[];
 
 	// @ManyToMany(() => Game)
-	// @JoinTable()
+	// @JoinTable({
+	// 	name: "user-game", // table name for the junction table of this relation
+	// 	joinColumn: {
+	// 		name: "ft_id", // name of the column in the junction table
+	// 		referencedColumnName: "ft_id",
+	// 	},
+	// 	inverseJoinColumn: {
+	// 		name: "id", // name of the column in the junction table
+	// 		referencedColumnName: "id",
+	// 	},
+	// })
 	// game: Game[];
 
-	@ManyToMany((type) => Channel, (channel) => channel.users, {
-		cascade: true,
+	@ManyToMany((type) => Channel, (channel) => channel.users)
+	@JoinTable({
+		name: "user-channels", // table name for the junction table of this relation
+		joinColumn: {
+			name: "ft_id", // name of the column in the junction table
+			referencedColumnName: "ft_id",
+		},
+		inverseJoinColumn: {
+			name: "id", // name of the column in the junction table
+			referencedColumnName: "id",
+		},
 	})
-	@JoinTable()
 	channels: Channel[];
 
 	@Column("int", { default: 0 })

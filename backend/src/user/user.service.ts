@@ -49,8 +49,15 @@ export class UserService {
 	}
 
 	async setElo(id: number, elo: number): Promise<User> {
-		const user = await this.userRepository.findOne({ where: { ft_id: id } }); 
+		const user = await this.userRepository.findOne({ where: { ft_id: id } });
 		user.elo = elo;
+		await this.userRepository.save(user);
+		return user;
+	}
+
+	async createChannel(id: number, channelData: any): Promise<User> {
+		const user = await this.userRepository.findOne({ where: { ft_id: id } });
+		user.channels.push(channelData);
 		await this.userRepository.save(user);
 		return user;
 	}
