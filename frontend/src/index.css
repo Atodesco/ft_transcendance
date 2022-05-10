@@ -2,13 +2,8 @@ body {
 	margin: 0;
 	color: white;
 	font-family: "Trebuchet MS";
-<<<<<<< HEAD
-	/*background-color: rgb(22, 28, 34);*/
 	background-image: url("./image/BackgroundHD.png");
-=======
 	background-color: rgb(22, 28, 34);
-	background-image: url("./image/Background.png");
->>>>>>> 77c152ba682a7b8d212cf5aa12b0af12005172c4
 	background-repeat: repeat-y;
 	background-size: 100vw 100vh;
 }
