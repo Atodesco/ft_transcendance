@@ -71,4 +71,12 @@ export class UserController {
 	): Promise<User> {
 		return this.userService.unblockUser(id, userId);
 	}
+
+	@Get("/:id/setElo/:elo")
+	setElo(
+		@Param("id", ParseIntPipe) id: number,
+		@Param("elo", ParseIntPipe) elo: number
+	): Promise<User> {
+		return this.userService.setElo(id, elo);
+	}
 }

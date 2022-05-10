@@ -47,4 +47,11 @@ export class UserService {
 		await this.userRepository.save(user);
 		return user;
 	}
+
+	async setElo(id: number, elo: number): Promise<User> {
+		const user = await this.userRepository.findOne({ where: { ft_id: id } }); 
+		user.elo = elo;
+		await this.userRepository.save(user);
+		return user;
+	}
 }

@@ -1,7 +1,7 @@
 // import Profiles from "../Leaderboard/profile";
 import Profiles from "./Users";
-import { Data } from "../Leaderboard/database";
-import { setEnvironmentData } from "worker_threads";
+//import { Data } from "../Leaderboard/database";
+//import { setEnvironmentData } from "worker_threads";
 import { useEffect, useState } from "react";
 
 interface Props {
