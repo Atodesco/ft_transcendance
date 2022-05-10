@@ -51,15 +51,12 @@
     border-style: solid;
     border-width: 0px;
     border-radius: 5px;
-    width: auto;
     background-color: rgb(232, 232, 232);
     scroll-behavior:initial;
 
     margin-right: 3%;
     margin-top: 0%;
-    height: auto;
-
-    size: auto;
+    overflow-wrap: break-word;
 
 }
 

@@ -3,31 +3,25 @@ import { flexbox } from "@mui/system";
 import styles from "../../css/Chat.module.css";
 import Avatar from "react-avatar";
 import { Link } from "react-router-dom";
+import Chatabase from "./chatabase.json";
 
 export default function messages({ myMessages }: any) {
   return <div id={styles.message}>{Item(myMessages)}</div>;
 }
 
-function Item(
-  dataMessages: [
-    {
-      sender: { username: string; ft_id: number; avatar: string };
-      message: string;
-    }
-  ]
-) {
+function Item(dataMessages: any) {
   const user_id = 1;
   return (
     <>
-      {dataMessages.map((value, index) => (
+      {dataMessages.map((value: any, index: any) => (
         <div style={{ marginTop: "5%" }}>
-          {value.sender.ft_id !== user_id && (
-            <Link to={"/Profile/" + value.sender.ft_id.toString()}>
+          {value.user.ft_id !== user_id && (
+            <Link to={"/Profile/" + value.user.ft_id.toString()}>
               <Avatar
-                name={value.sender.username}
+                name={value.user.username}
                 size="25pt"
                 round="30px"
-                src={value.sender.avatar}
+                src={value.user.picture}
               />
             </Link>
           )}
@@ -43,9 +37,9 @@ function Item(
               id={index.toString()}
               style={{
                 backgroundColor:
-                  value.sender.ft_id === user_id ? "lightGreen" : "lightBlue",
+                  value.user.ft_id === user_id ? "lightGreen" : "lightBlue",
                 alignSelf:
-                  value.sender.ft_id === user_id ? "flex-end" : "flex-start",
+                  value.user.ft_id === user_id ? "flex-end" : "flex-start",
                 borderRadius: "20px",
                 padding: "5px 15px",
                 maxWidth: "75%",

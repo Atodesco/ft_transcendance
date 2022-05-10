@@ -1,32 +1,32 @@
 import styles from "../../css/Chat.module.css";
 import { useState } from "react";
 
-export default function channels({ myChats }: any) {
-  return <div id={styles.channel}>{Item(myChats)}</div>;
+export default function channels({ myChats, channelState }: any) {
+  return <div id={styles.channel}>{Item(myChats, channelState)}</div>;
 }
 
-function Item(
-  dataChannels: [{ name: string; nameOfLast: string; lastMessage: string }]
-) {
+function Item(dataChannels: any, channelState: any) {
   const [selectedChat, setSelectedChat] = useState("");
   return (
     <>
-      {dataChannels.map((value, index) => (
+      {dataChannels.map((value: any, index: any) => (
         <div
           className={styles.flex}
           key={index}
           id={index.toString()}
           onClick={() => {
-            setSelectedChat(JSON.stringify(value));
+            setSelectedChat(value.channelname);
+            channelState(value.channelname);
           }}
           style={{
             backgroundColor:
-              selectedChat === JSON.stringify(value) ? "#38B2AC" : "#E8E8E8",
+              selectedChat === value.channelname ? "#38B2AC" : "#E8E8E8",
           }}
         >
-          <h1> {value.name}</h1>
+          <h1> {value.channelname}</h1>
           <p>
-            {value.nameOfLast} : {value.lastMessage}
+            {value.messages[value.messages.length - 1].user.username} :{" "}
+            {value.messages[value.messages.length - 1].message}
           </p>
         </div>
       ))}

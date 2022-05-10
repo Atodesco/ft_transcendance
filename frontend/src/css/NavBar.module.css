@@ -1,6 +1,7 @@
 .Container {
 	border-style: solid;
 	border-color: white;
+	background-color: rgba(17, 18, 19, 0.733);
 	width: 18%;
 	position: absolute;
 	top: 10%;

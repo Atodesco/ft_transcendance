@@ -1,42 +1,590 @@
 [
   {
-    "name": "Amis",
-    "nameOfLast": "Remi",
-    "lastMessage": "Salut c'est moi"
+    "channelname": "channel1",
+    "users": [
+      {
+        "ft_id": 1,
+        "username": "VraiRemi",
+        "picture": "avatarRemi.jpeg"
+      },
+      { "ft_id": 2, "username": "FauxRemi", "picture": "avatarRemi.jpeg" }
+    ],
+    "messages": [
+      {
+        "message": "SALUT",
+        "user": {
+          "ft_id": 2,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "OUHAHAH",
+        "user": {
+          "ft_id": 2,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 3,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      }
+    ]
   },
   {
-    "name": "Ennemis",
-    "nameOfLast": "Atodesco",
-    "lastMessage": "Salut connard"
+    "channelname": "channel2",
+    "users": [
+      {
+        "ft_id": 1,
+        "username": "VraiRemi",
+        "picture": "avatarRemi.jpeg"
+      },
+      { "ft_id": 2, "username": "FauxRemi", "picture": "avatarRemi.jpeg" }
+    ],
+    "messages": [
+      {
+        "message": "HIHI",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      }
+    ]
   },
   {
-    "name": "Public",
-    "nameOfLast": "Lacruype",
-    "lastMessage": "Salut c'est encore moi"
+    "channelname": "channel3",
+    "users": [
+      {
+        "ft_id": 1,
+        "username": "VraiRemi",
+        "picture": "avatarRemi.jpeg"
+      },
+      { "ft_id": 2, "username": "FauxRemi", "picture": "avatarRemi.jpeg" }
+    ],
+    "messages": [
+      {
+        "message": "HIHI",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      }
+    ]
   },
   {
-    "name": "NOUVEAU",
-    "nameOfLast": "Lacruype",
-    "lastMessage": "Salut c'est toujours moi"
+    "channelname": "channel4",
+    "users": [
+      {
+        "ft_id": 1,
+        "username": "VraiRemi",
+        "picture": "avatarRemi.jpeg"
+      },
+      { "ft_id": 2, "username": "FauxRemi", "picture": "avatarRemi.jpeg" }
+    ],
+    "messages": [
+      {
+        "message": "HIHI",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      }
+    ]
   },
   {
-    "name": "NOUVEAU",
-    "nameOfLast": "Lacruype",
-    "lastMessage": "Salut c'est toujours moi"
+    "channelname": "channel5",
+    "users": [
+      {
+        "ft_id": 1,
+        "username": "VraiRemi",
+        "picture": "avatarRemi.jpeg"
+      },
+      { "ft_id": 2, "username": "FauxRemi", "picture": "avatarRemi.jpeg" }
+    ],
+    "messages": [
+      {
+        "message": "HIHI",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      }
+    ]
   },
   {
-    "name": "NOUVEAU",
-    "nameOfLast": "Lacruype",
-    "lastMessage": "Salut c'est toujours moi"
+    "channelname": "channel6",
+    "users": [
+      {
+        "ft_id": 1,
+        "username": "VraiRemi",
+        "picture": "avatarRemi.jpeg"
+      },
+      { "ft_id": 2, "username": "FauxRemi", "picture": "avatarRemi.jpeg" }
+    ],
+    "messages": [
+      {
+        "message": "HIHI",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      }
+    ]
   },
   {
-    "name": "NOUVEAU",
-    "nameOfLast": "Lacruype",
-    "lastMessage": "Salut c'est toujours moi"
+    "channelname": "channel7",
+    "users": [
+      {
+        "ft_id": 1,
+        "username": "VraiRemi",
+        "picture": "avatarRemi.jpeg"
+      },
+      { "ft_id": 2, "username": "FauxRemi", "picture": "avatarRemi.jpeg" }
+    ],
+    "messages": [
+      {
+        "message": "HIHI",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      }
+    ]
   },
   {
-    "name": "NOUVEAU",
-    "nameOfLast": "Lacruype",
-    "lastMessage": "Salut c'est toujours moi"
+    "channelname": "channel8",
+    "users": [
+      {
+        "ft_id": 1,
+        "username": "VraiRemi",
+        "picture": "avatarRemi.jpeg"
+      },
+      { "ft_id": 2, "username": "FauxRemi", "picture": "avatarRemi.jpeg" }
+    ],
+    "messages": [
+      {
+        "message": "HIHI",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      }
+    ]
+  },
+  {
+    "channelname": "channel9",
+    "users": [
+      {
+        "ft_id": 1,
+        "username": "VraiRemi",
+        "picture": "avatarRemi.jpeg"
+      },
+      { "ft_id": 2, "username": "FauxRemi", "picture": "avatarRemi.jpeg" }
+    ],
+    "messages": [
+      {
+        "message": "HIHI",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      }
+    ]
+  },
+  {
+    "channelname": "channel10",
+    "users": [
+      {
+        "ft_id": 1,
+        "username": "VraiRemi",
+        "picture": "avatarRemi.jpeg"
+      },
+      { "ft_id": 2, "username": "FauxRemi", "picture": "avatarRemi.jpeg" }
+    ],
+    "messages": [
+      {
+        "message": "HIHI",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      }
+    ]
+  },
+  {
+    "channelname": "channel11",
+    "users": [
+      {
+        "ft_id": 1,
+        "username": "VraiRemi",
+        "picture": "avatarRemi.jpeg"
+      },
+      { "ft_id": 2, "username": "FauxRemi", "picture": "avatarRemi.jpeg" }
+    ],
+    "messages": [
+      {
+        "message": "HIHI",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      }
+    ]
+  },
+  {
+    "channelname": "channel12",
+    "users": [
+      {
+        "ft_id": 1,
+        "username": "VraiRemi",
+        "picture": "avatarRemi.jpeg"
+      },
+      { "ft_id": 2, "username": "FauxRemi", "picture": "avatarRemi.jpeg" }
+    ],
+    "messages": [
+      {
+        "message": "HIHI",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      },
+      {
+        "message": "message",
+        "user": {
+          "ft_id": 1,
+          "username": "VraiRemi",
+          "picture": "avatarRemi.jpeg"
+        },
+        "date": "date"
+      }
+    ]
   }
 ]
