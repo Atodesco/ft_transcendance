@@ -7,3 +7,7 @@ body {
 	background-repeat: repeat-y;
 	background-size: 100vw 100vh;
 }
+
+.popup-overlay {
+	background: rgba(0, 0, 0, 0.5);
+}
