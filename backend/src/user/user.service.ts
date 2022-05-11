@@ -59,6 +59,24 @@ export class UserService {
 		return user;
 	}
 
+	async joinChannel(id, channelId): Promise<User> {
+		const user = await this.userRepository.findOne({ ft_id: id });
+		const channel = await this.channelRepository.findOne({ id: channelId });
+		if (!user.channels) {
+			user.channels = [channel.id];
+		} else {
+			user.channels.push(channel.id);
+		}
+		if (!channel.users) {
+			channel.users = [user];
+		} else {
+			channel.users.push(user);
+		}
+		await this.userRepository.save(user);
+		await this.channelRepository.save(channel);
+		return user;
+	}
+
 	async createChannel(id: number, channelData: any): Promise<User> {
 		const user = await this.userRepository.findOne({ ft_id: id });
 		let channel = this.channelRepository.create();
@@ -69,6 +87,7 @@ export class UserService {
 		if (channelData.password) {
 			bcrypt.genSalt(saltRounds, function (err, salt) {
 				bcrypt.hash(channelData.password, salt, function (err, hash) {
+					// ! Store le hash dans la base de données
 					hash;
 				});
 			});
@@ -80,6 +99,13 @@ export class UserService {
 			channel.users.push(user);
 		}
 		await this.channelRepository.save(channel);
+
+		if (!user.channels) {
+			user.channels = [channel.id];
+		} else {
+			user.channels.push(channel.id);
+		}
+		await this.userRepository.save(user);
 		// console.log(channel);
 		// console.log(channel.users);
 
