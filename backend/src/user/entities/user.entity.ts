@@ -54,19 +54,21 @@ export class User {
 	// })
 	// game: Game[];
 
-	@ManyToMany((type) => Channel, (channel) => channel.users)
-	@JoinTable({
-		name: "user-channels", // table name for the junction table of this relation
-		joinColumn: {
-			name: "ft_id", // name of the column in the junction table
-			referencedColumnName: "ft_id",
-		},
-		inverseJoinColumn: {
-			name: "id", // name of the column in the junction table
-			referencedColumnName: "id",
-		},
-	})
-	channels: Channel[];
+	// @ManyToMany((type) => Channel, (channel) => channel.users, {
+	// 	cascade: true,
+	// })
+	// @JoinTable({
+	// 	name: "user-channels", // table name for the junction table of this relation
+	// 	joinColumn: {
+	// 		name: "ft_id", // name of the column in the junction table
+	// 		referencedColumnName: "ft_id",
+	// 	},
+	// 	inverseJoinColumn: {
+	// 		name: "id", // name of the column in the junction table
+	// 		referencedColumnName: "id",
+	// 	},
+	// })
+	// channels: Channel[];
 
 	@Column("int", { default: 0 })
 	lvl: number;

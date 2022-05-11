@@ -2,14 +2,12 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ChannelService } from "./channel.service";
 import { ChatController } from "./chat.controller";
+import { ChatGateway } from "./chat.gateway";
 import { Channel } from "./entities/channel.entity";
-import { Message } from "./entities/message.entity";
-import { MessageService } from "./message.service";
-// import { AppGateway } from "./app.gateway";
 
 @Module({
-	imports: [TypeOrmModule.forFeature([Channel, Message])],
+	imports: [TypeOrmModule.forFeature([Channel])],
 	controllers: [ChatController],
-	providers: [ChannelService, MessageService],
+	providers: [ChannelService, ChatGateway],
 })
 export class ChatModule {}

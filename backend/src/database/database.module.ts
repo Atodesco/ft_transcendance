@@ -3,7 +3,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { User } from "src/user/entities/user.entity";
 import { Channel } from "src/chat/entities/channel.entity";
-import { Message } from "src/chat/entities/message.entity";
 
 @Module({
 	imports: [
@@ -17,7 +16,7 @@ import { Message } from "src/chat/entities/message.entity";
 				username: process.env.DATABASE_USERNAME,
 				password: process.env.DATABASE_PASSWORD,
 				database: process.env.DATABASE_NAME,
-				entities: [User, Channel, Message],
+				entities: [User, Channel],
 				synchronize: true, //false for production, else destroy/recreate data in the db
 			}),
 		}),
