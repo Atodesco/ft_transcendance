@@ -59,7 +59,7 @@ export class UserService {
 		return user;
 	}
 
-	async joinChannel(id, channelId): Promise<User> {
+	async joinChannel(id, channelId): Promise<Channel> {
 		const user = await this.userRepository.findOne({ ft_id: id });
 		const channel = await this.channelRepository.findOne({ id: channelId });
 		if (!user.channels) {
@@ -74,7 +74,7 @@ export class UserService {
 		}
 		await this.userRepository.save(user);
 		await this.channelRepository.save(channel);
-		return user;
+		return channel;
 	}
 
 	async createChannel(id: number, channelData: any): Promise<User> {

@@ -8,6 +8,7 @@ import {
 	Request,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import { Channel } from "src/chat/entities/channel.entity";
 import { User } from "./entities/user.entity";
 import { UserService } from "./user.service";
 
@@ -79,7 +80,7 @@ export class UserController {
 	joinChannel(
 		@Param("id", ParseIntPipe) id: number,
 		@Param("channelId", ParseIntPipe) channelId: number
-	): Promise<User> {
+	): Promise<Channel> {
 		return this.userService.joinChannel(id, channelId);
 	}
 
