@@ -1,5 +1,5 @@
 import styles from "../../css/Chat.module.css";
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "../../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,30 +7,45 @@ import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 
 import Channels from "./Channels";
 import Messages from "./Messages";
-import { useEffect } from "react";
 import Chatabase from "./chatabase.json";
 import DatabaseChannel from "./databaseChannels.json";
 import Autocomplete from "@mui/material/Autocomplete";
-import Popup from "reactjs-popup";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import * as React from "react";
 
-import { setSelectionRange } from "@testing-library/user-event/dist/utils";
-import { valueToPercent } from "@mui/base";
+import { io } from "socket.io-client";
 
 export default function Chat() {
   const [inputText, setInputText] = useState("");
-  const [displayChannel, setDisplayChannel] = useState("");
   const [channelSelected, setChannelSelected] = useState("");
   const [messages, setMessages] = useState("");
   const [openModal, setOpenModal] = React.useState(false);
 
-  let inputHandler = (e: any) => {
-    //convert input text to lower case
-    var lowerCase = e.target.value.toLowerCase();
-    setInputText(lowerCase);
-  };
+  const p: any = { ini: 1 };
+  let ws = useRef(p);
+
+  useEffect(() => {
+    if (ws.current.ini) {
+      ws.current = io("http://localhost:3000?ft_id=57832");
+      ws.current.on("text", (data: any) => {
+        setMessages((messages: any) => {
+          let newMessage = JSON.parse(messages);
+          newMessage.push({
+            message: data,
+            user: {
+              ft_id: 57832,
+              username: "VraiRemi",
+              picture: "avatarRemi.jpeg",
+            },
+            date: "2020-01-01",
+          });
+          return JSON.stringify(newMessage);
+        });
+      });
+    }
+  }, []);
+
   let selectChannel = () => {
     Chatabase.map((value: any, index: any) => {
       if (value.channelname === channelSelected)
@@ -68,11 +83,25 @@ export default function Chat() {
         </div>
         <div className={styles.chatBar}>
           <TextField
-            id={styles.outlinedBasic}
             variant="outlined"
             fullWidth
-            label="Enter a message ..."
-            onChange={inputHandler}
+            label={channelSelected ? "Enter a message ..." : "Select a channel"}
+            onChange={(e: any) => setInputText(e.target.value)}
+            value={inputText}
+            disabled={!channelSelected}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && inputText) {
+                const channel = DatabaseChannel.find((value: any) => {
+                  return value.channelname === channelSelected;
+                });
+                const dataToSend = {
+                  channelname: channel?.channelname,
+                  message: inputText,
+                };
+                ws.current.emit("text", dataToSend);
+                setInputText("");
+              }
+            }}
           />
         </div>
       </div>

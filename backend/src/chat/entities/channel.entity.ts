@@ -29,11 +29,11 @@ export class Channel {
 	@JoinColumn({ referencedColumnName: "ft_id" })
 	owner: User;
 
-	@OneToMany(() => Message, (message) => message.channel)
-	@JoinColumn()
-	message: Message[];
+	// @OneToMany(() => Message, (message) => message.channel)
+	// @JoinColumn()
+	// message: Message[];
 
-	@ManyToMany((type) => User, (user) => user.channels)
+	@ManyToMany((type) => User)
 	@JoinTable({
 		name: "user-channels", // table name for the junction table of this relation
 		joinColumn: {
@@ -47,7 +47,17 @@ export class Channel {
 	})
 	users: User[];
 
-	@ManyToMany((type) => User, (user) => user.channels)
-	@JoinTable()
+	@ManyToMany((type) => User)
+	@JoinTable({
+		name: "muteduser-channel", // table name for the junction table of this relation
+		joinColumn: {
+			name: "id", // name of the column in the junction table
+			referencedColumnName: "id",
+		},
+		inverseJoinColumn: {
+			name: "ft_id", // name of the column in the junction table
+			referencedColumnName: "ft_id",
+		},
+	})
 	mutedusers: User[];
 }
