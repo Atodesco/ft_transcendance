@@ -1,6 +1,6 @@
 .game .Buttons {
     margin-left: 35%;
-    margin-top: 15%
+    margin-top: -5%
 }
 
 .game #timer {
@@ -9,4 +9,10 @@
     font-size: 35px;
     opacity: 0;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.Pong img {
+	
+	margin-left: 33.5%;
+
 }

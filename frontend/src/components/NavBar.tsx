@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
+import { PollingWatchKind } from "typescript";
 import styles from "../css/NavBar.module.css";
+import Pong from "../image/Pong.png";
 
 export default function NavBar() {
   return (

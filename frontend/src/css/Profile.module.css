@@ -31,7 +31,7 @@
 
 .ProfileInfo {
 	margin-left: 17%;
-	margin-top: 7vh;
+	/*margin-top: 7vh;*/
 	display: flex;
 }
 
@@ -60,55 +60,61 @@
 .MatchHistory > div:hover {
 }
 
-.ProfileInfo .Stats {
-	margin-left: 3%;
+.Stats {
 	border-style: solid;
-	border-color: darkgray;
-	border-width: 5px;
+	border-color: white;
+	border-width: 1px;
+	border-radius: 13px;
 	padding: 8px;
-	width: 16%;
-	height: 380px;
+	width: 15%;
+	background-color: #131921b8;;
+	position: absolute;
+	top: 7%;
+	right: 15%;
 }
 
-.ProfileInfo .Stats .Rank {
-	display: flex;
+.Stats .Rank {
+	display: block;
+	border-color: white;
 }
 
-.ProfileInfo .Stats .Rank > svg {
+.Stats .Rank > svg {
 	font-size: 60px;
 	margin: 5%;
 }
 
-.ProfileInfo .Stats .Rank h2 {
-	margin: 20px;
-	font-size: 50px;
+.Stats h2 {
+	margin: 10px;
+	font-size: 30px;
+	text-align: center;
 }
 
-.ProfileInfo .Stats .Rank h3 {
-	font-size: 30px;
-	margin-top: 15px;
-	margin-left: -20px;
-}
+
 
 .Stats .Ratio > svg {
-	width: 120px;
-	height: 120px;
-	display: block;
-	margin: 15% auto;
+	width: 100px;
+	height: 100px;
 	border-style: solid;
 	border-color: rgb(0, 0, 0);
 	border-width: 3px;
 	border-radius: 50%;
+	display: block;
+	margin: auto;
+	/* background-color: azure; */
 }
+
 
 .Stats .LevelProgress {
 	display: flex;
-	margin-top: 10%;
+	justify-content: center;
+
 }
 
 .Stats .LevelProgress > span {
+	align-items: flex-end;
 	margin-top: 15px;
-	margin-right: 10px;
+	margin-right: 15px;
+
 }
 
 .SearchBar {
@@ -203,8 +209,8 @@
 }
 
 #profile .flex img {
-	width: 20%;
-	border-radius: 50%;
+	width: 15%;
+	border-radius: 12%;
 }
 
 #profile .flex .info {
@@ -215,11 +221,11 @@
 	color: var(--color-dark);
 }
 
-.Button {
-	margin-left: -170px;
+.Buttons {
+	margin-left: px;
 }
 
-.Button div {
-	margin-top: 6%;
+.Buttons div {
+	margin-top: 25%;
 	padding: 10px 20px;
 }

@@ -14,7 +14,6 @@ import ProgressBar from "react-animated-progress-bar";
 import { PieChart } from "react-minimal-pie-chart";
 
 import Profiles from "./Users";
-import { Data } from "../Leaderboard/database";
 import { useParams } from "react-router";
 
 interface OtherUser {
@@ -284,27 +283,9 @@ export default function Profile() {
             </div>
           )}
         </div>
-      </div>
-      <div className={styles.ProfileInfo}>
-        <div className={styles.MatchHistory}>
-          {history.map((item, index) => {
-            let col = "red";
-            if (item.win) {
-              col = "green";
-            }
-
-            return (
-              <div key={index} style={{ backgroundColor: col }}>
-                {item.username} {item.score} {item.win}
-              </div>
-            );
-          })}
-        </div>
         <div className={styles.Stats}>
           <div className={styles.Rank}>
-            <FontAwesomeIcon icon={faRankingStar} />
-            <h2>1</h2>
-            <h3>er</h3>
+            <h2>Rank: 1 er</h2>
           </div>
           <div className={styles.LevelProgress}>
             <span>{userData.currentLevel}</span>
@@ -323,6 +304,7 @@ export default function Profile() {
             />
             <span>{userData.nextLevel}</span>
           </div>
+
           <div className={styles.Ratio}>
             <PieChart
               lineWidth={60}
@@ -340,6 +322,23 @@ export default function Profile() {
             />
           </div>
         </div>
+      </div>
+      <div className={styles.ProfileInfo}>
+        <div className={styles.MatchHistory}>
+          {history.map((item, index) => {
+            let col = "red";
+            if (item.win) {
+              col = "green";
+            }
+
+            return (
+              <div key={index} style={{ backgroundColor: col }}>
+                {item.username} {item.score} {item.win}
+              </div>
+            );
+          })}
+        </div>
+
         <div className={styles.SearchBar}>
           <TextField
             className={styles.Search}

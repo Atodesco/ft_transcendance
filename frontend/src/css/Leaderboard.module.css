@@ -69,7 +69,7 @@
 	box-shadow: 1.169px 3.825px 15.66px 2.34px rgba(0, 0, 0, 0.2);
 	background-color: rgba(0, 0, 0, 0.7);
 	border-radius: 15px;
-	height:60px;
+	height:80px;
 }
 
 #profile .flex:hover {
@@ -84,8 +84,8 @@
 }
 
 #profile .flex img {
-	border-radius: 10%;
-	height:100%;
+	width: 10%;
+	border-radius: 10px 0px 0px 10px;
 
 }
 

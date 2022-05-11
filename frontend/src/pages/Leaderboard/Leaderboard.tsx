@@ -37,7 +37,7 @@ export default function Leaderboard() {
       credentials: "include",
     });
     const data = await rawData.json();
-    fetch("http://localhost:3000/user/" + data.ft_id + "/setElo/950", {
+    fetch("http://localhost:3000/user/" + data.ft_id + "/setElo/1950", {
       credentials: "include",
     });
   };
