@@ -15,12 +15,11 @@ function Item(dataChannels: any, channelState: any) {
           key={index}
           id={index.toString()}
           onClick={() => {
-            setSelectedChat(value.channelname);
-            channelState(value.channelname);
+            setSelectedChat(value.id);
+            channelState(value.id);
           }}
           style={{
-            backgroundColor:
-              selectedChat === value.channelname ? "#38B2AC" : "#E8E8E8",
+            backgroundColor: selectedChat === value.id ? "#38B2AC" : "#E8E8E8",
           }}
         >
           <h1> {value.channelname}</h1>
