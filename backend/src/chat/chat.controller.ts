@@ -12,6 +12,6 @@ export class ChatController {
 
 	@Get("channel/:channelId")
 	async getChannelsId(@Param("channelId", ParseIntPipe) channelId: number) {
-		return await this.channelService.getChannels();
+		return await this.channelService.getChannelId(channelId);
 	}
 }
