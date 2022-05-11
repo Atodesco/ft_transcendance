@@ -2,7 +2,7 @@ body {
 	margin: 0;
 	color: white;
 	font-family: "Trebuchet MS";
-	background-image: url("./image/BackgroundHD.png");
+	background-image: url("./image/background_pong_darker.jpg");
 	background-color: rgb(22, 28, 34);
 	background-repeat: repeat-y;
 	background-size: 100vw 100vh;

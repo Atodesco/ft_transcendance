@@ -19,6 +19,7 @@
 		"axios": "^0.27.2",
 		"cross-env": "^7.0.3",
 		"js-cookie": "^3.0.1",
+		"popup": "^0.0.3",
 		"react": "^18.1.0",
 		"react-animated-progress-bar": "^1.0.4",
 		"react-avatar": "^4.1.0",
