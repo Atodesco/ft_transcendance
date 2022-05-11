@@ -13,4 +13,8 @@ export class ChannelService {
 	getChannels() {
 		return this.channelRepository.find();
 	}
+
+	getChannelId(id: number) {
+		return this.channelRepository.findOne({ id: id });
+	}
 }
