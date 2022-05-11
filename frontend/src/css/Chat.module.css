@@ -32,7 +32,7 @@
   border-style: solid;
   border-color: white;
   border-width: 3px;
-  background-color: darkgrey;
+  background-color: rgba(18, 17, 17, 0.671);
 
   width: 50%;
   height: 88vh;
@@ -85,7 +85,7 @@
   border-style: solid;
   border-color: white;
   border-width: 3px;
-  background-color: darkgrey;
+  background-color: rgba(240, 234, 234, 0.671);
 
   width: 26%;
   height: 88vh;
@@ -119,12 +119,11 @@
 
   border-radius: 15px;
   border-width: 3px;
-  background-color: white;
+  background-color: rgba(18, 17, 17, 0.671);
 
   width: 92%;
   height: 77vh;
 
-  /* padding: 10px 0px 0px 25px; */
 }
 
 .myChats .trucblanc .flex {
@@ -152,13 +151,25 @@
 }
 
 .modal {
-    display: flex;
-    background-color: grey;
-    border-radius: 5px;
-    /* width: 20vw;
-    height: 20vh; */
-    size: auto;
-    text-align: center;
-    padding-top: 5%;
+  background-color: grey;
+  border-radius: 5px;
+  width: fit-content;
+  height: fit-content;
+  margin: auto;
+  padding: 1%;
 }
 
+.modal .boxModal {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal .create {
+  color: white;
+  border-color: white;
+  background-color: black;
+  width: 6vw;
+  height: 5vh;
+  align-self: center;
+  padding: 5% 5% 5% 11%;
+}
