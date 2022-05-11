@@ -12,6 +12,9 @@ import Chatabase from "./chatabase.json";
 import DatabaseChannel from "./databaseChannels.json";
 import Autocomplete from "@mui/material/Autocomplete";
 import Popup from "reactjs-popup";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import * as React from "react";
 
 import { setSelectionRange } from "@testing-library/user-event/dist/utils";
 import { valueToPercent } from "@mui/base";
@@ -21,6 +24,7 @@ export default function Chat() {
   const [displayChannel, setDisplayChannel] = useState("");
   const [channelSelected, setChannelSelected] = useState("");
   const [messages, setMessages] = useState("");
+  const [openModal, setOpenModal] = React.useState(false);
 
   let inputHandler = (e: any) => {
     //convert input text to lower case
@@ -36,6 +40,12 @@ export default function Chat() {
   useEffect(() => {
     selectChannel();
   }, [channelSelected]);
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
   return (
     <div>
       <div className={styles.searchChannels}>
@@ -50,13 +60,6 @@ export default function Chat() {
               <TextField {...params} label="Search Channel" />
             )}
           />
-          {/* <TextField
-            variant="outlined"
-            fullWidth
-            label="Search Channels"
-            onChange={inputHandler}
-          />
-          <div className={styles.dropdown}>{displayChannel}</div> */}
         </div>
       </div>
       <div className={styles.chat}>
@@ -76,21 +79,35 @@ export default function Chat() {
       <div className={styles.myChats}>
         <h1>My Chats</h1>
         <div className={styles.button}>
-          <Popup
-            trigger={
-              <Button text="Create Channel">
-                <FontAwesomeIcon icon={faPlusCircle} />
-              </Button>
-            }
-            modal
-            nested
+          <Button text="Create Channel" onClick={handleOpenModal}>
+            <FontAwesomeIcon icon={faPlusCircle} />
+          </Button>
+          <Modal
+            open={openModal}
+            onClose={handleCloseModal}
+            className={styles.modal}
           >
-            <div className={styles.modal}>
-              <TextField>NOM</TextField>
-              <TextField>MOT DE PASSE</TextField>
-              <Button text="Close Popup"></Button>
-            </div>
-          </Popup>
+            <Box
+              component="form"
+              sx={{
+                "& > :not(style)": { m: 1, width: "25ch" },
+              }}
+              autoComplete="off"
+              className={styles.boxModal}
+            >
+              <TextField label="Enter a Name ..." variant="standard" />
+              <TextField
+                label="Choose a Password ..."
+                variant="standard"
+                type="password"
+              />
+              <Button
+                text="Create"
+                className={styles.create}
+                onClick={handleCloseModal}
+              />
+            </Box>
+          </Modal>
         </div>
         <div className={styles.trucblanc}>
           <Channels
@@ -102,23 +119,3 @@ export default function Chat() {
     </div>
   );
 }
-
-const top100Films = [
-  { label: "The Shawshank Redemption", year: 1994 },
-  { label: "The Godfather", year: 1972 },
-  { label: "The Godfather: Part II", year: 1974 },
-  { label: "The Dark Knight", year: 2008 },
-  { label: "12 Angry Men", year: 1957 },
-  { label: "Schindler's List", year: 1993 },
-  { label: "Pulp Fiction", year: 1994 },
-  {
-    label: "The Lord of the Rings: The Return of the King",
-    year: 2003,
-  },
-  { label: "The Good, the Bad and the Ugly", year: 1966 },
-  { label: "Fight Club", year: 1999 },
-  {
-    label: "The Lord of the Rings: The Fellowship of the Ring",
-    year: 2001,
-  },
-];
