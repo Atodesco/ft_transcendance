@@ -24,32 +24,81 @@ export default function Chat() {
   const [password, setPassword] = useState("");
   const [channelName, setChannelName] = useState("");
   const [databaseChannel, setDatabaseChannel] = useState<any>();
+  const [channelUserJoined, setChannelUserJoined] = useState<any>();
   const [channelSelected, setChannelSelected] = useState(0);
 
   const p: any = { ini: 1 };
+  let [userInfo, setUserInfo] = useState<any>(p);
   let ws = useRef(p);
+  let flag = useRef(p);
+
+  const getUserInfo = async () => {
+    const myData = await fetch(
+      process.env.REACT_APP_BACK_URL +
+        ":" +
+        process.env.REACT_APP_BACK_PORT +
+        "/user/me/",
+      {
+        credentials: "include", //this is what I need to tell the browser to include cookies
+      }
+    );
+    setUserInfo(await myData.json());
+  };
 
   useEffect(() => {
-    if (ws.current.ini) {
-      ws.current = io("http://localhost:3000?ft_id=57832");
+    if (flag.current.ini) {
+      getUserInfo();
+      flag.current = {};
+    }
+    getChannels();
+  }, []);
+
+  useEffect(() => {
+    if (ws.current.ini && userInfo.ft_id) {
+      ws.current = io("http://localhost:3000?ft_id=" + userInfo.ft_id);
       ws.current.on("text", (data: any) => {
         setMessages((messages: any) => {
           let newMessage = JSON.parse(messages);
           newMessage.push({
             message: data,
-            user: {
-              ft_id: 57832,
-              username: "VraiRemi",
-              picture: "avatarRemi.jpeg",
-            },
+            user: userInfo.ft_id,
             date: "2020-01-01",
           });
           return JSON.stringify(newMessage);
         });
       });
+      ws.current.on("searchChannel", (channel: any) => {
+        setDatabaseChannel((c: any) => {
+          c.push(channel);
+          return c;
+        });
+      });
+      ws.current.on("myChannel", (channel: any) => {
+        setChannelUserJoined((c: any) => {
+          c.push(channel);
+          return c;
+        });
+      });
     }
-    getChannels();
-  }, []);
+  }, [userInfo]);
+
+  useEffect(() => {
+    if (userInfo.ft_id) {
+      let arr: any = [];
+      databaseChannel.map((value: any, index: any) => {
+        if (userInfo.channels.includes(value.id)) {
+          arr.push(value);
+        }
+      });
+
+      setChannelUserJoined(arr);
+    }
+  }, [databaseChannel]);
+
+  useEffect(() => {
+    console.log("OUI", channelUserJoined);
+  }, [channelUserJoined]);
+
   let getChannels = async () => {
     const rawData = await fetch(
       process.env.REACT_APP_BACK_URL +
@@ -85,7 +134,11 @@ export default function Chat() {
             id="combo-box-demo"
             options={databaseChannel}
             sx={{ width: 673 }}
-            getOptionLabel={(option: any) => option.channelname}
+            getOptionLabel={(channel: any) => {
+              if (!userInfo.channels.includes(channel.id)) {
+                return channel.channelname;
+              }
+            }}
             onChange={async (event, value) => {
               if (value) {
                 const myData = await fetch(
@@ -102,7 +155,7 @@ export default function Chat() {
                   process.env.REACT_APP_BACK_URL +
                     ":" +
                     process.env.REACT_APP_BACK_PORT +
-                    "/" +
+                    "/user/" +
                     data.ft_id +
                     "/joinChannel/" +
                     value.id,
@@ -182,26 +235,10 @@ export default function Chat() {
                 className={styles.create}
                 onClick={async () => {
                   handleCloseModal();
-                  const me = await fetch("http://localhost:3000/user/me/", {
-                    credentials: "include",
+                  ws.current.emit("createChannel", {
+                    channelname: channelName,
+                    password: password,
                   });
-                  const myData = await me.json();
-                  const channel = await fetch(
-                    "http://localhost:3000/user/" +
-                      myData.ft_id +
-                      "/createChannel",
-                    {
-                      credentials: "include",
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify({
-                        channelname: channelName,
-                        password: password,
-                      }),
-                    }
-                  );
                   setPassword("");
                   setChannelName("");
                 }}
@@ -211,7 +248,7 @@ export default function Chat() {
         </div>
         <div className={styles.trucblanc}>
           <Channels
-            myChats={Chatabase}
+            myChats={channelUserJoined}
             channelState={setChannelSelected}
           ></Channels>
         </div>
