@@ -1,5 +1,5 @@
 import styles from "../../css/Chat.module.css";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "../../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,20 +7,16 @@ import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 
 import Channels from "./Channels";
 import Messages from "./Messages";
-import Chatabase from "./chatabase.json";
-// import DatabaseChannel from "./databaseChannels.json";
 import Autocomplete from "@mui/material/Autocomplete";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
-import * as React from "react";
 
 import { io } from "socket.io-client";
-import { ftruncate } from "fs";
 
 export default function Chat() {
 	const [inputText, setInputText] = useState("");
-	const [messages, setMessages] = useState("");
-	const [openModal, setOpenModal] = React.useState(false);
+	const [messages, setMessages] = useState<any>([]);
+	const [openModal, setOpenModal] = useState(false);
 	const [password, setPassword] = useState("");
 	const [channelName, setChannelName] = useState("");
 	const [databaseChannel, setDatabaseChannel] = useState<any>([]);
@@ -29,9 +25,9 @@ export default function Chat() {
 	const [searchBarState, setSearchBarState] = useState<any>();
 
 	const p: any = { ini: 1 };
-	let [userInfo, setUserInfo] = useState<any>(p);
-	let ws = useRef(p);
-	let flag = useRef(p);
+	const [userInfo, setUserInfo] = useState<any>(p);
+	const ws = useRef(p);
+	const flag = useRef(p);
 
 	const getUserInfo = async () => {
 		const myData = await fetch(
@@ -40,7 +36,7 @@ export default function Chat() {
 				process.env.REACT_APP_BACK_PORT +
 				"/user/me/",
 			{
-				credentials: "include", //this is what I need to tell the browser to include cookies
+				credentials: "include",
 			}
 		);
 		setUserInfo(await myData.json());
@@ -57,6 +53,29 @@ export default function Chat() {
 	useEffect(() => {
 		if (ws.current.ini && userInfo.ft_id) {
 			ws.current = io("http://localhost:3000?ft_id=" + userInfo.ft_id);
+			ws.current.on("text", (data: any) => {
+				console.log("SALUT :", data);
+				console.log("message :", messages);
+				setMessages((message: any) => {
+					let newMessage = message.slice();
+					if (newMessage.length) {
+						newMessage.push({
+							message: data.message,
+							user: data.user,
+							date: data.date,
+						});
+					} else {
+						newMessage = [
+							{
+								message: data.message,
+								user: data.user,
+								date: data.date,
+							},
+						];
+					}
+					return newMessage;
+				});
+			});
 		}
 	}, [userInfo]);
 
@@ -95,20 +114,52 @@ export default function Chat() {
 		}
 	}, [channelUserJoined]);
 
+	function usePrevious(value: any) {
+		const ref = useRef();
+		useEffect(() => {
+			ref.current = value; //assign the value of ref to the argument
+		}, [value]); //this code will run when the value of 'value' changes
+		return ref.current; //in the end, return the current ref value.
+	}
+
+	// if (usePrevious(channelSelected) !== channelSelected) {
+	// 	console.log("c'est previous ça ?");
+	// 	sessionStorage.setItem(
+	// 		"messages" + channelSelected,
+	// 		JSON.stringify(messages)
+	// 	);
+	// } else {
+	// 	const messagesStorage = sessionStorage.getItem(
+	// 		"messages" + channelSelected
+	// 	);
+	// 	if (messagesStorage) {
+	// 		const newMessages = JSON.parse(messagesStorage);
+	// 		setMessages(newMessages);
+	// 	}
+	// }
+
 	useEffect(() => {
-		if (userInfo.ft_id) {
-			ws.current.on("text", (data: any) => {
-				console.log("SALUT :", data);
-				let newTmp = JSON.parse(messages.slice());
-				newTmp.push({
-					message: data,
-					user: userInfo.ft_id,
-					date: "2020-01-01",
-				});
-				setMessages(JSON.stringify(newTmp));
-			});
-		}
-	}, [messages]);
+		setInputText("");
+		// console.log("channelSelected :", channelSelected);
+		// if (channelSelected > 0) {
+		// 	const messagesStorage = sessionStorage.getItem(
+		// 		"messages" + channelSelected
+		// 	);
+		// 	if (messagesStorage) {
+		// 		setMessages(JSON.parse(messagesStorage));
+		// 	}
+		// }
+		// return () => {
+		// 	if (channelSelected > 0) {
+		// 		const channelId = channelSelected;
+		// 		console.log("channelSelected :", channelSelected);
+		// 		sessionStorage.setItem(
+		// 			"messages" + channelId,
+		// 			JSON.stringify(messages)
+		// 		);
+		// 	}
+		// };
+	}, [channelSelected]);
 
 	let getChannels = async () => {
 		const rawData = await fetch(
@@ -121,15 +172,6 @@ export default function Chat() {
 		const data = await rawData.json();
 		setDatabaseChannel(data);
 	};
-	let selectChannel = () => {
-		Chatabase.map((value: any, index: any) => {
-			if (value.channelname === channelSelected)
-				setMessages(JSON.stringify(value.messages));
-		});
-	};
-	useEffect(() => {
-		selectChannel();
-	}, [channelSelected]);
 	const handleOpenModal = () => {
 		setOpenModal(true);
 	};
@@ -147,13 +189,6 @@ export default function Chat() {
 						clearOnEscape={true}
 						options={searchBarState}
 						sx={{ width: 673 }}
-						// filterOptions={(options: any, state: object) => {
-						// 	return options.filter((channel: any) => {
-						// 		if (!userInfo.channels.includes(channel.id)) {
-						// 			return channel.channelname;
-						// 		}
-						// 	});
-						// }}
 						getOptionLabel={(channel: any) => {
 							return channel.channelname;
 						}}
@@ -183,7 +218,7 @@ export default function Chat() {
 			</div>
 			<div className={styles.chat}>
 				<div className={styles.chatHistory}>
-					{messages && <Messages myMessages={JSON.parse(messages)}></Messages>}
+					{messages && <Messages myMessages={messages}></Messages>}
 				</div>
 				<div className={styles.chatBar}>
 					<TextField
@@ -199,8 +234,9 @@ export default function Chat() {
 									return value.id === channelSelected;
 								});
 								const dataToSend = {
-									channelname: channel?.channelname,
+									channelId: channel?.id,
 									message: inputText,
+									date: new Date(),
 								};
 								ws.current.emit("text", dataToSend);
 								setInputText("");

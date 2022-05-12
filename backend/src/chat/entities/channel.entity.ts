@@ -9,7 +9,6 @@ import {
 	ManyToMany,
 	OneToMany,
 } from "typeorm";
-import { Message } from "./message.entity";
 
 @Entity()
 export class Channel {

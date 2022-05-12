@@ -46,45 +46,43 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.clientsFt.delete(ft_id);
 	}
 
-	emitChannel(channel: any, event: string, data: any): void {
-		try {
-			if (!channel.users) return;
+	async emitChannel(channel: any, event: string, data: any): Promise<void> {
+		if (!channel.users) return;
 
-			const sockets: any[] = Array.from(this.server.sockets.sockets.values());
-			sockets.forEach((socket) => {
-				if (
-					channel.users.find(
-						(user) => user.ft_id === this.clientsId.get(socket.id)
-					)
-				) {
-					socket.emit(event, data);
-				}
-			});
-		} catch {}
+		const sockets: any[] = Array.from(this.server.sockets.sockets.values());
+		sockets.forEach((socket) => {
+			if (
+				channel.users.find(
+					(user) => user.ft_id === this.clientsId.get(socket.id)
+				)
+			) {
+				socket.emit(event, data);
+			}
+		});
 	}
 
 	@SubscribeMessage("text")
 	async handleMessage(
 		client: Socket,
-		data: { channelname: string; message: string; date: Date }
+		data: { channelId: number; message: string; date: Date }
 	): Promise<void> {
 		console.log("Message received from: ", client.id);
 		console.log("Message received data: ", data);
 		const ft_id = this.clientsId.get(client.id);
+		const user = await this.userRepository.findOne({ ft_id: ft_id });
 
-		const channel = await this.channelRepository.findOne({
-			channelname: data.channelname,
-		});
+		const channel = await this.channelRepository.findOne(
+			{
+				id: data.channelId,
+			},
+			{ relations: ["users"] }
+		);
 		if (channel && channel.users) {
-			const user = channel.users.find((user) => user.ft_id === ft_id);
-			if (user) {
-				// this.emitChannel(channel, "text", {
-				this.server.emit("text", {
-					message: data.message,
-					user: user,
-					date: data.date,
-				});
-			}
+			this.emitChannel(channel, "text", {
+				message: data.message,
+				user: user,
+				date: data.date,
+			});
 		}
 	}
 
@@ -95,9 +93,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	): Promise<void> {
 		const ft_id = this.clientsId.get(client.id);
 		const user = await this.userRepository.findOne({ ft_id: ft_id });
-		const channel = await this.channelRepository.findOne({
-			id: data.channelId,
-		});
+		const channel = await this.channelRepository.findOne(
+			{
+				id: data.channelId,
+			},
+			{ relations: ["users"] }
+		);
 		if (!user.channels) {
 			user.channels = [channel.id];
 		} else {
@@ -143,23 +144,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			channel.users.push(user);
 		}
 		await this.channelRepository.save(channel);
+		const newChannel = await this.channelRepository.findOne({ id: channel.id });
 
 		if (!user.channels) {
-			user.channels = [channel.id];
+			user.channels = [newChannel.id];
 		} else {
-			user.channels.push(channel.id);
+			user.channels.push(newChannel.id);
 		}
 		await this.userRepository.save(user);
-		const sockets: any[] = Array.from(this.server.sockets.sockets.values());
 
+		client.emit("myChannel", newChannel);
+
+		const sockets: any[] = Array.from(this.server.sockets.sockets.values());
 		sockets.forEach((socket) => {
 			if (socket.id !== client.id) {
-				socket.emit("searchChannel", channel);
+				socket.emit("searchChannel", newChannel);
 			}
 		});
-		client.emit(
-			"myChannel",
-			await this.channelRepository.findOne({ id: channel.id })
-		);
 	}
 }

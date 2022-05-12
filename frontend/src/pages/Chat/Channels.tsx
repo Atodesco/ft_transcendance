@@ -11,7 +11,7 @@ export default function channels({ myChats, channelState }: any) {
 }
 
 function Item(dataChannels: any, channelState: any) {
-	const [selectedChat, setSelectedChat] = useState("");
+	const [selectedChat, setSelectedChat] = useState(0);
 	return (
 		<>
 			{dataChannels.map((value: any, index: any) => {
@@ -21,8 +21,13 @@ function Item(dataChannels: any, channelState: any) {
 						key={index}
 						id={index.toString()}
 						onClick={() => {
-							setSelectedChat(value.id);
-							channelState(value.id);
+							if (value.id != selectedChat) {
+								setSelectedChat(value.id);
+								channelState(value.id);
+							} else {
+								setSelectedChat(0);
+								channelState(0);
+							}
 						}}
 						style={{
 							backgroundColor:
