@@ -34,6 +34,10 @@
 	/*margin-top: 7vh;*/
 	display: flex;
 }
+.Status {
+	display: flex;
+	gap: 12px;
+}
 
 .MatchHistory {
 	border-style: solid;
@@ -67,7 +71,7 @@
 	border-radius: 13px;
 	padding: 8px;
 	width: 15%;
-	background-color: #131921b8;;
+	background-color: #131921b8;
 	position: absolute;
 	top: 7%;
 	right: 15%;
@@ -89,8 +93,6 @@
 	text-align: center;
 }
 
-
-
 .Stats .Ratio > svg {
 	width: 100px;
 	height: 100px;
@@ -103,18 +105,15 @@
 	/* background-color: azure; */
 }
 
-
 .Stats .LevelProgress {
 	display: flex;
 	justify-content: center;
-
 }
 
 .Stats .LevelProgress > span {
 	align-items: flex-end;
 	margin-top: 15px;
 	margin-right: 15px;
-
 }
 
 .SearchBar {

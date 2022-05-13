@@ -1,5 +1,5 @@
 import styles from "../../css/Chat.module.css";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "../../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,6 +12,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 
 import { io } from "socket.io-client";
+import { context } from "../../App";
 
 export default function Chat() {
 	const [inputText, setInputText] = useState("");
@@ -26,7 +27,7 @@ export default function Chat() {
 
 	const p: any = { ini: 1 };
 	const [userInfo, setUserInfo] = useState<any>(p);
-	const ws = useRef(p);
+	const ws = useContext(context);
 	const flag = useRef(p);
 
 	const getUserInfo = async () => {
@@ -51,9 +52,9 @@ export default function Chat() {
 	}, []);
 
 	useEffect(() => {
-		if (ws.current.ini && userInfo.ft_id) {
-			ws.current = io("http://localhost:3000?ft_id=" + userInfo.ft_id);
-			ws.current.on("text", (data: any) => {
+		if (userInfo.ft_id) {
+			// ws.current = io("http://localhost:3000?ft_id=" + userInfo.ft_id);
+			ws.on("text", (data: any) => {
 				setMessages((message: any) => {
 					let newMessage = message.slice();
 					if (newMessage.length) {
@@ -111,7 +112,7 @@ export default function Chat() {
 			});
 			setChannelUserJoined(arr);
 
-			ws.current.on("searchChannel", (channel: any) => {
+			ws.on("searchChannel", (channel: any) => {
 				let tmp = databaseChannel.slice();
 				tmp.push(channel);
 				setDatabaseChannel(tmp);
@@ -128,7 +129,7 @@ export default function Chat() {
 
 	useEffect(() => {
 		if (userInfo.ft_id) {
-			ws.current.on("myChannel", (channel: any) => {
+			ws.on("myChannel", (channel: any) => {
 				let tmp = channelUserJoined.slice();
 				tmp.push(channel);
 				setChannelUserJoined(tmp);
@@ -183,7 +184,7 @@ export default function Chat() {
 						value={searchBarState}
 						onChange={async (event, value) => {
 							if (value) {
-								ws.current.emit("joinChannel", { channelId: value.id });
+								ws.emit("joinChannel", { channelId: value.id });
 							}
 							if (searchBarState.length) {
 								const search = searchBarState.filter((channel: any) => {
@@ -194,7 +195,6 @@ export default function Chat() {
 										return channel;
 									}
 								});
-								console.log(search);
 								setSearchBarState(search);
 							}
 						}}
@@ -231,7 +231,7 @@ export default function Chat() {
 									message: inputText,
 									date: new Date(),
 								};
-								ws.current.emit("text", dataToSend);
+								ws.emit("text", dataToSend);
 								setInputText("");
 							}
 						}}
@@ -275,7 +275,7 @@ export default function Chat() {
 								className={styles.create}
 								onClick={async () => {
 									handleCloseModal();
-									ws.current.emit("createChannel", {
+									ws.emit("createChannel", {
 										channelname: channelName,
 										password: password,
 									});

@@ -16,14 +16,19 @@ import Settings from "./pages/Settings";
 import NavBar from "./components/NavBar";
 import Cookies from "js-cookie";
 import { createContext, useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import TheGame from "./pages/TheGame/TheGame";
 
+let tet: any;
+
+export const context = createContext(tet);
+
 function App() {
-	const [ready, setReady] = useState(false);
-	const [context, setContext] = useState<any>();
+	const p = { ini: 1 };
+
 	const [userInfo, setUserInfo] = useState<any>();
-	const [ws, setWs] = useState<any>();
+	const [ws, setWs] = useState<any>(p);
+	const [ready, setReady] = useState(false);
 
 	const ProtectedRoutes = () => {
 		return (
@@ -80,20 +85,10 @@ function App() {
 			}
 		);
 		setUserInfo(await myData.json());
-		// setWs(
-		// 	io(
-		// 		process.env.REACT_APP_BACK_URL +
-		// 			":" +
-		// 			process.env.REACT_APP_BACK_PORT +
-		// 			"?ft_id=" +
-		// 			userInfo.ft_id
-		// 	)
-		// );
-		// setContext(createContext(ws));
 	};
 
 	useEffect(() => {
-		if (userInfo && userInfo.ft_id) {
+		if (userInfo && userInfo.ft_id && ws.ini) {
 			setWs(
 				io(
 					process.env.REACT_APP_BACK_URL +
@@ -107,23 +102,13 @@ function App() {
 	}, [userInfo]);
 
 	useEffect(() => {
-		setContext(createContext(ws));
+		// setContext(createContext(ws));
+		setReady(true);
 	}, [ws]);
 
 	useEffect(() => {
 		getUserInfo();
-		setReady(true);
 	}, []);
-	// useEffect(() => {
-	// 	console.log("ready");
-	// 	console.log(userInfo.current);
-	// 	console.log(ws.current);
-	// 	if (userInfo.current && context.current) {
-	// 		setReady(true);
-	// 	}
-	// }, [userInfo.current, context.current, ws.current]);
-
-	// console.log("userInfo", userInfo);
 
 	return (
 		<>
