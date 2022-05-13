@@ -16,14 +16,19 @@ import Settings from "./pages/Settings";
 import NavBar from "./components/NavBar";
 import Cookies from "js-cookie";
 import { createContext, useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import TheGame from "./pages/TheGame/TheGame";
 
+let tet: any;
+
+export const context = createContext(tet);
+
 function App() {
-  const [ready, setReady] = useState(false);
-  const [context, setContext] = useState<any>();
-  const [userInfo, setUserInfo] = useState<any>();
-  const [ws, setWs] = useState<any>();
+	const p = { ini: 1 };
+
+	const [userInfo, setUserInfo] = useState<any>();
+	const [ws, setWs] = useState<any>(p);
+	const [ready, setReady] = useState(false);
 
   const ProtectedRoutes = () => {
     return (
@@ -69,6 +74,7 @@ function App() {
     }
   }
 
+<<<<<<< HEAD
   const getUserInfo = async () => {
     const myData = await fetch(
       process.env.REACT_APP_BACK_URL +
@@ -124,6 +130,43 @@ function App() {
   // }, [userInfo.current, context.current, ws.current]);
 
   // console.log("userInfo", userInfo);
+=======
+	const getUserInfo = async () => {
+		const myData = await fetch(
+			process.env.REACT_APP_BACK_URL +
+				":" +
+				process.env.REACT_APP_BACK_PORT +
+				"/user/me/",
+			{
+				credentials: "include",
+			}
+		);
+		setUserInfo(await myData.json());
+	};
+
+	useEffect(() => {
+		if (userInfo && userInfo.ft_id && ws.ini) {
+			setWs(
+				io(
+					process.env.REACT_APP_BACK_URL +
+						":" +
+						process.env.REACT_APP_BACK_PORT +
+						"?ft_id=" +
+						userInfo.ft_id
+				)
+			);
+		}
+	}, [userInfo]);
+
+	useEffect(() => {
+		// setContext(createContext(ws));
+		setReady(true);
+	}, [ws]);
+
+	useEffect(() => {
+		getUserInfo();
+	}, []);
+>>>>>>> d90e9005514ab544a17f195f264d7a22c9ec8134
 
   return (
     <>

@@ -20,6 +20,10 @@ function Item(data: any[], myData: any) {
 			{data.map((value, index) => {
 				let addFriend = myData.friends.includes(value.ft_id);
 				let blockedUser = myData.blocked.includes(value.ft_id);
+				let color;
+				if (value.status == "Online") color = "green";
+				else if (value.status == "Offline") color = "red";
+				else if (value.status == "InGame") color = "orange";
 				return (
 					<div className={styles.flex} key={index}>
 						<div />
@@ -32,7 +36,7 @@ function Item(data: any[], myData: any) {
 										{value.username}
 									</h3>
 								</Link>
-								<span>{value.status}</span>
+								<span style={{ color: color }}>{value.status}</span>
 							</div>
 						</div>
 						{/* <div className={styles.Button}>

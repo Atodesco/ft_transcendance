@@ -75,20 +75,4 @@ export class UserController {
 	): Promise<User> {
 		return this.userService.setElo(id, elo);
 	}
-
-	@Get("/:id/joinChannel/:channelId")
-	joinChannel(
-		@Param("id", ParseIntPipe) id: number,
-		@Param("channelId", ParseIntPipe) channelId: number
-	): Promise<Channel> {
-		return this.userService.joinChannel(id, channelId);
-	}
-
-	@Post("/:id/createChannel")
-	createChannel(
-		@Param("id", ParseIntPipe) id: number,
-		@Body() channelData: any
-	) {
-		return this.userService.createChannel(id, channelData);
-	}
 }

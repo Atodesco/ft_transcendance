@@ -11,6 +11,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Channel } from "./entities/channel.entity";
 import { User } from "src/User/entities/user.entity";
 import { Repository } from "typeorm";
+import { UserStatus } from "src/interfaces/user-status.enum";
 const bcrypt = require("bcrypt");
 
 @WebSocketGateway({
@@ -32,16 +33,30 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private clientsId = new Map<string, number>();
 	private clientsFt = new Map<number, string>();
 
-	handleConnection(client: Socket) {
+	async handleConnection(client: Socket) {
 		console.log("Client connected: ", client.id);
 		console.log("Client ft_id: ", client.handshake.query.ft_id);
+
+		const user = await this.userRepository.findOne({
+			ft_id: Number(client.handshake.query.ft_id),
+		});
+		user.status = UserStatus.ONLINE;
+		await this.userRepository.save(user);
+
 		this.clientsId.set(client.id, Number(client.handshake.query.ft_id));
 		this.clientsFt.set(Number(client.handshake.query.ft_id), client.id);
 	}
 
-	handleDisconnect(client: Socket) {
+	async handleDisconnect(client: Socket) {
 		console.log("Client disconnected: ", client.id);
 		const ft_id = this.clientsId.get(client.id);
+
+		const user = await this.userRepository.findOne({
+			ft_id: ft_id,
+		});
+		user.status = UserStatus.OFFLINE;
+		await this.userRepository.save(user);
+
 		this.clientsId.delete(client.id);
 		this.clientsFt.delete(ft_id);
 	}
@@ -165,5 +180,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				socket.emit("searchChannel", newChannel);
 			}
 		});
+	}
+
+	@SubscribeMessage("GetUserData")
+	async getUserData(client: Socket): Promise<void> {
+		const ft_id = this.clientsId.get(client.id);
+		const user = await this.userRepository.findOne({ ft_id: ft_id });
+		client.emit("userData", user);
 	}
 }
