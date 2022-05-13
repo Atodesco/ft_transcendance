@@ -1,0 +1,146 @@
+*, *::after, *::before {
+    box-sizing: border-box;
+}
+
+:root {
+    --hue: 200;
+    --saturation: 50%;
+    --colorContent: hsl(var(--hue), var(--saturation), 75%);
+    --colorBackground: hsl(var(--hue), var(--saturation),20%);
+}
+
+/* TRUC QUI MARCHE PAS */
+.machin {
+    display: inline-block;
+    animation: bounce;
+    animation-duration: 2s;
+}
+
+.buttons {
+    width: 10vw;
+    margin-top: -5vh;
+    align-self: center;
+}
+
+.endscreen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    padding: 1%;
+    transform: translate(-50%, -50%);
+    font-size: 10vh;
+    border-radius: 15%;
+    color: gold;
+    background-color: var(--colorBackground);
+    border: 1vh solid var(--colorContent);
+
+    /* animation: bounce;
+    animation-duration: 2s; */
+}
+.victory {
+
+}
+.defeat {
+
+}
+.goal {
+
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+
+    padding: 5% 0% 0% 0%;
+}
+
+.containerGame {
+    position: absolute;
+    align-self: center;
+    background-color: var(--colorBackground);
+    margin: 0;
+
+    width: 75%;
+    height: 75vh;
+
+    border-radius: 5px;
+    border-color: var(--colorContent);
+    border-width: 1vw;
+    border-style: solid;
+
+    padding-left: 1vh;
+    padding-right: 1vh;
+}
+
+.score {
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 7vh;
+    color: var(--colorContent);
+}
+
+.score > * {
+    flex-grow: 1;
+    flex-basis: 0;
+    padding: 0 5vh;
+    opacity: 0.5;
+    margin: 1vh 0;
+}
+
+.score > :first-child {
+    text-align: right;
+    border-right: solid;
+}
+
+.names {
+    position: absolute;
+    font-weight: bold;
+    font-size: 7vh;
+    color: var(--colorContent);
+
+    padding: 0 4vh;
+    opacity: 0.2;
+}
+
+.leftName {
+    left: 1vw;
+}
+
+.rightName {
+    right: 1vw;
+}
+
+.paddle {
+    --position: 50;
+
+    position: absolute;
+    background-color: var(--colorContent);
+    top: calc(var(--position) * 1%);
+    transform: translateY(-50%);
+    width: 1vh;
+    height: 10vh;
+}
+
+.leftPaddle {
+    left: 1vw;
+}
+
+.rightPaddle {
+    right: 1vw;
+}
+
+.ball {
+    --x: 50;
+    --y: 50;
+
+    position: absolute;
+    background-color: var(--colorContent);
+    left: calc(var(--x) * 1%);
+    top: calc(var(--y) * 1%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    width: 2.5vh;
+    height: 2.5vh;
+}

@@ -17,6 +17,7 @@
 		"@types/react": "^18.0.8",
 		"@types/react-dom": "^18.0.3",
 		"@types/socket.io-client": "^3.0.0",
+		"animate.css": "^4.1.1",
 		"axios": "^0.27.2",
 		"cross-env": "^7.0.3",
 		"js-cookie": "^3.0.1",
