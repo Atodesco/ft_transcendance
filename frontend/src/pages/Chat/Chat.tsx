@@ -54,8 +54,6 @@ export default function Chat() {
 		if (ws.current.ini && userInfo.ft_id) {
 			ws.current = io("http://localhost:3000?ft_id=" + userInfo.ft_id);
 			ws.current.on("text", (data: any) => {
-				console.log("SALUT :", data);
-				console.log("message :", messages);
 				setMessages((message: any) => {
 					let newMessage = message.slice();
 					if (newMessage.length) {
@@ -75,6 +73,30 @@ export default function Chat() {
 					}
 					return newMessage;
 				});
+				const storedMessages = sessionStorage.getItem(
+					"messages" + data.channelId
+				);
+				let parsedMessages;
+				if (storedMessages) {
+					parsedMessages = JSON.parse(storedMessages);
+					parsedMessages.push({
+						message: data.message,
+						user: data.user,
+						date: data.date,
+					});
+				} else {
+					parsedMessages = [
+						{
+							message: data.message,
+							user: data.user,
+							date: data.date,
+						},
+					];
+				}
+				sessionStorage.setItem(
+					"messages" + data.channelId,
+					JSON.stringify(parsedMessages)
+				);
 			});
 		}
 	}, [userInfo]);
@@ -114,51 +136,17 @@ export default function Chat() {
 		}
 	}, [channelUserJoined]);
 
-	function usePrevious(value: any) {
-		const ref = useRef();
-		useEffect(() => {
-			ref.current = value; //assign the value of ref to the argument
-		}, [value]); //this code will run when the value of 'value' changes
-		return ref.current; //in the end, return the current ref value.
-	}
-
-	// if (usePrevious(channelSelected) !== channelSelected) {
-	// 	console.log("c'est previous ça ?");
-	// 	sessionStorage.setItem(
-	// 		"messages" + channelSelected,
-	// 		JSON.stringify(messages)
-	// 	);
-	// } else {
-	// 	const messagesStorage = sessionStorage.getItem(
-	// 		"messages" + channelSelected
-	// 	);
-	// 	if (messagesStorage) {
-	// 		const newMessages = JSON.parse(messagesStorage);
-	// 		setMessages(newMessages);
-	// 	}
-	// }
-
 	useEffect(() => {
 		setInputText("");
-		// console.log("channelSelected :", channelSelected);
-		// if (channelSelected > 0) {
-		// 	const messagesStorage = sessionStorage.getItem(
-		// 		"messages" + channelSelected
-		// 	);
-		// 	if (messagesStorage) {
-		// 		setMessages(JSON.parse(messagesStorage));
-		// 	}
-		// }
-		// return () => {
-		// 	if (channelSelected > 0) {
-		// 		const channelId = channelSelected;
-		// 		console.log("channelSelected :", channelSelected);
-		// 		sessionStorage.setItem(
-		// 			"messages" + channelId,
-		// 			JSON.stringify(messages)
-		// 		);
-		// 	}
-		// };
+
+		const messagesStorage = sessionStorage.getItem(
+			"messages" + channelSelected
+		);
+		if (messagesStorage) {
+			setMessages(JSON.parse(messagesStorage));
+		} else {
+			setMessages([]);
+		}
 	}, [channelSelected]);
 
 	let getChannels = async () => {
@@ -230,9 +218,14 @@ export default function Chat() {
 						disabled={!channelSelected}
 						onKeyDown={(e) => {
 							if (e.key === "Enter" && inputText) {
-								const channel = databaseChannel.find((value: any) => {
+								let channel = databaseChannel.find((value: any) => {
 									return value.id === channelSelected;
 								});
+								if (!channel) {
+									channel = channelUserJoined.find((value: any) => {
+										return value.id === channelSelected;
+									});
+								}
 								const dataToSend = {
 									channelId: channel?.id,
 									message: inputText,

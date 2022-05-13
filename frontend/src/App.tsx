@@ -15,8 +15,16 @@ import PlayGame from "./pages/PlayGame";
 import Settings from "./pages/Settings";
 import NavBar from "./components/NavBar";
 import Cookies from "js-cookie";
+import { createContext, useEffect, useRef, useState } from "react";
+import { io } from "socket.io-client";
+import TheGame from "./pages/TheGame/TheGame";
 
 function App() {
+	const [ready, setReady] = useState(false);
+	const [context, setContext] = useState<any>();
+	const [userInfo, setUserInfo] = useState<any>();
+	const [ws, setWs] = useState<any>();
+
 	const ProtectedRoutes = () => {
 		return (
 			<>
@@ -35,6 +43,7 @@ function App() {
 				<Routes>
 					<Route path="/" element={<ProtectedRoutes />}>
 						<Route path="/PlayGame" element={<PlayGame />} />
+						<Route path="/TheGame" element={<TheGame />} />
 						<Route path="/Profile" element={<Profile />} />
 						<Route path="/Profile/:id" element={<Profile />} />
 						<Route path="/Leaderboard" element={<Leaderboard />} />
@@ -59,13 +68,76 @@ function App() {
 			window.location.href = window.location.href.split("?")[0];
 		}
 	}
+
+	const getUserInfo = async () => {
+		const myData = await fetch(
+			process.env.REACT_APP_BACK_URL +
+				":" +
+				process.env.REACT_APP_BACK_PORT +
+				"/user/me/",
+			{
+				credentials: "include",
+			}
+		);
+		setUserInfo(await myData.json());
+		// setWs(
+		// 	io(
+		// 		process.env.REACT_APP_BACK_URL +
+		// 			":" +
+		// 			process.env.REACT_APP_BACK_PORT +
+		// 			"?ft_id=" +
+		// 			userInfo.ft_id
+		// 	)
+		// );
+		// setContext(createContext(ws));
+	};
+
+	useEffect(() => {
+		if (userInfo && userInfo.ft_id) {
+			setWs(
+				io(
+					process.env.REACT_APP_BACK_URL +
+						":" +
+						process.env.REACT_APP_BACK_PORT +
+						"?ft_id=" +
+						userInfo.ft_id
+				)
+			);
+		}
+	}, [userInfo]);
+
+	useEffect(() => {
+		setContext(createContext(ws));
+	}, [ws]);
+
+	useEffect(() => {
+		getUserInfo();
+		setReady(true);
+	}, []);
+	// useEffect(() => {
+	// 	console.log("ready");
+	// 	console.log(userInfo.current);
+	// 	console.log(ws.current);
+	// 	if (userInfo.current && context.current) {
+	// 		setReady(true);
+	// 	}
+	// }, [userInfo.current, context.current, ws.current]);
+
+	// console.log("userInfo", userInfo);
+
 	return (
-		<BrowserRouter>
-			<Routes>
-				<Route path="/Login" element={<Login />} />
-				<Route path="*" element={<DefaultRoutes />} />
-			</Routes>
-		</BrowserRouter>
+		<>
+			{ready && (
+				<BrowserRouter>
+					<context.Provider value={ws}>
+						<Routes>
+							<Route path="/Login" element={<Login />} />
+							<Route path="*" element={<DefaultRoutes />} />
+						</Routes>
+					</context.Provider>
+				</BrowserRouter>
+			)}
+		</>
 	);
 }
 

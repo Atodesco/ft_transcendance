@@ -77,11 +77,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 			{ relations: ["users"] }
 		);
+
 		if (channel && channel.users) {
 			this.emitChannel(channel, "text", {
 				message: data.message,
 				user: user,
 				date: data.date,
+				channelId: data.channelId,
 			});
 		}
 	}
@@ -92,7 +94,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		data: { channelId: number }
 	): Promise<void> {
 		const ft_id = this.clientsId.get(client.id);
-		const user = await this.userRepository.findOne({ ft_id: ft_id });
+		const user = await this.userRepository.findOne(
+			{ ft_id: ft_id },
+			{ relations: ["channels"] }
+		);
 		const channel = await this.channelRepository.findOne(
 			{
 				id: data.channelId,
@@ -111,10 +116,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 		await this.userRepository.save(user);
 		await this.channelRepository.save(channel);
-		client.emit(
-			"myChannel",
-			await this.channelRepository.findOne({ id: channel.id })
-		);
+
+		const newChannel = await this.channelRepository.findOne({ id: channel.id });
+		client.emit("myChannel", newChannel);
 	}
 
 	@SubscribeMessage("createChannel")
