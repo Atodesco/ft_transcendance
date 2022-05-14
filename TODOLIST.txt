@@ -1,6 +1,8 @@
 Plusieurs skins/maps pour le jeu
 Un CountDown avant le debut de la partie
+
 La page Credit
+
 Add un bouton dans le chat pour pouvoir kick si on est l'owner
 Provoquer en duel depuis le chat
 Mdp channels

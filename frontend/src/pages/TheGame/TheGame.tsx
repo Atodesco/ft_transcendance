@@ -2,8 +2,8 @@ import styles from "../../css/TheGame.module.css";
 import * as React from "react";
 import Modal from "@mui/material/Modal";
 import "animate.css";
-import { wait } from "@testing-library/user-event/dist/utils";
-import { getElementError } from "@testing-library/react";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import Dropdown from "react-bootstrap/Dropdown";
 
 export default function TheGame() {
   const [open, setOpen] = React.useState(false);
@@ -15,6 +15,9 @@ export default function TheGame() {
 
   return (
     <div className={styles.page}>
+      {/* <button className={`${styles.buttons} ${styles.customBall}`}>
+        Customize Ball
+      </button> */}
       <button
         className={`${styles.buttons} ${styles.victory}`}
         onClick={handleOpen}
@@ -53,6 +56,27 @@ export default function TheGame() {
       >
         GOAL
       </button>
+      <DropdownButton
+        className={`${styles.buttons} ${styles.customBall}`}
+        id="dropdown-basic-button"
+        title="Dropdown button"
+      >
+        <Dropdown.Item
+          as="button"
+          onClick={() => {
+            document
+              .getElementById("ball")
+              ?.setAttribute(
+                "content",
+                "url(https://png.pngtree.com/png-clipart/20190524/ourmid/pngtree-basket-ball-png-transparent-3d-png-image_1078997.jpg)"
+              );
+          }}
+        >
+          Action
+        </Dropdown.Item>
+        <Dropdown.Item as="button">Another action</Dropdown.Item>
+        <Dropdown.Item as="button">Something else</Dropdown.Item>
+      </DropdownButton>
       <div className={styles.containerGame} id="containerGame">
         <div className={styles.score}>
           <div id="rightScore">0</div>
@@ -60,7 +84,7 @@ export default function TheGame() {
         </div>
         <div className={`${styles.names} ${styles.leftName}`}>Lacruype</div>
         <div className={`${styles.names} ${styles.rightName}`}>Rledrin</div>
-        <div className={styles.ball}></div>
+        <div id="ball" className={styles.ball}></div>
         <div className={`${styles.paddle} ${styles.leftPaddle}`}></div>
         <div className={`${styles.paddle} ${styles.rightPaddle}`}></div>
       </div>

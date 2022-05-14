@@ -18,8 +18,12 @@
 
 .buttons {
   width: 10vw;
-  margin-top: -5vh;
-  align-self: center;
+  margin: 0 1vw 1vh 1vw;
+  align-self: flex-end;
+  cursor: pointer;
+}
+
+.buttons .customBall {
 }
 
 .endscreen {
@@ -32,12 +36,6 @@
   border-radius: 15%;
   background-color: var(--colorBackground);
   border: 1vh solid var(--colorContent);
-}
-.victory {
-}
-.defeat {
-}
-.goal {
 }
 
 .page {
@@ -164,4 +162,6 @@
   transform: translate(-50%, -50%);
   width: 2.5vh;
   height: 2.5vh;
+
+  content: url(https://toppng.com/uploads/preview/soccer-ball-11547030791eh59fn2utb.png);
 }
