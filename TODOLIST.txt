@@ -1,7 +1,5 @@
-Plusieurs skins/maps pour le jeu
 Un CountDown avant le debut de la partie
 Dans le win/Lose screen afficher le level, le ratio win lose et le elo
-
 
 La page Credit
 
