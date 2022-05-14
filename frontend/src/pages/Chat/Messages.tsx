@@ -22,9 +22,6 @@ function Item(dataMessages: any, channelSelected: any, userInfo: any) {
 		<>
 			{dataMessages.map((value: any, index: any) => {
 				if (value.channelId !== channelSelected) {
-					console.log("value.channel_id !== channelSelected");
-					console.log("value.channel_id", value.channelId);
-					console.log("channelSelected", channelSelected);
 					return <></>;
 				}
 				return (

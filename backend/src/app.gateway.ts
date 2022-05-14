@@ -8,7 +8,7 @@ import {
 } from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Channel } from "./entities/channel.entity";
+import { Channel } from "./chat/entities/channel.entity";
 import { User } from "src/User/entities/user.entity";
 import { Repository } from "typeorm";
 import { UserStatus } from "src/interfaces/user-status.enum";
@@ -144,7 +144,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 		const newChannel = await this.channelRepository.findOne({ id: channel.id });
 
-		client.emit("myChannel", newChannel);
+		client.emit("myChannel", {
+			channelname: newChannel.channelname,
+			id: newChannel.id,
+			private: newChannel.private,
+		});
 	}
 
 	@SubscribeMessage("createChannel")
@@ -160,12 +164,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		channel.private = data.password ? true : false;
 		const saltRounds = 10;
 		if (data.password) {
-			bcrypt.genSalt(saltRounds, function (err, salt) {
-				bcrypt.hash(data.password, salt, function (err, hash) {
-					// ! Store le hash dans la base de données
-					hash;
-				});
-			});
+			channel.password = await bcrypt.hash(data.password, saltRounds);
 		}
 
 		const allChannels = await this.channelRepository.find();
@@ -196,12 +195,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 		await this.userRepository.save(user);
 
-		client.emit("myChannel", newChannel);
+		client.emit("myChannel", {
+			channelname: newChannel.channelname,
+			id: newChannel.id,
+			private: newChannel.private,
+		});
 
 		const sockets: any[] = Array.from(this.server.sockets.sockets.values());
 		sockets.forEach((socket) => {
 			if (socket.id !== client.id) {
-				socket.emit("searchChannel", newChannel);
+				client.emit("searchChannel", {
+					channelname: newChannel.channelname,
+					id: newChannel.id,
+					private: newChannel.private,
+				});
 			}
 		});
 	}
