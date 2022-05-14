@@ -46,6 +46,10 @@ export default function Chat() {
 		if (flag.current.ini) {
 			getUserInfo();
 			flag.current = {};
+			const messagesStorage = sessionStorage.getItem("messages");
+			if (messagesStorage) {
+				setMessages(JSON.parse(messagesStorage));
+			}
 		}
 		getChannels();
 	}, []);
@@ -56,35 +60,34 @@ export default function Chat() {
 				console.log("message", data.message);
 				console.log("data.channelId", data.channelId);
 				console.log("channelSelected", channelSelected);
-				if (data.channelId === channelSelected) {
-					console.log("data.channelId === channelSelected");
-					setMessages((message: any) => {
-						let newMessage = message.slice();
-						if (newMessage.length) {
-							newMessage.push({
+				console.log("data.channelId === channelSelected");
+				setMessages((message: any) => {
+					let newMessage = message.slice();
+					if (newMessage.length) {
+						newMessage.push({
+							channelId: data.channelId,
+							message: data.message,
+							user: data.user,
+							date: data.date,
+						});
+					} else {
+						newMessage = [
+							{
+								channelId: data.channelId,
 								message: data.message,
 								user: data.user,
 								date: data.date,
-							});
-						} else {
-							newMessage = [
-								{
-									message: data.message,
-									user: data.user,
-									date: data.date,
-								},
-							];
-						}
-						return newMessage;
-					});
-				}
-				const storedMessages = sessionStorage.getItem(
-					"messages" + data.channelId
-				);
+							},
+						];
+					}
+					return newMessage;
+				});
+				const storedMessages = sessionStorage.getItem("messages");
 				let parsedMessages;
 				if (storedMessages) {
 					parsedMessages = JSON.parse(storedMessages);
 					parsedMessages.push({
+						channelId: data.channelId,
 						message: data.message,
 						user: data.user,
 						date: data.date,
@@ -92,16 +95,14 @@ export default function Chat() {
 				} else {
 					parsedMessages = [
 						{
+							channelId: data.channelId,
 							message: data.message,
 							user: data.user,
 							date: data.date,
 						},
 					];
 				}
-				sessionStorage.setItem(
-					"messages" + data.channelId,
-					JSON.stringify(parsedMessages)
-				);
+				sessionStorage.setItem("messages", JSON.stringify(parsedMessages));
 			});
 			ws.on("userData", (data: any) => {
 				setUserInfo(data);
@@ -149,18 +150,10 @@ export default function Chat() {
 	useEffect(() => {
 		setInputText("");
 		console.log("channelSelected à été set à: ", channelSelected);
-		if (channelSelected > 0) {
-			const messagesStorage = sessionStorage.getItem(
-				"messages" + channelSelected
-			);
-			if (messagesStorage) {
-				setMessages(JSON.parse(messagesStorage));
-			} else {
-				setMessages([]);
-			}
-		} else {
-			setMessages([]);
-		}
+		// const messagesStorage = sessionStorage.getItem("messages");
+		// if (messagesStorage) {
+		// 	setMessages(JSON.parse(messagesStorage));
+		// }
 	}, [channelSelected]);
 
 	let getChannels = async () => {
@@ -219,7 +212,13 @@ export default function Chat() {
 			</div>
 			<div className={styles.chat}>
 				<div className={styles.chatHistory}>
-					{messages && <Messages myMessages={messages}></Messages>}
+					{messages && (
+						<Messages
+							myMessages={messages}
+							channelSelected={channelSelected}
+							userInfo={userInfo}
+						></Messages>
+					)}
 				</div>
 				<div className={styles.chatBar}>
 					<TextField
