@@ -10,8 +10,12 @@ export default function TheGame() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.machin}>ET VOILA</div>
-      <button onClick={handleOpen}>VICTORY</button>
+      <button
+        className={`${styles.buttons} ${styles.victory}`}
+        onClick={handleOpen}
+      >
+        VICTORY
+      </button>
       <Modal open={open} onClose={handleClose}>
         <div className={styles.endscreen}> Victory !</div>
       </Modal>

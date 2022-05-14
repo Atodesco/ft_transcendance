@@ -9,13 +9,6 @@
     --colorBackground: hsl(var(--hue), var(--saturation),20%);
 }
 
-/* TRUC QUI MARCHE PAS */
-.machin {
-    display: inline-block;
-    animation: bounce;
-    animation-duration: 2s;
-}
-
 .buttons {
     width: 10vw;
     margin-top: -5vh;
