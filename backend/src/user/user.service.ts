@@ -57,22 +57,4 @@ export class UserService {
 		await this.userRepository.save(user);
 		return user;
 	}
-
-	async joinChannel(id, channelId): Promise<Channel> {
-		const user = await this.userRepository.findOne({ ft_id: id });
-		const channel = await this.channelRepository.findOne({ id: channelId });
-		if (!user.channels) {
-			user.channels = [channel.id];
-		} else {
-			user.channels.push(channel.id);
-		}
-		if (!channel.users) {
-			channel.users = [user];
-		} else {
-			channel.users.push(user);
-		}
-		await this.userRepository.save(user);
-		await this.channelRepository.save(channel);
-		return channel;
-	}
 }

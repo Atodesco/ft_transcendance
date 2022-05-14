@@ -1,17 +1,24 @@
 import styles from "../../css/Chat.module.css";
 import { useState } from "react";
 
-export default function channels({ myChats, channelState }: any) {
+export default function channels({
+	myChats,
+	setChannelState,
+	channelState,
+}: any) {
 	return (
 		<>
-			{/* <div id={styles.channel}>{Item(myChats, channelState)}</div> */}
-			{myChats && <div id={styles.channel}>{Item(myChats, channelState)}</div>}
+			{myChats && (
+				<div id={styles.channel}>
+					{Item(myChats, setChannelState, channelState)}
+				</div>
+			)}
 		</>
 	);
 }
 
-function Item(dataChannels: any, channelState: any) {
-	const [selectedChat, setSelectedChat] = useState(0);
+function Item(dataChannels: any, setChannelState: any, channelState: any) {
+	// const [selectedChat, setSelectedChat] = useState(0);
 	return (
 		<>
 			{dataChannels.map((value: any, index: any) => {
@@ -21,17 +28,17 @@ function Item(dataChannels: any, channelState: any) {
 						key={index}
 						id={index.toString()}
 						onClick={() => {
-							if (value.id != selectedChat) {
-								setSelectedChat(value.id);
-								channelState(value.id);
+							if (value.id != channelState) {
+								console.log("Je set SelectedChannel à:", value.id);
+								setChannelState(value.id);
 							} else {
-								setSelectedChat(0);
-								channelState(0);
+								console.log("Je set SelectedChannel à: 0");
+								setChannelState(0);
 							}
 						}}
 						style={{
 							backgroundColor:
-								selectedChat === value.id ? "#38B2AC" : "#E8E8E8",
+								channelState === value.id ? "#38B2AC" : "#E8E8E8",
 						}}
 					>
 						<h1> {value.channelname}</h1>

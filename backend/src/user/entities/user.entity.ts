@@ -31,7 +31,7 @@ export class User {
 	@Column("int", { default: 0 })
 	lose: number;
 
-	@Column("text", { default: "Online" })
+	@Column("text", { default: "Offline" })
 	status: UserStatus;
 
 	@Column("int", { array: true, default: [] })

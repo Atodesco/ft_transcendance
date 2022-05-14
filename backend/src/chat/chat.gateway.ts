@@ -34,17 +34,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private clientsFt = new Map<number, string>();
 
 	async handleConnection(client: Socket) {
-		console.log("Client connected: ", client.id);
-		console.log("Client ft_id: ", client.handshake.query.ft_id);
+		try {
+			console.log("Client connected: ", client.id);
+			console.log("Client ft_id: ", client.handshake.query.ft_id);
 
-		const user = await this.userRepository.findOne({
-			ft_id: Number(client.handshake.query.ft_id),
-		});
-		user.status = UserStatus.ONLINE;
-		await this.userRepository.save(user);
+			const user = await this.userRepository.findOne({
+				ft_id: Number(client.handshake.query.ft_id),
+			});
+			if (user && user.status) {
+				user.status = UserStatus.ONLINE;
+				await this.userRepository.save(user);
 
-		this.clientsId.set(client.id, Number(client.handshake.query.ft_id));
-		this.clientsFt.set(Number(client.handshake.query.ft_id), client.id);
+				this.clientsId.set(client.id, Number(client.handshake.query.ft_id));
+				this.clientsFt.set(Number(client.handshake.query.ft_id), client.id);
+			}
+		} catch (error) {
+			console.log("Error handleConnection: ", error);
+		}
 	}
 
 	async handleDisconnect(client: Socket) {
@@ -54,11 +60,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const user = await this.userRepository.findOne({
 			ft_id: ft_id,
 		});
-		user.status = UserStatus.OFFLINE;
-		await this.userRepository.save(user);
+		if (user && user.status) {
+			user.status = UserStatus.OFFLINE;
+			await this.userRepository.save(user);
 
-		this.clientsId.delete(client.id);
-		this.clientsFt.delete(ft_id);
+			this.clientsId.delete(client.id);
+			this.clientsFt.delete(ft_id);
+		}
 	}
 
 	async emitChannel(channel: any, event: string, data: any): Promise<void> {
@@ -109,16 +117,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		data: { channelId: number }
 	): Promise<void> {
 		const ft_id = this.clientsId.get(client.id);
-		const user = await this.userRepository.findOne(
-			{ ft_id: ft_id },
-			{ relations: ["channels"] }
-		);
+		const user = await this.userRepository.findOne({ ft_id: ft_id });
 		const channel = await this.channelRepository.findOne(
 			{
 				id: data.channelId,
 			},
 			{ relations: ["users"] }
 		);
+
 		if (!user.channels) {
 			user.channels = [channel.id];
 		} else {
@@ -129,10 +135,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		} else {
 			channel.users.push(user);
 		}
+
 		await this.userRepository.save(user);
+		await this.channelRepository.delete({ id: channel.id });
+
+		channel.id = data.channelId;
 		await this.channelRepository.save(channel);
 
 		const newChannel = await this.channelRepository.findOne({ id: channel.id });
+
 		client.emit("myChannel", newChannel);
 	}
 
@@ -157,13 +168,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			});
 		}
 
+		const allChannels = await this.channelRepository.find();
+		let channelId = 1;
+		allChannels.forEach((c) => {
+			if (c.id > channelId) {
+				channelId = c.id;
+			}
+		});
+		channelId++;
+		channel.id = channelId;
+
 		if (!channel.users) {
 			channel.users = [user];
 		} else {
 			channel.users.push(user);
 		}
+
 		await this.channelRepository.save(channel);
-		const newChannel = await this.channelRepository.findOne({ id: channel.id });
+		const newChannel = await this.channelRepository.findOne({
+			id: channel.id,
+		});
 
 		if (!user.channels) {
 			user.channels = [newChannel.id];

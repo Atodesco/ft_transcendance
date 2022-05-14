@@ -11,7 +11,6 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 
-import { io } from "socket.io-client";
 import { context } from "../../App";
 
 export default function Chat() {
@@ -53,27 +52,32 @@ export default function Chat() {
 
 	useEffect(() => {
 		if (userInfo.ft_id) {
-			// ws.current = io("http://localhost:3000?ft_id=" + userInfo.ft_id);
 			ws.on("text", (data: any) => {
-				setMessages((message: any) => {
-					let newMessage = message.slice();
-					if (newMessage.length) {
-						newMessage.push({
-							message: data.message,
-							user: data.user,
-							date: data.date,
-						});
-					} else {
-						newMessage = [
-							{
+				console.log("message", data.message);
+				console.log("data.channelId", data.channelId);
+				console.log("channelSelected", channelSelected);
+				if (data.channelId === channelSelected) {
+					console.log("data.channelId === channelSelected");
+					setMessages((message: any) => {
+						let newMessage = message.slice();
+						if (newMessage.length) {
+							newMessage.push({
 								message: data.message,
 								user: data.user,
 								date: data.date,
-							},
-						];
-					}
-					return newMessage;
-				});
+							});
+						} else {
+							newMessage = [
+								{
+									message: data.message,
+									user: data.user,
+									date: data.date,
+								},
+							];
+						}
+						return newMessage;
+					});
+				}
 				const storedMessages = sessionStorage.getItem(
 					"messages" + data.channelId
 				);
@@ -99,6 +103,9 @@ export default function Chat() {
 					JSON.stringify(parsedMessages)
 				);
 			});
+			ws.on("userData", (data: any) => {
+				setUserInfo(data);
+			});
 		}
 	}, [userInfo]);
 
@@ -116,6 +123,7 @@ export default function Chat() {
 				let tmp = databaseChannel.slice();
 				tmp.push(channel);
 				setDatabaseChannel(tmp);
+				ws.emit("GetUserData");
 			});
 			setSearchBarState(
 				databaseChannel.filter((channel: any) => {
@@ -133,18 +141,23 @@ export default function Chat() {
 				let tmp = channelUserJoined.slice();
 				tmp.push(channel);
 				setChannelUserJoined(tmp);
+				ws.emit("GetUserData");
 			});
 		}
 	}, [channelUserJoined]);
 
 	useEffect(() => {
 		setInputText("");
-
-		const messagesStorage = sessionStorage.getItem(
-			"messages" + channelSelected
-		);
-		if (messagesStorage) {
-			setMessages(JSON.parse(messagesStorage));
+		console.log("channelSelected à été set à: ", channelSelected);
+		if (channelSelected > 0) {
+			const messagesStorage = sessionStorage.getItem(
+				"messages" + channelSelected
+			);
+			if (messagesStorage) {
+				setMessages(JSON.parse(messagesStorage));
+			} else {
+				setMessages([]);
+			}
 		} else {
 			setMessages([]);
 		}
@@ -287,8 +300,9 @@ export default function Chat() {
 				<div className={styles.trucblanc}>
 					<Channels
 						myChats={channelUserJoined}
-						channelState={setChannelSelected}
-					></Channels>
+						setChannelState={setChannelSelected}
+						channelState={channelSelected}
+					/>
 				</div>
 			</div>
 		</div>

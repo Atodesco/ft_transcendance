@@ -8,11 +8,12 @@ import {
 	JoinColumn,
 	ManyToMany,
 	OneToMany,
+	PrimaryColumn,
 } from "typeorm";
 
 @Entity()
 export class Channel {
-	@PrimaryGeneratedColumn()
+	@PrimaryColumn()
 	id: number;
 
 	@Column("text", { default: "" })
@@ -28,11 +29,7 @@ export class Channel {
 	@JoinColumn({ referencedColumnName: "ft_id" })
 	owner: User;
 
-	// @OneToMany(() => Message, (message) => message.channel)
-	// @JoinColumn()
-	// message: Message[];
-
-	@ManyToMany((type) => User)
+	@ManyToMany((type) => User, { cascade: true })
 	@JoinTable({
 		name: "user-channels", // table name for the junction table of this relation
 		joinColumn: {
@@ -46,7 +43,7 @@ export class Channel {
 	})
 	users: User[];
 
-	@ManyToMany((type) => User)
+	@ManyToMany((type) => User, { cascade: true })
 	@JoinTable({
 		name: "muteduser-channel", // table name for the junction table of this relation
 		joinColumn: {
