@@ -2,8 +2,6 @@ import styles from "../css/PlayGame.module.css";
 import Button from "../components/Button";
 import React, { Component, useState } from "react";
 import { useStopwatch } from "react-timer-hook";
-import { getElementError } from "@testing-library/react";
-import { blob } from "stream/consumers";
 
 import Pong from "../image/Pong.png";
 

@@ -5,6 +5,8 @@ import "animate.css";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import ProgressBar from "react-animated-progress-bar";
+import { PieChart } from "react-minimal-pie-chart";
+import Countdown from "react-countdown";
 
 export default function TheGame() {
   const [open, setOpen] = React.useState(false);
@@ -13,6 +15,13 @@ export default function TheGame() {
   const [open1, setOpen1] = React.useState(false);
   const handleOpen1 = () => setOpen1(true);
   const handleClose1 = () => setOpen1(false);
+  const [open2, setOpen2] = React.useState(false);
+  const handleOpen2 = () => setOpen2(true);
+  const handleClose2 = () => setOpen2(false);
+
+  const renderer = ({ formatted: { hours, minutes, seconds } }: any) => {
+    return <span>{seconds}</span>;
+  };
 
   return (
     <div className={styles.page}>
@@ -31,21 +40,45 @@ export default function TheGame() {
             Victory !
           </div>
           <div className={styles.endscreenStats}>
-            STATS
-            <ProgressBar
-              className={styles.Level}
-              width="200px"
-              height="10px"
-              rect
-              fontColor="gray"
-              percentage={70}
-              // percentage={userData.levelProgress.toString()}
-              rectPadding="1px"
-              rectBorderRadius="20px"
-              trackPathColor="transparent"
-              bgColor="#333333"
-              trackBorderColor="grey"
-            />
+            <div className={styles.stats}>STATS</div>
+            <div className={styles.level}>
+              <ProgressBar
+                // width="20vw"
+                trackWidth="0.5vh"
+                height="3vh"
+                rect
+                fontColor="white"
+                percentage={70}
+                // percentage={userData.levelProgress.toString()}
+                rectPadding="0.1vh"
+                rectBorderRadius="2vh"
+                trackPathColor="transparent"
+                bgColor="#333333"
+                trackBorderColor="white"
+              />
+            </div>
+            <div className={styles.fromlevel}>From Level 3</div>
+            <div className={styles.ratioWinLoose}>
+              <PieChart
+                lineWidth={60}
+                label={({ dataEntry }) =>
+                  Math.round(dataEntry.percentage) + "%"
+                }
+                labelPosition={100 - 60 / 2}
+                labelStyle={{
+                  fill: "#fff",
+                  opacity: 0.75,
+                  pointerEvents: "none",
+                }}
+                data={[
+                  { title: "Win", value: 10, color: "green" },
+                  { title: "Lose", value: 5, color: "red" },
+                ]}
+              />
+            </div>
+            <div className={styles.ratioWinLoosePhrase}>
+              {" <= Ratio Win/Loose "}
+            </div>
           </div>
         </div>
       </Modal>
@@ -56,11 +89,54 @@ export default function TheGame() {
         DEFEAT
       </button>
       <Modal open={open1} onClose={handleClose1}>
-        <div
-          className={`${styles.endscreen} animate__animated animate__hinge`}
-          style={{ color: "red" }}
-        >
-          Defeat ...
+        <div className={styles.endscreen}>
+          <div
+            className={`${styles.endscreenMessage} animate__animated animate__hinge`}
+            style={{ color: "red" }}
+          >
+            Defeat ...
+          </div>
+          <div className={styles.endscreenStats}>
+            <div className={styles.stats}>STATS</div>
+            <div className={styles.level}>
+              <ProgressBar
+                // width="20vw"
+                trackWidth="0.5vh"
+                height="3vh"
+                rect
+                fontColor="white"
+                percentage={70}
+                // percentage={userData.levelProgress.toString()}
+                rectPadding="0.1vh"
+                rectBorderRadius="2vh"
+                trackPathColor="transparent"
+                bgColor="#333333"
+                trackBorderColor="white"
+              />
+            </div>
+            <div className={styles.fromlevel}>From Level 3</div>
+            <div className={styles.ratioWinLoose}>
+              <PieChart
+                lineWidth={60}
+                label={({ dataEntry }) =>
+                  Math.round(dataEntry.percentage) + "%"
+                }
+                labelPosition={100 - 60 / 2}
+                labelStyle={{
+                  fill: "#fff",
+                  opacity: 0.75,
+                  pointerEvents: "none",
+                }}
+                data={[
+                  { title: "Win", value: 10, color: "green" },
+                  { title: "Lose", value: 5, color: "red" },
+                ]}
+              />
+            </div>
+            <div className={styles.ratioWinLoosePhrase}>
+              {" <= Ratio Win/Loose "}
+            </div>
+          </div>
         </div>
       </Modal>
       <button
@@ -131,6 +207,23 @@ export default function TheGame() {
           Normal
         </Dropdown.Item>
       </DropdownButton>
+      <button
+        className={`${styles.buttons} ${styles.countdown}`}
+        onClick={handleOpen2}
+      >
+        Countdown
+      </button>
+      <Modal disableEscapeKeyDown open={open2}>
+        <div className={`${styles.endscreen} ${styles.endscreenCountdown}`}>
+          <Countdown
+            date={Date.now() + 3000}
+            daysInHours={true}
+            zeroPadTime={1}
+            onComplete={handleClose2}
+            renderer={renderer}
+          />
+        </div>
+      </Modal>
       <div className={styles.containerGame} id="containerGame">
         <div className={styles.score}>
           <div id="rightScore">0</div>
