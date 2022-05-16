@@ -5,7 +5,7 @@
 }
 
 :root {
-  --hue: 300;
+  --hue: 200;
   --saturation: 50%;
   --light: 75%;
   --colorContent: hsl(var(--hue), var(--saturation), var(--light));
@@ -16,6 +16,9 @@
   );
 }
 
+/* LES BOUTTONS SONT 
+TEMPORAIRES LE SITE EST ETERNEL */
+
 .buttons {
   width: 10vw;
   margin: 0 1vw 1vh 1vw;
@@ -23,10 +26,7 @@
   cursor: pointer;
 }
 
-.buttons .customBall {
-}
-
-.endscreen {
+.endscreenMessage {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -36,6 +36,20 @@
   border-radius: 15%;
   background-color: var(--colorBackground);
   border: 1vh solid var(--colorContent);
+}
+
+.endscreenStats {
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5vh;
+  border-radius: 5%;
+  background-color: var(--colorBackground);
+  border: 0.7vh solid var(--colorContent);
+
+  width: 20vw;
+  height: 30vh;
 }
 
 .page {
@@ -162,6 +176,16 @@
   transform: translate(-50%, -50%);
   width: 2.5vh;
   height: 2.5vh;
+}
 
-  content: url(https://toppng.com/uploads/preview/soccer-ball-11547030791eh59fn2utb.png);
+.football {
+  content: url(https://www.pngmart.com/files/21/Football-PNG-Isolated-HD.png);
+}
+
+.basketball {
+  content: url(https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Basketball_Clipart.svg/768px-Basketball_Clipart.svg.png);
+}
+
+.volleyball {
+  content: url(https://cdn.pixabay.com/photo/2019/11/05/21/32/ball-4604616_1280.png);
 }

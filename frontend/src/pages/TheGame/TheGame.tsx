@@ -4,6 +4,7 @@ import Modal from "@mui/material/Modal";
 import "animate.css";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
+import ProgressBar from "react-animated-progress-bar";
 
 export default function TheGame() {
   const [open, setOpen] = React.useState(false);
@@ -15,9 +16,6 @@ export default function TheGame() {
 
   return (
     <div className={styles.page}>
-      {/* <button className={`${styles.buttons} ${styles.customBall}`}>
-        Customize Ball
-      </button> */}
       <button
         className={`${styles.buttons} ${styles.victory}`}
         onClick={handleOpen}
@@ -25,11 +23,30 @@ export default function TheGame() {
         VICTORY
       </button>
       <Modal open={open} onClose={handleClose}>
-        <div
-          className={`${styles.endscreen} animate__animated animate__zoomInUp`}
-          style={{ color: "gold" }}
-        >
-          Victory !
+        <div className={styles.endscreen}>
+          <div
+            className={`${styles.endscreenMessage} animate__animated animate__zoomInUp`}
+            style={{ color: "gold" }}
+          >
+            Victory !
+          </div>
+          <div className={styles.endscreenStats}>
+            STATS
+            <ProgressBar
+              className={styles.Level}
+              width="200px"
+              height="10px"
+              rect
+              fontColor="gray"
+              percentage={70}
+              // percentage={userData.levelProgress.toString()}
+              rectPadding="1px"
+              rectBorderRadius="20px"
+              trackPathColor="transparent"
+              bgColor="#333333"
+              trackBorderColor="grey"
+            />
+          </div>
         </div>
       </Modal>
       <button
@@ -59,23 +76,60 @@ export default function TheGame() {
       <DropdownButton
         className={`${styles.buttons} ${styles.customBall}`}
         id="dropdown-basic-button"
-        title="Dropdown button"
+        title="Customize the Ball"
       >
+        <Dropdown.Item
+          as="button"
+          onClick={() => {
+            document.getElementById("ball")?.classList.add(styles.football);
+            document
+              .getElementById("ball")
+              ?.classList.remove(styles.basketball);
+            document
+              .getElementById("ball")
+              ?.classList.remove(styles.volleyball);
+          }}
+        >
+          Footall
+        </Dropdown.Item>
+        <Dropdown.Item
+          as="button"
+          onClick={() => {
+            document.getElementById("ball")?.classList.add(styles.basketball);
+            document
+              .getElementById("ball")
+              ?.classList.remove(styles.volleyball);
+            document.getElementById("ball")?.classList.remove(styles.football);
+          }}
+        >
+          BasketBall
+        </Dropdown.Item>
+        <Dropdown.Item
+          as="button"
+          onClick={() => {
+            document.getElementById("ball")?.classList.add(styles.volleyball);
+            document
+              .getElementById("ball")
+              ?.classList.remove(styles.basketball);
+            document.getElementById("ball")?.classList.remove(styles.football);
+          }}
+        >
+          Volley
+        </Dropdown.Item>
         <Dropdown.Item
           as="button"
           onClick={() => {
             document
               .getElementById("ball")
-              ?.setAttribute(
-                "content",
-                "url(https://png.pngtree.com/png-clipart/20190524/ourmid/pngtree-basket-ball-png-transparent-3d-png-image_1078997.jpg)"
-              );
+              ?.classList.remove(styles.volleyball);
+            document
+              .getElementById("ball")
+              ?.classList.remove(styles.basketball);
+            document.getElementById("ball")?.classList.remove(styles.football);
           }}
         >
-          Action
+          Normal
         </Dropdown.Item>
-        <Dropdown.Item as="button">Another action</Dropdown.Item>
-        <Dropdown.Item as="button">Something else</Dropdown.Item>
       </DropdownButton>
       <div className={styles.containerGame} id="containerGame">
         <div className={styles.score}>

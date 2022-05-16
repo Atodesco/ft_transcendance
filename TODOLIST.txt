@@ -1,4 +1,3 @@
-Plusieurs skins/maps pour le jeu
 Un CountDown avant le debut de la partie
 
 La page Credit
