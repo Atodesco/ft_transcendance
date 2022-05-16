@@ -103,7 +103,9 @@ function App() {
 
 	useEffect(() => {
 		// setContext(createContext(ws));
-		setReady(true);
+		if (!ws.ini) {
+			setReady(true);
+		}
 	}, [ws]);
 
 	useEffect(() => {

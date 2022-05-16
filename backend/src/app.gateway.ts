@@ -114,7 +114,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage("joinChannel")
 	async joinChannel(
 		client: Socket,
-		data: { channelId: number }
+		data: { channelId: number; password: string }
 	): Promise<void> {
 		const ft_id = this.clientsId.get(client.id);
 		const user = await this.userRepository.findOne({ ft_id: ft_id });
@@ -124,6 +124,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 			{ relations: ["users"] }
 		);
+		let isPassword = false;
+		if (channel && channel.private) {
+			if (!bcrypt.compare(data.password, channel.password)) {
+				return;
+			}
+			isPassword = true;
+		}
 
 		if (!user.channels) {
 			user.channels = [channel.id];
@@ -149,6 +156,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			id: newChannel.id,
 			private: newChannel.private,
 		});
+		if (isPassword) {
+			client.emit("joinedChannel", { channelId: newChannel.id });
+		}
 	}
 
 	@SubscribeMessage("createChannel")
@@ -218,5 +228,25 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const ft_id = this.clientsId.get(client.id);
 		const user = await this.userRepository.findOne({ ft_id: ft_id });
 		client.emit("userData", user);
+	}
+
+	@SubscribeMessage("ready")
+	async ready(client: Socket): Promise<void> {
+		const interval = 1000 / 60;
+		const ballSpeed = 0.03;
+		const frameTime = interval / 1000;
+		let ballPositions = { x: 50, y: 50 };
+		console.log("update!");
+		let now = Date.now();
+		let lastUpdate = Date.now();
+
+		setInterval(() => {
+			now = Date.now();
+			let dt = now - lastUpdate;
+			client.emit("update", { p1: 50, ball: ballPositions, p2: 50 });
+			ballPositions.x += ballSpeed * dt;
+			ballPositions.y += ballSpeed * dt;
+			lastUpdate = now;
+		}, interval);
 	}
 }

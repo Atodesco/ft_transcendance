@@ -16,13 +16,15 @@ import { context } from "../../App";
 export default function Chat() {
 	const [inputText, setInputText] = useState("");
 	const [messages, setMessages] = useState<any>([]);
-	const [openModal, setOpenModal] = useState(false);
+	const [openModalCreateChannel, setOpenModalCreateChannel] = useState(false);
+	const [openModalJoinChannel, setOpenModalJoinChannel] = useState(false);
 	const [password, setPassword] = useState("");
 	const [channelName, setChannelName] = useState("");
 	const [databaseChannel, setDatabaseChannel] = useState<any>([]);
 	const [channelUserJoined, setChannelUserJoined] = useState<any>([]);
 	const [channelSelected, setChannelSelected] = useState(0);
 	const [searchBarState, setSearchBarState] = useState<any>();
+	const [joinChannel, setJoinChannel] = useState<any>();
 
 	const p: any = { ini: 1 };
 	const [userInfo, setUserInfo] = useState<any>(p);
@@ -104,6 +106,22 @@ export default function Chat() {
 				}
 				sessionStorage.setItem("messages", JSON.stringify(parsedMessages));
 			});
+			ws.on("joinedChannel", (data: any) => {
+				if (searchBarState.length) {
+					setSearchBarState((searchBar: any) => {
+						let newSbs = searchBar.slice();
+						const search = newSbs.filter((channel: any) => {
+							if (
+								!userInfo.channels.includes(channel.id) &&
+								data.channelId !== channel.id
+							) {
+								return channel;
+							}
+							return search;
+						});
+					});
+				}
+			});
 			ws.on("userData", (data: any) => {
 				setUserInfo(data);
 			});
@@ -150,10 +168,6 @@ export default function Chat() {
 	useEffect(() => {
 		setInputText("");
 		console.log("channelSelected à été set à: ", channelSelected);
-		// const messagesStorage = sessionStorage.getItem("messages");
-		// if (messagesStorage) {
-		// 	setMessages(JSON.parse(messagesStorage));
-		// }
 	}, [channelSelected]);
 
 	let getChannels = async () => {
@@ -168,12 +182,12 @@ export default function Chat() {
 		setDatabaseChannel(data);
 	};
 	const handleOpenModal = () => {
-		setOpenModal(true);
+		setOpenModalCreateChannel(true);
 	};
 	const handleCloseModal = () => {
 		setPassword("");
 		setChannelName("");
-		setOpenModal(false);
+		setOpenModalCreateChannel(false);
 	};
 	return (
 		<div>
@@ -189,25 +203,65 @@ export default function Chat() {
 						}}
 						value={searchBarState}
 						onChange={async (event, value) => {
-							if (value) {
+							if (value && !value.private) {
 								ws.emit("joinChannel", { channelId: value.id });
-							}
-							if (searchBarState.length) {
-								const search = searchBarState.filter((channel: any) => {
-									if (
-										!userInfo.channels.includes(channel.id) &&
-										value.id !== channel.id
-									) {
-										return channel;
-									}
-								});
-								setSearchBarState(search);
+								if (searchBarState.length) {
+									const search = searchBarState.filter((channel: any) => {
+										if (
+											!userInfo.channels.includes(channel.id) &&
+											value.id !== channel.id
+										) {
+											return channel;
+										}
+									});
+									setSearchBarState(search);
+								}
+							} else if (value && value.private) {
+								setJoinChannel(value);
+								setOpenModalJoinChannel(true);
 							}
 						}}
 						renderInput={(params) => {
 							return <TextField {...params} label="Search Channel" />;
 						}}
 					/>
+					<Modal
+						open={openModalJoinChannel}
+						onClose={() => {
+							setOpenModalJoinChannel(false);
+						}}
+						className={styles.modal}
+					>
+						<Box
+							component="form"
+							sx={{
+								"& > :not(style)": { m: 1, width: "25ch" },
+							}}
+							autoComplete="off"
+							className={styles.boxModal}
+						>
+							<TextField
+								label="Choose a Password ..."
+								variant="standard"
+								type="password"
+								onChange={(e: any) => setPassword(e.target.value)}
+								value={password}
+							/>
+							<Button
+								text="Create"
+								className={styles.create}
+								onClick={async () => {
+									setOpenModalJoinChannel(false);
+									ws.emit("joinChannel", {
+										channelId: joinChannel.id,
+										password: password,
+									});
+
+									setPassword("");
+								}}
+							/>
+						</Box>
+					</Modal>
 				</div>
 			</div>
 			<div className={styles.chat}>
@@ -257,7 +311,7 @@ export default function Chat() {
 						<FontAwesomeIcon icon={faPlusCircle} />
 					</Button>
 					<Modal
-						open={openModal}
+						open={openModalCreateChannel}
 						onClose={handleCloseModal}
 						className={styles.modal}
 					>
@@ -291,6 +345,8 @@ export default function Chat() {
 										channelname: channelName,
 										password: password,
 									});
+									setChannelName("");
+									setPassword("");
 								}}
 							/>
 						</Box>

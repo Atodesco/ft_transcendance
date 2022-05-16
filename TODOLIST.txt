@@ -1,8 +1,10 @@
-Un CountDown avant le debut de la partie
-Dans le win/Lose screen afficher le level, le ratio win lose et le elo
+2FA
+
+Le Backend du jeu
 
 La page Credit
 
-Add un bouton dans le chat pour pouvoir kick si on est l'owner
+Add un bouton dans le chat pour pouvoir kick si on est l'owner et ban (avec choix de temps ou def et mute et nique sa mere le chat)
 Provoquer en duel depuis le chat
+
 Mdp channels
