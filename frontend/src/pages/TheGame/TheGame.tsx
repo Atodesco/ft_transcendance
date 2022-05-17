@@ -40,12 +40,12 @@ export default function TheGame() {
 				if (ball) {
 					// ball.style.left = `${data.ball.x}%`;
 					// ball.style.top = `${data.ball.y}%`;
-					// ball.style.setProperty("--x", `${data.ball.x}`);
-					// ball.style.setProperty("--y", `${data.ball.y}`);
-					requestAnimationFrame(() => {
-						ball.style.setProperty("--x", `${data.ball.x}`);
-						ball.style.setProperty("--y", `${data.ball.y}`);
-					});
+					ball.style.setProperty("--x", `${data.ball.x}`);
+					ball.style.setProperty("--y", `${data.ball.y}`);
+					// window.requestAnimationFrame(() => {
+					// 	ball.style.setProperty("--x", `${data.ball.x}`);
+					// 	ball.style.setProperty("--y", `${data.ball.y}`);
+					// });
 				}
 			}
 		);

@@ -4,9 +4,14 @@ import { ConfigModule } from "@nestjs/config";
 import { UserModule } from "./user/user.module";
 import { DatabaseModule } from "./database/database.module";
 import { ChatModule } from "./chat/chat.module";
+import { AppGateway } from "./app.gateway";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Channel } from "./chat/entities/channel.entity";
+import { User } from "./user/entities/user.entity";
 
 @Module({
 	imports: [
+		TypeOrmModule.forFeature([Channel, User]),
 		ConfigModule.forRoot({
 			envFilePath: ".env",
 		}),
@@ -16,6 +21,6 @@ import { ChatModule } from "./chat/chat.module";
 		ChatModule,
 	],
 	controllers: [],
-	providers: [],
+	providers: [AppGateway],
 })
 export class AppModule {}

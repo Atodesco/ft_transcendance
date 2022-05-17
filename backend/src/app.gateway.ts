@@ -12,6 +12,7 @@ import { Channel } from "./chat/entities/channel.entity";
 import { User } from "src/User/entities/user.entity";
 import { Repository } from "typeorm";
 import { UserStatus } from "src/interfaces/user-status.enum";
+import { Interval } from "@nestjs/schedule";
 const bcrypt = require("bcrypt");
 
 @WebSocketGateway({
@@ -19,7 +20,7 @@ const bcrypt = require("bcrypt");
 		origin: "*",
 	},
 })
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	constructor(
 		@InjectRepository(Channel)
 		private readonly channelRepository: Repository<Channel>,
@@ -232,21 +233,43 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage("ready")
 	async ready(client: Socket): Promise<void> {
-		const interval = 1000 / 60;
-		const ballSpeed = 0.03;
-		const frameTime = interval / 1000;
-		let ballPositions = { x: 50, y: 50 };
-		console.log("update!");
-		let now = Date.now();
-		let lastUpdate = Date.now();
+		// const interval = 1000 / 60;
+		// const ballSpeed = 0.03;
+		// const frameTime = interval / 1000;
+		// let ballPositions = { x: 50, y: 50 };
+		// console.log("update!");
+		// let now = Date.now();
+		// let lastUpdate = Date.now();
 
-		setInterval(() => {
-			now = Date.now();
-			let dt = now - lastUpdate;
-			client.emit("update", { p1: 50, ball: ballPositions, p2: 50 });
-			ballPositions.x += ballSpeed * dt;
-			ballPositions.y += ballSpeed * dt;
-			lastUpdate = now;
-		}, interval);
+		// setInterval(() => {
+		// 	now = Date.now();
+		// 	let dt = now - lastUpdate;
+		// 	// client.emit("update", { p1: 50, ball: ballPositions, p2: 50 });
+		// 	ballPositions.x += ballSpeed * dt;
+		// 	ballPositions.y += ballSpeed * dt;
+		// 	lastUpdate = now;
+		// }, interval);
+		this.loop(client);
+	}
+
+	now = Date.now();
+	lastUpdate = Date.now();
+	ballPositions = { x: 50, y: 50 };
+	ballSpeed = 0.001;
+	counter = 0;
+
+	@Interval(1000 / 5)
+	loop(client: any) {
+		this.now = Date.now();
+		let dt = this.now - this.lastUpdate;
+		// client.emit("update", { p1: 50, ball: this.ballPositions, p2: 50 });
+		this.ballPositions.x += this.ballSpeed * dt;
+		this.ballPositions.y += this.ballSpeed * dt;
+		this.lastUpdate = this.now;
+		this.counter++;
+		// if (this.counter > 600) {
+		// 	this.counter = 0;
+		// 	return true;
+		// }
 	}
 }

@@ -47,22 +47,12 @@ export default function Chat() {
 	useEffect(() => {
 		if (flag.current.ini) {
 			getUserInfo();
-			flag.current = {};
 			const messagesStorage = sessionStorage.getItem("messages");
 			if (messagesStorage) {
 				setMessages(JSON.parse(messagesStorage));
 			}
-		}
-		getChannels();
-	}, []);
-
-	useEffect(() => {
-		if (userInfo.ft_id) {
 			ws.on("text", (data: any) => {
-				console.log("message", data.message);
-				console.log("data.channelId", data.channelId);
-				console.log("channelSelected", channelSelected);
-				console.log("data.channelId === channelSelected");
+				console.log("data", data);
 				setMessages((message: any) => {
 					let newMessage = message.slice();
 					if (newMessage.length) {
@@ -125,8 +115,26 @@ export default function Chat() {
 			ws.on("userData", (data: any) => {
 				setUserInfo(data);
 			});
+			ws.on("searchChannel", (channel: any) => {
+				setDatabaseChannel((dc: any) => {
+					let newDatabaseChannel = dc.slice();
+					newDatabaseChannel.push(channel);
+					return newDatabaseChannel;
+				});
+				ws.emit("GetUserData");
+			});
+			ws.on("myChannel", (channel: any) => {
+				setChannelUserJoined((cj: any) => {
+					let newChannelUserJoined = cj.slice();
+					newChannelUserJoined.push(channel);
+					return newChannelUserJoined;
+				});
+				ws.emit("GetUserData");
+			});
+			flag.current = {};
 		}
-	}, [userInfo]);
+		getChannels();
+	}, []);
 
 	useEffect(() => {
 		if (userInfo.ft_id) {
@@ -138,12 +146,6 @@ export default function Chat() {
 			});
 			setChannelUserJoined(arr);
 
-			ws.on("searchChannel", (channel: any) => {
-				let tmp = databaseChannel.slice();
-				tmp.push(channel);
-				setDatabaseChannel(tmp);
-				ws.emit("GetUserData");
-			});
 			setSearchBarState(
 				databaseChannel.filter((channel: any) => {
 					if (!userInfo.channels.includes(channel.id)) {
@@ -155,19 +157,7 @@ export default function Chat() {
 	}, [databaseChannel]);
 
 	useEffect(() => {
-		if (userInfo.ft_id) {
-			ws.on("myChannel", (channel: any) => {
-				let tmp = channelUserJoined.slice();
-				tmp.push(channel);
-				setChannelUserJoined(tmp);
-				ws.emit("GetUserData");
-			});
-		}
-	}, [channelUserJoined]);
-
-	useEffect(() => {
 		setInputText("");
-		console.log("channelSelected à été set à: ", channelSelected);
 	}, [channelSelected]);
 
 	let getChannels = async () => {
