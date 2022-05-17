@@ -116,17 +116,20 @@ function App() {
 
 	return (
 		<>
-			{ready && (
-				<BrowserRouter>
-					<context.Provider value={ws}>
-						<Routes>
-							<Route path="/Login" element={<Login />} />
-							<Route path="/TheGame" element={<TheGame />} />
-							<Route path="*" element={<DefaultRoutes />} />
-						</Routes>
-					</context.Provider>
-				</BrowserRouter>
-			)}
+			<BrowserRouter>
+				<context.Provider value={ws}>
+					<Routes>
+						<Route path="/Login" element={<Login />} />
+						{ready && (
+							<>
+								<Route path="/TheGame" element={<TheGame />} />
+								<Route path="*" element={<DefaultRoutes />} />
+							</>
+						)}
+						<Route path="/" element={<Login />} />
+					</Routes>
+				</context.Provider>
+			</BrowserRouter>
 		</>
 	);
 }

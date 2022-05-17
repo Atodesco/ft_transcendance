@@ -27,6 +27,8 @@ export default function TheGame() {
 
 	const ws = React.useContext(context);
 
+	// To update the ball position on the screen smoothly
+	// I use requestAnimationFrame to update the ball position
 	React.useEffect(() => {
 		ws.emit("ready");
 		ws.on(
@@ -38,8 +40,12 @@ export default function TheGame() {
 				if (ball) {
 					// ball.style.left = `${data.ball.x}%`;
 					// ball.style.top = `${data.ball.y}%`;
-					ball.style.setProperty("--x", `${data.ball.x}`);
-					ball.style.setProperty("--y", `${data.ball.y}`);
+					// ball.style.setProperty("--x", `${data.ball.x}`);
+					// ball.style.setProperty("--y", `${data.ball.y}`);
+					requestAnimationFrame(() => {
+						ball.style.setProperty("--x", `${data.ball.x}`);
+						ball.style.setProperty("--y", `${data.ball.y}`);
+					});
 				}
 			}
 		);
