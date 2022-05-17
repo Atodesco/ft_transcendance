@@ -30,13 +30,13 @@ export default function TheGame() {
 	// To update the ball position on the screen smoothly
 	// I use requestAnimationFrame to update the ball position
 	React.useEffect(() => {
+		const ball = document.getElementById("ball");
 		ws.emit("ready");
 		ws.on(
 			"update",
 			(data: { p1: number; ball: { x: number; y: number }; p2: number }) => {
 				console.log(data);
 				// setBallPos(data.ball);
-				const ball = document.getElementById("ball");
 				if (ball) {
 					// ball.style.left = `${data.ball.x}%`;
 					// ball.style.top = `${data.ball.y}%`;

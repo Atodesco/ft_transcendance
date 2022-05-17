@@ -240,7 +240,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// console.log("update!");
 		// let now = Date.now();
 		// let lastUpdate = Date.now();
-
 		// setInterval(() => {
 		// 	now = Date.now();
 		// 	let dt = now - lastUpdate;
@@ -249,7 +248,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// 	ballPositions.y += ballSpeed * dt;
 		// 	lastUpdate = now;
 		// }, interval);
-		this.loop(client);
+		// this.loop(client);
 	}
 
 	now = Date.now();
