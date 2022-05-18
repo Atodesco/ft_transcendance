@@ -52,7 +52,9 @@ export default function Chat() {
 				setMessages(JSON.parse(messagesStorage));
 			}
 			ws.on("text", (data: any) => {
-				console.log("data", data);
+				if (userInfo.blocked.includes(data.user.ft_id)) {
+					data.message = "This user is blocked";
+				}
 				setMessages((message: any) => {
 					let newMessage = message.slice();
 					if (newMessage.length) {
@@ -131,9 +133,9 @@ export default function Chat() {
 				});
 				ws.emit("GetUserData");
 			});
+			getChannels();
 			flag.current = {};
 		}
-		getChannels();
 	}, []);
 
 	useEffect(() => {
@@ -148,7 +150,7 @@ export default function Chat() {
 
 			setSearchBarState(
 				databaseChannel.filter((channel: any) => {
-					if (!userInfo.channels.includes(channel.id)) {
+					if (!userInfo.channels.includes(channel.id) && channel.dm == false) {
 						return channel.channelname;
 					}
 				})

@@ -25,6 +25,9 @@ export class Channel {
 	@Column("text", { default: "" })
 	password: string;
 
+	@Column("boolean", { default: false })
+	dm: boolean;
+
 	@ManyToOne(() => User, { onDelete: "CASCADE", eager: true })
 	@JoinColumn({ referencedColumnName: "ft_id" })
 	owner: User;

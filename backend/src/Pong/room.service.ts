@@ -59,7 +59,7 @@ export class RoomService {
 				}
 			}
 		}
-		return null;
+		return this.queue.find((player) => player.ft_id == ft_id);
 	}
 
 	getRoomForUser(ft_id: number): Room {
@@ -151,6 +151,7 @@ export class RoomService {
 					ft_id: room.players[1].ft_id,
 				});
 				room.players.map((p) => {
+					p.socket.emit("gameFound", {});
 					p.socket.emit("room", {
 						code: room.code,
 						p1Username: p1Username.username,
@@ -164,9 +165,19 @@ export class RoomService {
 			}
 			if (spectator) {
 				room.spectators.push(spectator);
+				const p1Username = await this.userRepository.findOne({
+					ft_id: room.players[0].ft_id,
+				});
+				const p2Username = await this.userRepository.findOne({
+					ft_id: room.players[1].ft_id,
+				});
 
-				// spectator.emit("ready"); // send les usernames des autres joueurs
-				spectator.emit("room", room.code);
+				spectator.emit("gameFound");
+				spectator.emit("room", {
+					code: room.code,
+					p1Username: p1Username.username,
+					p2Username: p2Username.username,
+				});
 			}
 		}
 	}

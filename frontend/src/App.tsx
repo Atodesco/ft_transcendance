@@ -42,9 +42,10 @@ function App() {
 		);
 	};
 	const DefaultRoutes = () => {
+		const displayNav = window.location.pathname.toLowerCase() !== "/thegame";
 		return (
 			<div>
-				<NavBar />
+				{displayNav && <NavBar />}
 				<Routes>
 					<Route path="/" element={<ProtectedRoutes />}>
 						<Route path="/PlayGame" element={<PlayGame />} />
@@ -114,19 +115,20 @@ function App() {
 		}
 	}, []);
 
+	const route = Cookies.get("token") ? (
+		<DefaultRoutes />
+	) : (
+		<Navigate to="/Login" />
+	);
+
 	return (
 		<>
 			<BrowserRouter>
 				<context.Provider value={ws}>
 					<Routes>
 						<Route path="/Login" element={<Login />} />
-						{ready && (
-							<>
-								<Route path="/TheGame" element={<TheGame />} />
-								<Route path="*" element={<DefaultRoutes />} />
-							</>
-						)}
-						<Route path="/" element={<Login />} />
+						{ready && <Route path="*" element={<DefaultRoutes />} />}
+						{/* <Route path="*" element={route} /> */}
 					</Routes>
 				</context.Provider>
 			</BrowserRouter>

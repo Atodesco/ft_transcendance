@@ -14,6 +14,7 @@ import { Repository } from "typeorm";
 import { UserStatus } from "src/interfaces/user-status.enum";
 import { Player, Room, State } from "./Pong/interfaces/room.interface";
 import { RoomService } from "./Pong/room.service";
+import { ChannelService } from "./chat/channel.service";
 const bcrypt = require("bcrypt");
 
 @WebSocketGateway({
@@ -27,7 +28,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		private readonly channelRepository: Repository<Channel>,
 		@InjectRepository(User)
 		private readonly userRepository: Repository<User>,
-		private readonly roomService: RoomService
+		private readonly roomService: RoomService,
+		private readonly channelService: ChannelService
 	) {}
 
 	@WebSocketServer()
@@ -226,6 +228,13 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		});
 	}
 
+	@SubscribeMessage("createDm")
+	async createDm(client: Socket, data: { ft_id: number }): Promise<void> {
+		const ft_id = this.clientsId.get(client.id);
+
+		await this.channelService.createDm(ft_id, data.ft_id);
+	}
+
 	@SubscribeMessage("GetUserData")
 	async getUserData(client: Socket): Promise<void> {
 		const ft_id = this.clientsId.get(client.id);
@@ -244,6 +253,14 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			heightFromCenter: 5,
 		};
 		this.roomService.addQueue(p);
+	}
+
+	@SubscribeMessage("removeSocket")
+	removeSocket(client: Socket): void {
+		const ft_id = this.clientsId.get(client.id);
+		const player = this.roomService.getPlayer(ft_id);
+
+		this.roomService.removeSocket(player);
 	}
 
 	// @SubscribeMessage("room")

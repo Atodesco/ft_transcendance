@@ -18,37 +18,29 @@ export default function TheGame() {
 	const handleClose1 = () => setOpen1(false);
 	const [open2, setOpen2] = React.useState(false);
 	const handleOpen2 = () => setOpen2(true);
-	const handleClose2 = () => setOpen2(false);
+	const handleClose2 = () => {
+		ws.emit("start");
+		setOpen2(false);
+	};
 
-	const [ballPos, setBallPos] = React.useState<{ x: number; y: number }>({
-		x: 50,
-		y: 50,
-	});
+	const [usernames, setUsernames] = React.useState({ p1: "", p2: "" });
+	const [score, setScore] = React.useState({ p1: 0, p2: 0 });
 
 	const ws = React.useContext(context);
 
-	// To update the ball position on the screen smoothly
-	// I use requestAnimationFrame to update the ball position
 	React.useEffect(() => {
 		const ball = document.getElementById("ball");
-		ws.emit("ready");
 		ws.on(
-			"update",
-			(data: { p1: number; ball: { x: number; y: number }; p2: number }) => {
-				console.log(data);
-				// setBallPos(data.ball);
-				if (ball) {
-					// ball.style.left = `${data.ball.x}%`;
-					// ball.style.top = `${data.ball.y}%`;
-					ball.style.setProperty("--x", `${data.ball.x}`);
-					ball.style.setProperty("--y", `${data.ball.y}`);
-					// window.requestAnimationFrame(() => {
-					// 	ball.style.setProperty("--x", `${data.ball.x}`);
-					// 	ball.style.setProperty("--y", `${data.ball.y}`);
-					// });
-				}
+			"room",
+			(data: { code: string; p1Username: string; p2Username: string }) => {
+				setUsernames({ p1: data.p1Username, p2: data.p2Username });
 			}
 		);
+		ws.on("ball", () => {});
+		ws.on("score", (data: { p1: number; p2: number }) => {
+			setScore({ p1: data.p1, p2: data.p2 });
+		});
+		ws.emit("ready");
 	}, []);
 
 	const renderer = ({ formatted: { hours, minutes, seconds } }: any) => {
@@ -75,13 +67,11 @@ export default function TheGame() {
 						<div className={styles.stats}>STATS</div>
 						<div className={styles.level}>
 							<ProgressBar
-								// width="20vw"
 								trackWidth="0.5vh"
 								height="3vh"
 								rect
 								fontColor="white"
 								percentage={70}
-								// percentage={userData.levelProgress.toString()}
 								rectPadding="0.1vh"
 								rectBorderRadius="2vh"
 								trackPathColor="transparent"
@@ -132,13 +122,11 @@ export default function TheGame() {
 						<div className={styles.stats}>STATS</div>
 						<div className={styles.level}>
 							<ProgressBar
-								// width="20vw"
 								trackWidth="0.5vh"
 								height="3vh"
 								rect
 								fontColor="white"
 								percentage={70}
-								// percentage={userData.levelProgress.toString()}
 								rectPadding="0.1vh"
 								rectBorderRadius="2vh"
 								trackPathColor="transparent"
@@ -258,11 +246,15 @@ export default function TheGame() {
 			</Modal>
 			<div className={styles.containerGame} id="containerGame">
 				<div className={styles.score}>
-					<div id="rightScore">0</div>
-					<div id="leftScore">0</div>
+					<div id="leftScore">{score.p1}</div>
+					<div id="rightScore">{score.p2}</div>
 				</div>
-				<div className={`${styles.names} ${styles.leftName}`}>Lacruype</div>
-				<div className={`${styles.names} ${styles.rightName}`}>Rledrin</div>
+				<div className={`${styles.names} ${styles.leftName}`}>
+					{usernames.p1}
+				</div>
+				<div className={`${styles.names} ${styles.rightName}`}>
+					{usernames.p2}
+				</div>
 				<div id="ball" className={styles.ball}></div>
 				<div
 					id="leftPaddle"

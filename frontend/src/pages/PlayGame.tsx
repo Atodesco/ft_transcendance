@@ -44,9 +44,9 @@ export default function PlayGame() {
 								}
 							}
 							if (booleanButton) {
-								ws.emit("queueUp");
+								ws.emit("queue");
 							} else {
-								ws.emit("queueDown");
+								ws.emit("removeSocket");
 							}
 
 							setBooleanButton(!booleanButton);

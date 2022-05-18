@@ -14,4 +14,12 @@ export class ChatController {
 	async getChannelsId(@Param("channelId", ParseIntPipe) channelId: number) {
 		return await this.channelService.getChannelId(channelId);
 	}
+
+	@Get("channel/:ownerId/dm/:userId")
+	async createDm(
+		@Param("ownerId", ParseIntPipe) ownerId: number,
+		@Param("userId", ParseIntPipe) userId: number
+	) {
+		return await this.channelService.createDm(ownerId, userId);
+	}
 }
