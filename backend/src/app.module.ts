@@ -8,6 +8,8 @@ import { AppGateway } from "./app.gateway";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Channel } from "./chat/entities/channel.entity";
 import { User } from "./user/entities/user.entity";
+import { RoomService } from "./Pong/room.service";
+import { PongService } from "./Pong/pong.service";
 
 @Module({
 	imports: [
@@ -21,6 +23,6 @@ import { User } from "./user/entities/user.entity";
 		ChatModule,
 	],
 	controllers: [],
-	providers: [AppGateway],
+	providers: [AppGateway, RoomService, PongService],
 })
 export class AppModule {}

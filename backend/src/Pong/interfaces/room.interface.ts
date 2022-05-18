@@ -8,7 +8,7 @@ export interface Vec2 {
 export interface Ball {
 	position: Vec2;
 	velocity: Vec2;
-	// radius: number;
+	radius: number;
 	speed: number;
 }
 
@@ -25,7 +25,8 @@ export interface Player {
 	ft_id: number;
 	position: Vec2;
 	score: number;
-	// height: number;
+	room: Room;
+	heightFromCenter: number;
 }
 
 export interface Room {
@@ -34,4 +35,5 @@ export interface Room {
 	ball: Ball;
 	players: Array<Player>;
 	spectators?: Array<Socket>;
+	maxScore: number;
 }

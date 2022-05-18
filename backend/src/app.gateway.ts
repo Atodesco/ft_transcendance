@@ -12,7 +12,8 @@ import { Channel } from "./chat/entities/channel.entity";
 import { User } from "src/User/entities/user.entity";
 import { Repository } from "typeorm";
 import { UserStatus } from "src/interfaces/user-status.enum";
-import { Interval } from "@nestjs/schedule";
+import { Player, Room, State } from "./Pong/interfaces/room.interface";
+import { RoomService } from "./Pong/room.service";
 const bcrypt = require("bcrypt");
 
 @WebSocketGateway({
@@ -25,7 +26,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		@InjectRepository(Channel)
 		private readonly channelRepository: Repository<Channel>,
 		@InjectRepository(User)
-		private readonly userRepository: Repository<User>
+		private readonly userRepository: Repository<User>,
+		private readonly roomService: RoomService
 	) {}
 
 	@WebSocketServer()
@@ -231,44 +233,56 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		client.emit("userData", user);
 	}
 
-	@SubscribeMessage("ready")
-	async ready(client: Socket): Promise<void> {
-		// const interval = 1000 / 60;
-		// const ballSpeed = 0.03;
-		// const frameTime = interval / 1000;
-		// let ballPositions = { x: 50, y: 50 };
-		// console.log("update!");
-		// let now = Date.now();
-		// let lastUpdate = Date.now();
-		// setInterval(() => {
-		// 	now = Date.now();
-		// 	let dt = now - lastUpdate;
-		// 	// client.emit("update", { p1: 50, ball: ballPositions, p2: 50 });
-		// 	ballPositions.x += ballSpeed * dt;
-		// 	ballPositions.y += ballSpeed * dt;
-		// 	lastUpdate = now;
-		// }, interval);
-		// this.loop(client);
+	@SubscribeMessage("queue")
+	joinQueue(client: Socket): void {
+		const p: Player = {
+			ft_id: this.clientsId.get(client.id),
+			socket: client,
+			score: 0,
+			room: null,
+			position: { x: 0, y: 0 },
+			heightFromCenter: 5,
+		};
+		this.roomService.addQueue(p);
 	}
 
-	now = Date.now();
-	lastUpdate = Date.now();
-	ballPositions = { x: 50, y: 50 };
-	ballSpeed = 0.001;
-	counter = 0;
+	// @SubscribeMessage("room")
+	// joinRoom(client: Socket, code?: string): void {
+	// 	let room: Room = this.roomService.getRoom(code);
+	// 	if (!room) {
+	// 		room = this.roomService.createRoom(code);
+	// 	}
+	// 	const p: Player = {
+	// 		ft_id: this.clientsId.get(client.id),
+	// 		socket: client,
+	// 		room: null,
+	// 		score: 0,
+	// 		position: { x: 0, y: 50 },
+	// 	};
 
-	@Interval(1000 / 5)
-	loop(client: any) {
-		this.now = Date.now();
-		let dt = this.now - this.lastUpdate;
-		// client.emit("update", { p1: 50, ball: this.ballPositions, p2: 50 });
-		this.ballPositions.x += this.ballSpeed * dt;
-		this.ballPositions.y += this.ballSpeed * dt;
-		this.lastUpdate = this.now;
-		this.counter++;
-		// if (this.counter > 600) {
-		// 	this.counter = 0;
-		// 	return true;
-		// }
+	// 	this.roomService.joinRoom(room, p);
+	// }
+
+	@SubscribeMessage("ready")
+	onReady(client: Socket): void {
+		const player: Player = this.roomService.getPlayer(
+			this.clientsId.get(client.id)
+		);
+		if (!player || !player.room) {
+			return;
+		}
+
+		this.roomService.startGame(player.room);
+	}
+
+	@SubscribeMessage("start")
+	onStart(client: Socket): void {
+		const player: Player = this.roomService.getPlayer(
+			this.clientsId.get(client.id)
+		);
+		if (!player || !player.room) {
+			return;
+		}
+		this.roomService.startCalc(player.room);
 	}
 }
