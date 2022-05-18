@@ -9,12 +9,12 @@ import {
 import { Socket, Server } from "socket.io";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Channel } from "./chat/entities/channel.entity";
-import { User } from "src/User/entities/user.entity";
 import { Repository } from "typeorm";
-import { UserStatus } from "src/interfaces/user-status.enum";
-import { Player, Room, State } from "./Pong/interfaces/room.interface";
+import { Player } from "./Pong/interfaces/room.interface";
 import { RoomService } from "./Pong/room.service";
 import { ChannelService } from "./chat/channel.service";
+import { User } from "./user/entities/user.entity";
+import { UserStatus } from "./interfaces/user-status.enum";
 const bcrypt = require("bcrypt");
 
 @WebSocketGateway({

@@ -15,7 +15,7 @@ import PlayGame from "./pages/PlayGame";
 import Settings from "./pages/Settings";
 import NavBar from "./components/NavBar";
 import Cookies from "js-cookie";
-import { createContext, useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import TheGame from "./pages/TheGame/TheGame";
 
@@ -85,7 +85,13 @@ function App() {
 				credentials: "include",
 			}
 		);
-		setUserInfo(await myData.json());
+		myData
+			.json()
+			.then((data) => {
+				setUserInfo(data);
+			})
+			.catch((err) => {});
+		// setUserInfo(await myData.json());
 	};
 
 	useEffect(() => {
@@ -129,6 +135,7 @@ function App() {
 						<Route path="/Login" element={<Login />} />
 						{ready && <Route path="*" element={<DefaultRoutes />} />}
 						{/* <Route path="*" element={route} /> */}
+						<Route path="/" element={<Navigate to="/Login" />} />
 					</Routes>
 				</context.Provider>
 			</BrowserRouter>

@@ -15,4 +15,4 @@ RUN npm -g install @nestjs/cli
 
 EXPOSE 3000
 
-ENTRYPOINT [ "/bin/sh", "-c", "npm install --non-interactive && npm run build && npm run start:prod" ]
+ENTRYPOINT [ "/bin/sh", "-c", "npm install --non-interactive && npm rebuild bcrypt --build-from-source && npm run build && npm run start:prod" ]
