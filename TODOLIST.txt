@@ -9,6 +9,8 @@ Provoquer en duel depuis le chat
 
 Quand on est pas login modifier l'url ne return pas sur la page login
 
+Fix le pgadmin avec docker
+
 Tester:
 	- les dm
 	- les messages des users bloqués
