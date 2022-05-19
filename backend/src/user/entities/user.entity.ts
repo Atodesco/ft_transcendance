@@ -22,6 +22,9 @@ export class User {
 	@Column("text", { default: "empty" })
 	picture: string;
 
+	@Column("text", { default: "" })
+	mail: string;
+
 	@Column("int", { default: 1000 })
 	elo: number;
 

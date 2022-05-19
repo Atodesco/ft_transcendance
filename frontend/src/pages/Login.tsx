@@ -1,8 +1,19 @@
 import Cookies from "js-cookie";
-import { Navigate } from "react-router";
+import { useNavigate } from "react-router";
 import styles from "../css/Login.module.css";
 
 export default function Login() {
+	const navigate = useNavigate();
+
+	if (
+		Cookies.get("token") !== undefined &&
+		sessionStorage.getItem("2FA") === "true"
+	) {
+		navigate("/2FA");
+	} else if (Cookies.get("token") !== undefined) {
+		navigate("/Profile");
+	}
+
 	return (
 		<div>
 			<a
@@ -17,7 +28,6 @@ export default function Login() {
 					<span>Log 42 </span>
 				</button>
 			</a>
-			{Cookies.get("token") !== undefined && <Navigate to="/Profile" />}
 		</div>
 	);
 }

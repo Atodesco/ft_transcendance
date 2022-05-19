@@ -9,13 +9,12 @@ import { useNavigate } from "react-router";
 
 export default function PlayGame() {
 	const ws = useContext(context);
-	const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
-		useStopwatch({ autoStart: false });
+	const { seconds, minutes, start, reset } = useStopwatch({ autoStart: false });
 	const [booleanButton, setBooleanButton] = useState(false);
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		ws.on("gameFound", (data: any) => {
+		ws.on("gameFound", () => {
 			navigate("/TheGame");
 		});
 	}, []);

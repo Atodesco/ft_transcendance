@@ -19,6 +19,7 @@ import Cookies from "js-cookie";
 import { createContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import TheGame from "./pages/TheGame/TheGame";
+import FA from "./pages/FA";
 
 let tet: any;
 
@@ -53,6 +54,9 @@ function App() {
 				{displayNav && <NavBar />}
 				<Routes>
 					<Route path="/" element={<ProtectedRoutes />}>
+						{sessionStorage.getItem("2FA") === "true" && (
+							<Route path="*" element={<Navigate to="/2FA" />} />
+						)}
 						{ready && (
 							<>
 								<Route path="/PlayGame" element={<PlayGame />} />
@@ -102,7 +106,6 @@ function App() {
 				setUserInfo(data);
 			})
 			.catch((err) => {});
-		// setUserInfo(await myData.json());
 	};
 
 	useEffect(() => {
@@ -137,6 +140,7 @@ function App() {
 				<context.Provider value={ws}>
 					<Routes>
 						<Route path="/Login" element={<Login />} />
+						<Route path="/2FA" element={<FA />} />
 						<Route path="*" element={<DefaultRoutes />} />
 					</Routes>
 				</context.Provider>

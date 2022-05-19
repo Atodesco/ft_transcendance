@@ -55,7 +55,7 @@ export class FtStrategy extends PassportStrategy(Strategy, "42") {
 			u.ft_id = payload.id;
 			u.username = payload.username;
 			u.picture = payload.picture;
-			this.userRepository.save(u);
+			await this.userRepository.save(u);
 		}
 
 		return this.jwtService.sign(payload);
