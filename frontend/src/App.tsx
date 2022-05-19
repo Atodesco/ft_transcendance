@@ -4,6 +4,7 @@ import {
 	BrowserRouter,
 	Outlet,
 	Navigate,
+	useLocation,
 } from "react-router-dom";
 import Chat from "./pages/Chat/Chat";
 import Profile from "./pages/Profile/Profile";
@@ -42,24 +43,34 @@ function App() {
 		);
 	};
 	const DefaultRoutes = () => {
-		const displayNav = window.location.pathname.toLowerCase() !== "/thegame";
+		const location = useLocation();
+		const displayNav =
+			location.pathname.toLowerCase() !== "/thegame" && Cookies.get("token")
+				? true
+				: false;
 		return (
 			<div>
 				{displayNav && <NavBar />}
 				<Routes>
 					<Route path="/" element={<ProtectedRoutes />}>
-						<Route path="/PlayGame" element={<PlayGame />} />
-						<Route path="/TheGame" element={<TheGame />} />
-						<Route path="/Profile" element={<Profile />} />
-						<Route path="/Profile/:id" element={<Profile />} />
-						<Route path="/Leaderboard" element={<Leaderboard />} />
-						<Route path="/Friendlist" element={<Friendlist />} />
-						<Route path="/Chat" element={<Chat />} />
-						<Route path="/Credits" element={<Credits />} />
-						{/* DANS SETTINGS IL Y AURA LOGOUT*/}
-						<Route path="/Settings" element={<Settings />} />
-						<Route path="/" element={<Navigate replace to="/Profile" />} />
-						<Route path="*" element={<div>404</div>} />
+						{ready && (
+							<>
+								<Route path="/PlayGame" element={<PlayGame />} />
+								<Route path="/TheGame" element={<TheGame />} />
+								<Route path="/Profile" element={<Profile />} />
+								<Route path="/Profile/:id" element={<Profile />} />
+								<Route path="/Leaderboard" element={<Leaderboard />} />
+								<Route path="/Friendlist" element={<Friendlist />} />
+								<Route path="/Chat" element={<Chat />} />
+								<Route path="/Credits" element={<Credits />} />
+								<Route path="/Settings" element={<Settings />} />
+								<Route path="/" element={<Navigate replace to="/Profile" />} />
+								<Route path="*" element={<div>404 Not Found</div>} />
+							</>
+						)}
+						{!Cookies.get("token") && (
+							<Route path="*" element={<Navigate to="/Login" />} />
+						)}
 					</Route>
 				</Routes>
 			</div>
@@ -109,7 +120,6 @@ function App() {
 	}, [userInfo]);
 
 	useEffect(() => {
-		// setContext(createContext(ws));
 		if (!ws.ini) {
 			setReady(true);
 		}
@@ -121,21 +131,13 @@ function App() {
 		}
 	}, []);
 
-	const route = Cookies.get("token") ? (
-		<DefaultRoutes />
-	) : (
-		<Navigate to="/Login" />
-	);
-
 	return (
 		<>
 			<BrowserRouter>
 				<context.Provider value={ws}>
 					<Routes>
 						<Route path="/Login" element={<Login />} />
-						{ready && <Route path="*" element={<DefaultRoutes />} />}
-						{/* <Route path="*" element={route} /> */}
-						<Route path="/" element={<Navigate to="/Login" />} />
+						<Route path="*" element={<DefaultRoutes />} />
 					</Routes>
 				</context.Provider>
 			</BrowserRouter>
