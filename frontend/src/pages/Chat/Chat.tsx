@@ -52,7 +52,11 @@ export default function Chat() {
 				setMessages(JSON.parse(messagesStorage));
 			}
 			ws.on("text", (data: any) => {
-				if (userInfo.blocked.includes(data.user.ft_id)) {
+				if (
+					userInfo &&
+					userInfo.blocked &&
+					userInfo.blocked.includes(data.user.ft_id)
+				) {
 					data.message = "This user is blocked";
 				}
 				setMessages((message: any) => {
