@@ -4,7 +4,7 @@
 			"Name": "ft_transcendence",
 			"Group": "Servers",
 			"Port": 5432,
-			"Username": "postgres",
+			"Username": "transcendence",
 			"SSLMode": "prefer",
 			"MaintenanceDB": "postgres",
 			"Host": "postgres"
