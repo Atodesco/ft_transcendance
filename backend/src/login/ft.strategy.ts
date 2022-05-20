@@ -44,6 +44,7 @@ export class FtStrategy extends PassportStrategy(Strategy, "42") {
 			username: user.username,
 			id: user.id,
 			picture: user.photos[0].value,
+			mail: user.email,
 		};
 
 		const db_user = await this.userRepository.findOne({
@@ -55,7 +56,8 @@ export class FtStrategy extends PassportStrategy(Strategy, "42") {
 			u.ft_id = payload.id;
 			u.username = payload.username;
 			u.picture = payload.picture;
-			this.userRepository.save(u);
+			u.mail = payload.mail;
+			await this.userRepository.save(u);
 		}
 
 		return this.jwtService.sign(payload);

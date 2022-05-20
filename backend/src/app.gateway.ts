@@ -15,6 +15,7 @@ import { RoomService } from "./Pong/room.service";
 import { ChannelService } from "./chat/channel.service";
 import { User } from "./user/entities/user.entity";
 import { UserStatus } from "./interfaces/user-status.enum";
+import { DoubleAuthService } from "./2FA/doubleAuth.service";
 const bcrypt = require("bcrypt");
 
 @WebSocketGateway({
@@ -29,7 +30,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		@InjectRepository(User)
 		private readonly userRepository: Repository<User>,
 		private readonly roomService: RoomService,
-		private readonly channelService: ChannelService
+		private readonly channelService: ChannelService,
+		private readonly doubleAuthService: DoubleAuthService
 	) {}
 
 	@WebSocketServer()
@@ -37,6 +39,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	private clientsId = new Map<string, number>();
 	private clientsFt = new Map<number, string>();
+	private dfaCode = new Map<number, string>();
 
 	async handleConnection(client: Socket) {
 		try {
@@ -71,6 +74,51 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 			this.clientsId.delete(client.id);
 			this.clientsFt.delete(ft_id);
+		}
+	}
+
+	@SubscribeMessage("2FA")
+	async change2FA(client: Socket, data: any): Promise<void> {
+		const ft_id = this.clientsId.get(client.id);
+		const user = await this.userRepository.findOne({ ft_id });
+		if (user.dfa) {
+			user.dfa = false;
+			await this.userRepository.save(user);
+		} else {
+			user.dfa = true;
+			await this.userRepository.save(user);
+		}
+	}
+
+	@SubscribeMessage("ask2FA")
+	async ask2FA(client: Socket): Promise<void> {
+		const ft_id = this.clientsId.get(client.id);
+		if (this.dfaCode.has(ft_id)) {
+			this.dfaCode.delete(ft_id);
+		}
+		if (!(await this.userRepository.findOne({ ft_id })).dfa) {
+			client.emit("ask2FA", false);
+			return;
+		}
+		const code = Math.floor(Math.random() * (9999 - 1000) + 1000).toString();
+		this.dfaCode.set(ft_id, code);
+
+		await this.doubleAuthService.sendEmail(ft_id, code);
+		client.emit("ask2FA", true);
+	}
+
+	@SubscribeMessage("check2FA")
+	async check2FA(client: Socket, data: { code: string }): Promise<void> {
+		const ft_id = this.clientsId.get(client.id);
+		const code = this.dfaCode.get(ft_id);
+		if (!code) {
+			client.emit("check2FA", false);
+			return;
+		}
+		if (code === data.code) {
+			client.emit("check2FA", true);
+		} else {
+			client.emit("check2FA", false);
 		}
 	}
 

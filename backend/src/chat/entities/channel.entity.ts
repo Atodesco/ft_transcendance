@@ -32,6 +32,21 @@ export class Channel {
 	@JoinColumn({ referencedColumnName: "ft_id" })
 	owner: User;
 
+	@Column("int", { array: true, default: [] })
+	admins: number[];
+
+	@Column("int", { array: true, default: [] })
+	muted: number[];
+
+	@Column("text", { array: true, default: [] })
+	mutedUntil: Date[];
+
+	@Column("int", { array: true, default: [] })
+	banned: number[];
+
+	@Column("text", { array: true, default: [] })
+	bannedUntil: Date[];
+
 	@ManyToMany((type) => User, { cascade: true })
 	@JoinTable({
 		name: "user-channels", // table name for the junction table of this relation

@@ -11,6 +11,7 @@ import { User } from "./user/entities/user.entity";
 import { RoomService } from "./Pong/room.service";
 import { PongService } from "./Pong/pong.service";
 import { ChannelService } from "./chat/channel.service";
+import { DoubleAuthService } from "./2FA/doubleAuth.service";
 
 @Module({
 	imports: [
@@ -24,6 +25,12 @@ import { ChannelService } from "./chat/channel.service";
 		ChatModule,
 	],
 	controllers: [],
-	providers: [AppGateway, RoomService, PongService, ChannelService],
+	providers: [
+		AppGateway,
+		RoomService,
+		PongService,
+		ChannelService,
+		DoubleAuthService,
+	],
 })
 export class AppModule {}

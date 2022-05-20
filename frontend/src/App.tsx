@@ -6,6 +6,7 @@ import {
   Navigate,
   useLocation,
 } from "react-router-dom";
+import { useNavigate } from "react-router";
 import Chat from "./pages/Chat/Chat";
 import Profile from "./pages/Profile/Profile";
 import Credits from "./pages/Credits";
@@ -20,6 +21,7 @@ import Cookies from "js-cookie";
 import { createContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import TheGame from "./pages/TheGame/TheGame";
+import FA from "./pages/FA";
 
 let tet: any;
 
@@ -46,7 +48,9 @@ function App() {
   const DefaultRoutes = () => {
     const location = useLocation();
     const displayNav =
-      location.pathname.toLowerCase() !== "/thegame" && Cookies.get("token")
+      location.pathname.toLowerCase() !== "/thegame" &&
+      Cookies.get("token") &&
+      !sessionStorage.getItem("2FA")
         ? true
         : false;
     return (
@@ -54,7 +58,8 @@ function App() {
         {displayNav && <NavBar />}
         <Routes>
           <Route path="/" element={<ProtectedRoutes />}>
-            {ready && (
+            <Route path="/2FA" element={<FA ready={ready} />} />
+            {ready && !sessionStorage.getItem("2FA") && (
               <>
                 <Route path="/PlayGame" element={<PlayGame />} />
                 <Route path="/TheGame" element={<TheGame />} />
@@ -66,8 +71,12 @@ function App() {
                 <Route path="/Credits" element={<Credits />} />
                 <Route path="/Settings" element={<Settings />} />
                 <Route path="/" element={<Navigate replace to="/Profile" />} />
+                <Route path="/2FA" element={<Navigate replace to="/2FA" />} />
                 <Route path="*" element={<div>404 Not Found</div>} />
               </>
+            )}
+            {sessionStorage.getItem("2FA") === "true" && (
+              <Route path="*" element={<Navigate to="/2FA" />} />
             )}
             {!Cookies.get("token") && (
               <Route path="*" element={<Navigate to="/Login" />} />
@@ -83,6 +92,10 @@ function App() {
     const paramValue = params.get("code");
     if (paramValue !== null) {
       Cookies.set("token", paramValue, { expires: 1 });
+      sessionStorage.setItem("JustLoged", "true");
+      if (window.location.pathname.includes("2FA")) {
+        sessionStorage.setItem("2FA", "true");
+      }
       window.location.href = window.location.href.split("?")[0];
     }
   }
@@ -103,7 +116,6 @@ function App() {
         setUserInfo(data);
       })
       .catch((err) => {});
-    // setUserInfo(await myData.json());
   };
 
   useEffect(() => {

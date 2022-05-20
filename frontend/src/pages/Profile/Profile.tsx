@@ -7,14 +7,13 @@ import {
 	faCirclePlus,
 	faMessage,
 	faBan,
-	faRankingStar,
 } from "@fortawesome/free-solid-svg-icons";
 
 import ProgressBar from "react-animated-progress-bar";
 import { PieChart } from "react-minimal-pie-chart";
 
 import Profiles from "./Users";
-import { Navigate, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { context } from "../../App";
 
 interface OtherUser {
@@ -68,7 +67,6 @@ const history: History[] = [
 ];
 
 export default function Profile() {
-	const Var: any = {};
 	const aVar: any = [{}];
 	const [inputText, setInputText] = useState("");
 	const [status, setStatus] = useState("");
@@ -108,7 +106,6 @@ export default function Profile() {
 	const [blockedUser, setBlockedUser] = useState(true);
 
 	let inputHandler = (e: any) => {
-		//convert input text to lower case
 		var lowerCase = e.target.value.toLowerCase();
 		setInputText(lowerCase);
 	};
@@ -120,7 +117,7 @@ export default function Profile() {
 				process.env.REACT_APP_BACK_PORT +
 				"/user/me/",
 			{
-				credentials: "include", //this is what I need to tell the browser to include cookies
+				credentials: "include",
 			}
 		);
 
@@ -212,6 +209,12 @@ export default function Profile() {
 		getMyData();
 	};
 
+	useEffect(() => {
+		if (sessionStorage.getItem("JustLoged")) {
+			sessionStorage.removeItem("JustLoged");
+		}
+	}, []);
+
 	const { id } = useParams();
 	useEffect(() => {
 		getData(Number(id));
@@ -230,14 +233,14 @@ export default function Profile() {
 	}, [myData]);
 
 	let color;
-	if (status == "Online") color = "green";
-	else if (status == "Offline") color = "red";
-	else if (status == "InGame") color = "orange";
+	if (status === "Online") color = "green";
+	else if (status === "Offline") color = "red";
+	else if (status === "InGame") color = "orange";
 
 	return (
 		<div className={styles.Container}>
 			<div className={styles.Header}>
-				<img src={userData.picture} />
+				<img src={userData.picture} alt="profile" />
 				<div className={styles.Infos}>
 					<div>
 						<h1>{userData.username}</h1>
