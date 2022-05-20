@@ -7,7 +7,7 @@ L'historique ?
 La page Credit
 
 Add un bouton dans le chat pour pouvoir kick si on est l'owner et ban (avec choix de temps ou def et mute et nique sa mere le chat)
-Provoquer en duel depuis le chat
+Provoquer en duel depuis le chat, ce qui cree une modal avec un bouton annler dont on ne peux pas sortir autrement qu'en annulant
 
 Tester:
 	- les dm
