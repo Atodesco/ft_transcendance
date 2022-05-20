@@ -77,13 +77,26 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 	}
 
+	@SubscribeMessage("2FA")
+	async change2FA(client: Socket, data: any): Promise<void> {
+		const ft_id = this.clientsId.get(client.id);
+		const user = await this.userRepository.findOne({ ft_id });
+		if (user.dfa) {
+			user.dfa = false;
+			await this.userRepository.save(user);
+		} else {
+			user.dfa = true;
+			await this.userRepository.save(user);
+		}
+	}
+
 	@SubscribeMessage("ask2FA")
 	async ask2FA(client: Socket): Promise<void> {
 		const ft_id = this.clientsId.get(client.id);
 		if (this.dfaCode.has(ft_id)) {
 			this.dfaCode.delete(ft_id);
 		}
-		if (!(await this.userRepository.findOne({ ft_id })).mail) {
+		if (!(await this.userRepository.findOne({ ft_id })).dfa) {
 			client.emit("ask2FA", false);
 			return;
 		}
@@ -98,6 +111,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	async check2FA(client: Socket, data: { code: string }): Promise<void> {
 		const ft_id = this.clientsId.get(client.id);
 		const code = this.dfaCode.get(ft_id);
+		if (!code) {
+			client.emit("check2FA", false);
+			return;
+		}
 		if (code === data.code) {
 			client.emit("check2FA", true);
 		} else {

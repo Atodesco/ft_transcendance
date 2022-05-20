@@ -209,6 +209,12 @@ export default function Profile() {
 		getMyData();
 	};
 
+	useEffect(() => {
+		if (sessionStorage.getItem("JustLoged")) {
+			sessionStorage.removeItem("JustLoged");
+		}
+	}, []);
+
 	const { id } = useParams();
 	useEffect(() => {
 		getData(Number(id));

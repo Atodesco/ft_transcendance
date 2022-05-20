@@ -23,7 +23,7 @@ export class DoubleAuthService {
 
 	async sendEmail(ft_id: number, code: string) {
 		const user = await this.userRepository.findOne({ ft_id });
-		if (!user || !user.mail) {
+		if (!user || !user.mail || !user.dfa) {
 			return;
 		}
 
@@ -35,13 +35,13 @@ export class DoubleAuthService {
 			html: "<h2>Code: </h2><h1>" + code + "</h1>", // html body
 		});
 
-		console.log("info: %s", info);
+		// console.log("info: %s", info);
 
-		console.log("Message sent: %s", info.messageId);
+		// console.log("Message sent: %s", info.messageId);
 		// Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
 		// Preview only available when sending through an Ethereal account
-		console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+		// console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 		// Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 	}
 }

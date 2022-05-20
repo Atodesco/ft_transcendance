@@ -25,7 +25,7 @@ export class LoginController {
 		const token = await this.ftstrategy.login(req.user);
 		const url = new URL(`${req.protocol}:${req.hostname}`);
 		const user = await this.userRepository.findOne({ ft_id: req.user.id });
-		const pathname = user.mail ? "2FA" : "Profile";
+		const pathname = user.dfa ? "2FA" : "Profile";
 		url.port = process.env.FRONT_PORT;
 		url.pathname = pathname;
 		url.searchParams.set("code", token);
