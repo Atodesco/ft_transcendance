@@ -4,15 +4,17 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import Form from "react-bootstrap/Form";
 import {
   SportsEsports,
   Block,
   AdminPanelSettings,
   VolumeOff,
+  AccountCircle,
 } from "@mui/icons-material";
-import { useNavigate } from "react-router";
 
-import { useState } from "react";
+import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
 
 interface Props {
   myMessages: any;
@@ -31,8 +33,20 @@ export default function messages(props: Props) {
 function Item(dataMessages: any, channelSelected: any, userInfo: any) {
   const user_id = 1;
   const [modalProfile, setModalProfile] = useState(false);
+  const [modalDuel, setModalDuel] = useState(false);
+  const [showDropdownMute, setShowDropdownMute] = useState(false);
+  const [showDropdownBan, setShowDropdownBan] = useState(false);
+  const [valueTimeMute, setValueTimeMute] = useState(0);
+  const [valueTimeBan, setValueTimeBan] = useState(0);
+  const [booleanButtonMakeAdmin, setBooleanButtonMakeAdmin] = useState(true);
+
   const navigate = useNavigate();
   //   const user_id = userInfo.ft_id;
+
+  useEffect(() => {
+    console.log(valueTimeMute);
+  }, [valueTimeMute]);
+
   return (
     <>
       {dataMessages.map((value: any, index: any) => {
@@ -83,30 +97,72 @@ function Item(dataMessages: any, channelSelected: any, userInfo: any) {
                           <br />
                           <Stack
                             className={styles.boxButtonsOwner}
-                            spacing={5}
+                            spacing={15}
                             direction="row"
                           >
                             <Button
                               variant="contained"
-                              color="success"
+                              color={
+                                !booleanButtonMakeAdmin ? "error" : "success"
+                              }
                               endIcon={<AdminPanelSettings />}
+                              onClick={() => {
+                                setBooleanButtonMakeAdmin(
+                                  !booleanButtonMakeAdmin
+                                );
+                              }}
                             >
-                              Make Admin
+                              {!booleanButtonMakeAdmin
+                                ? "Remove Admin"
+                                : "Make Admin"}
                             </Button>
                             <Button
+                              title="Mute"
                               variant="contained"
                               color="error"
                               endIcon={<VolumeOff />}
+                              onClick={() => {
+                                if (showDropdownMute === false)
+                                  setShowDropdownMute(true);
+                                else setShowDropdownMute(false);
+                              }}
                             >
                               Mute
                             </Button>
+                            {showDropdownMute && (
+                              <Form.Control
+                                type="number"
+                                placeholder="Time staying banned (in seconds)"
+                                onChange={(e) =>
+                                  setValueTimeMute(Number(e.target.value))
+                                }
+                                value={valueTimeMute}
+                                className={styles.dropdownButtonMute}
+                              />
+                            )}
                             <Button
                               variant="contained"
                               color="error"
                               endIcon={<Block />}
+                              onClick={() => {
+                                if (showDropdownBan === false)
+                                  setShowDropdownBan(true);
+                                else setShowDropdownBan(false);
+                              }}
                             >
                               Ban
                             </Button>
+                            {showDropdownBan && (
+                              <Form.Control
+                                type="number"
+                                placeholder="Time staying banned (in seconds)"
+                                onChange={(e) =>
+                                  setValueTimeBan(Number(e.target.value))
+                                }
+                                value={valueTimeBan}
+                                className={styles.dropdownButtonBan}
+                              />
+                            )}
                           </Stack>
                           <Stack
                             className={styles.boxButtons}
@@ -118,15 +174,50 @@ function Item(dataMessages: any, channelSelected: any, userInfo: any) {
                               onClick={() => {
                                 navigate("/Profile/" + value.user.ft_id);
                               }}
+                              endIcon={<AccountCircle />}
                             >
                               Go to Profile
                             </Button>
                             <Button
                               variant="contained"
                               endIcon={<SportsEsports />}
+                              onClick={() => {
+                                setModalDuel(true);
+                              }}
                             >
                               Duel
                             </Button>
+                            {modalDuel && (
+                              <div>
+                                <Modal
+                                  open={modalDuel}
+                                  onClose={(event, reason) => {
+                                    if (reason && reason == "backdropClick")
+                                      return;
+                                    setModalDuel(false);
+                                  }}
+                                  disableEscapeKeyDown={true}
+                                >
+                                  <Box className={styles.boxModalDuel}>
+                                    <div className={styles.loader}></div>
+                                    <div style={{ margin: "3% 0 0 35%" }}>
+                                      Waiting for your opponent to accept ...
+                                    </div>
+                                    <Button
+                                      style={{ margin: "5% 0 0 45%" }}
+                                      variant="contained"
+                                      color="error"
+                                      onClick={() => {
+                                        setModalDuel(false);
+                                      }}
+                                      endIcon={<Block />}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </Box>
+                                </Modal>
+                              </div>
+                            )}
                           </Stack>
                         </Box>
                       </Modal>
