@@ -8,8 +8,8 @@ services:
     environment:
       TZ: "Europe/Paris"
     restart: unless-stopped
-    # volumes:
-    #   - data:/var/lib/postgresql/data
+    volumes:
+      - data:/var/lib/postgresql/data
     ports:
       - 5432:5432
     networks:

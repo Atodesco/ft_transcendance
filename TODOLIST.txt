@@ -4,6 +4,12 @@ L'historique ?
 
 La page Credit
 
+protect Injection sql
+server side validation
+
+changer d'avatar
+changer d'username
+
 Tester:
 	- les dm
 	- les messages des users bloqués

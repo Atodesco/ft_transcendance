@@ -9,10 +9,11 @@ import {
 	ManyToMany,
 	OneToMany,
 	PrimaryColumn,
+	BaseEntity,
 } from "typeorm";
 
 @Entity()
-export class Channel {
+export class Channel extends BaseEntity {
 	@PrimaryColumn()
 	id: number;
 

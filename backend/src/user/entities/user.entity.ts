@@ -5,11 +5,12 @@ import {
 	PrimaryGeneratedColumn,
 	ManyToMany,
 	JoinTable,
+	BaseEntity,
 } from "typeorm";
 import { UserStatus } from "../../interfaces/user-status.enum";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
 
