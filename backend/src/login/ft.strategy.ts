@@ -44,7 +44,7 @@ export class FtStrategy extends PassportStrategy(Strategy, "42") {
 			username: user.username,
 			id: user.id,
 			picture: user.photos[0].value,
-			mail: user.email,
+			mail: user.emails[0].value,
 		};
 
 		const db_user = await this.userRepository.findOne({
