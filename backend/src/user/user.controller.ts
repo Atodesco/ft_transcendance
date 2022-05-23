@@ -1,5 +1,4 @@
 import {
-	Body,
 	Controller,
 	Get,
 	Param,
@@ -8,7 +7,6 @@ import {
 	Request,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { Channel } from "src/chat/entities/channel.entity";
 import { User } from "./entities/user.entity";
 import { UserService } from "./user.service";
 
@@ -74,5 +72,15 @@ export class UserController {
 		@Param("elo", ParseIntPipe) elo: number
 	): Promise<User> {
 		return this.userService.setElo(id, elo);
+	}
+
+	@Post("/:id/setUsername/:username")
+	setUsername(@Param("id") id, @Param("username") username): Promise<User> {
+		return this.userService.setUsername(Number(id), username);
+	}
+
+	@Post("/:id/setPicture/:link")
+	setPicture(@Param("id") id, @Param("link") link): Promise<User> {
+		return this.userService.setPicture(id, link);
 	}
 }

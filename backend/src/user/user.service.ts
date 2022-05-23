@@ -57,4 +57,18 @@ export class UserService {
 		await this.userRepository.save(user);
 		return user;
 	}
+
+	async setUsername(id: number, username: string): Promise<User> {
+		const user = await this.userRepository.findOne({ ft_id: id });
+		user.username = username;
+		await this.userRepository.save(user);
+		return user;
+	}
+
+	async setPicture(id: number, link: string): Promise<User> {
+		const user = await this.userRepository.findOne({ ft_id: id });
+		user.picture = link;
+		await this.userRepository.save(user);
+		return user;
+	}
 }
