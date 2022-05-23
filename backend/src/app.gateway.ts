@@ -292,6 +292,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage("queue")
 	joinQueue(client: Socket): void {
+		console.log("Queue joined", client.id);
 		const p: Player = {
 			ft_id: this.clientsId.get(client.id),
 			socket: client,

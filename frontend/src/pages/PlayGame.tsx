@@ -10,7 +10,7 @@ import { useNavigate } from "react-router";
 export default function PlayGame() {
 	const ws = useContext(context);
 	const { seconds, minutes, start, reset } = useStopwatch({ autoStart: false });
-	const [booleanButton, setBooleanButton] = useState(false);
+	const [booleanButton, setBooleanButton] = useState(true);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -29,7 +29,7 @@ export default function PlayGame() {
 					<Button
 						id={styles.queueUpButton}
 						onClick={() => {
-							if (!booleanButton) {
+							if (booleanButton) {
 								start();
 								const queueTimer = document.getElementById(styles.timer);
 								if (queueTimer) {
@@ -50,7 +50,7 @@ export default function PlayGame() {
 
 							setBooleanButton(!booleanButton);
 						}}
-						text={booleanButton ? "Leave Queue" : "Queue Up"}
+						text={booleanButton ? "Queue Up" : "Leave Queue"}
 					/>
 					<Button text="Spectate" />
 				</div>

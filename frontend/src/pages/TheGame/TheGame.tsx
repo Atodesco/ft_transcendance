@@ -41,6 +41,15 @@ export default function TheGame() {
 			setScore({ p1: data.p1, p2: data.p2 });
 		});
 		ws.emit("ready");
+		ws.on("ball", (data: { x: number; y: number }) => {
+			const ball = document.getElementById("ball");
+			console.log("ici");
+			if (ball) {
+				ball.style.setProperty("--x", data.x + "%");
+				ball.style.setProperty("--y", data.y + "%");
+				console.log(data.x, data.y);
+			}
+		});
 	}, []);
 
 	const renderer = ({ formatted: { hours, minutes, seconds } }: any) => {
@@ -239,7 +248,10 @@ export default function TheGame() {
 						date={Date.now() + 3000}
 						daysInHours={true}
 						zeroPadTime={1}
-						onComplete={handleClose2}
+						onComplete={() => {
+							handleClose2();
+							ws.emit("start");
+						}}
 						renderer={renderer}
 					/>
 				</div>
