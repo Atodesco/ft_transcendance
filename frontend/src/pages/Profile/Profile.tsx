@@ -293,13 +293,15 @@ export default function Profile() {
                       process.env.REACT_APP_BACK_PORT +
                       "/user/" +
                       myData.ft_id +
-                      "/setPicture/" +
-                      changeAvatarUrl,
+                      "/setPicture",
                     {
                       credentials: "include",
                       method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ link: changeAvatarUrl }),
                     }
                   );
+                  getData();
                 }}
               >
                 Modify
@@ -330,6 +332,7 @@ export default function Profile() {
                       method: "POST",
                     }
                   );
+                  getData();
                 }}
               >
                 Modify
