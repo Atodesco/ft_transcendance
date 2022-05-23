@@ -1,230 +1,258 @@
 .Container {
-	margin-left: 5%;
+  margin-left: 5%;
 }
 
 .Header {
-	margin-left: 17%;
-	margin-top: 7vh;
-	margin-bottom: 2vh;
-	display: flex;
+  margin-left: 17%;
+  margin-top: 7vh;
+  margin-bottom: 2vh;
+  display: flex;
 }
 
 .Header img {
-	width: 15%;
-	height: 12%;
-	border: 3px;
-	border-color: black;
-	border-style: solid;
+  width: 15%;
+  height: 12%;
+  border: 3px;
+  border-color: black;
+  border-style: solid;
+}
+
+.Header .buttonModifyProfile {
+  position: absolute;
+  margin: 5% 0 0 2%;
+}
+
+.boxModalModifyProfile {
+  position: absolute;
+  display: block;
+  margin: 10% 0 0 25%;
+  width: 50%;
+  height: 50%;
+  background: url(https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77700442162.jpg);
+  border-radius: 2vw;
+  border-style: solid;
+  border-color: rgb(43, 35, 35);
+  border-width: 0.5vw;
+  align-items: baseline;
+}
+
+.textFieldModalModifyProfile {
+  border-color: var(--colorBackground);
+  border-style: solid;
+  border-width: 0.3vw;
+  border-radius: 0.3vw;
+  background-color: var(--colorContent);
+  width: 75%;
 }
 
 .Header .Infos {
-	margin-left: 3%;
+  margin-left: 3%;
 }
 
 .Header .Infos .Buttons > div {
-	padding: 15px 30px;
-	margin-left: 0px;
+  padding: 15px 30px;
+  margin-left: 0px;
 }
 .Header h1 {
-	margin-top: 0px;
+  margin-top: 0px;
 }
 
 .ProfileInfo {
-	margin-left: 17%;
-	/*margin-top: 7vh;*/
-	display: flex;
+  margin-left: 17%;
+  /*margin-top: 7vh;*/
+  display: flex;
 }
 .Status {
-	display: flex;
-	gap: 12px;
+  display: flex;
+  gap: 12px;
 }
 
 .MatchHistory {
-	border-style: solid;
-	border-color: darkgray;
-	width: 13%;
-	border-width: 5px;
-	overflow: hidden;
-	max-height: 380px;
-	padding: 5px;
+  border-style: solid;
+  border-color: darkgray;
+  width: 13%;
+  border-width: 5px;
+  overflow: hidden;
+  max-height: 380px;
+  padding: 5px;
 }
 
 .MatchHistory > div {
-	margin-top: 5px;
-	margin-bottom: 5px;
-	margin-left: 5px;
-	margin-right: 5px;
-	border-style: solid;
-	border-color: white;
-	border-width: 1px;
-	padding: 5px;
-	transition: 300ms;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-style: solid;
+  border-color: white;
+  border-width: 1px;
+  padding: 5px;
+  transition: 300ms;
 }
 
 .MatchHistory > div:hover {
 }
 
 .Stats {
-	border-style: solid;
-	border-color: white;
-	border-width: 1px;
-	border-radius: 13px;
-	padding: 8px;
-	width: 15%;
-	background-color: #131921b8;
-	position: absolute;
-	top: 7%;
-	right: 15%;
+  border-style: solid;
+  border-color: white;
+  border-width: 1px;
+  border-radius: 13px;
+  padding: 8px;
+  width: 15%;
+  background-color: #131921b8;
+  position: absolute;
+  top: 7%;
+  right: 15%;
 }
 
 .Stats .Rank {
-	display: block;
-	border-color: white;
+  display: block;
+  border-color: white;
 }
 
 .Stats .Rank > svg {
-	font-size: 60px;
-	margin: 5%;
+  font-size: 60px;
+  margin: 5%;
 }
 
 .Stats h2 {
-	margin: 10px;
-	font-size: 30px;
-	text-align: center;
+  margin: 10px;
+  font-size: 30px;
+  text-align: center;
 }
 
 .Stats .Ratio > svg {
-	width: 100px;
-	height: 100px;
-	border-style: solid;
-	border-color: rgb(0, 0, 0);
-	border-width: 3px;
-	border-radius: 50%;
-	display: block;
-	margin: auto;
-	/* background-color: azure; */
+  width: 100px;
+  height: 100px;
+  border-style: solid;
+  border-color: rgb(0, 0, 0);
+  border-width: 3px;
+  border-radius: 50%;
+  display: block;
+  margin: auto;
+  /* background-color: azure; */
 }
 
 .Stats .LevelProgress {
-	display: flex;
-	justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .Stats .LevelProgress > span {
-	align-items: flex-end;
-	margin-top: 15px;
-	margin-right: 15px;
+  align-items: flex-end;
+  margin-top: 15px;
+  margin-right: 15px;
 }
 
 .SearchBar {
-	margin: auto;
-	margin-top: 0%;
-	overflow: hidden;
-	max-height: 520px;
-	padding-left: 20px;
-	padding-left: 12px;
-	padding-right: 12px;
+  margin: auto;
+  margin-top: 0%;
+  overflow: hidden;
+  max-height: 520px;
+  padding-left: 20px;
+  padding-left: 12px;
+  padding-right: 12px;
 }
 
 .SearchBar .Search {
-	margin-top: 10px;
-	border-radius: 5px;
-	background-color: white;
-	min-width: 780px;
+  margin-top: 10px;
+  border-radius: 5px;
+  background-color: white;
+  min-width: 780px;
 }
 
 @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
 
 :root {
-	--color-dark: #2c3131;
-	--color-light: #f3f3f2;
+  --color-dark: #2c3131;
+  --color-light: #f3f3f2;
 }
 
 #main {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .board {
-	text-align: center;
-	margin-left: 20%;
-	margin-top: 0%;
-	width: 60%;
+  text-align: center;
+  margin-left: 20%;
+  margin-top: 0%;
+  width: 60%;
 }
 
 .board .leaderboard {
-	margin-bottom: 1em;
+  margin-bottom: 1em;
 }
 
 .board .duration {
-	display: flex;
-	justify-content: center;
-	gap: 1em;
+  display: flex;
+  justify-content: center;
+  gap: 1em;
 }
 
 .board .duration > button {
-	border: 1px solid var(--color-light);
-	padding: 0.5em 2em;
-	border-radius: 50px;
-	background-color: var(--color-light);
-	cursor: pointer;
+  border: 1px solid var(--color-light);
+  padding: 0.5em 2em;
+  border-radius: 50px;
+  background-color: var(--color-light);
+  cursor: pointer;
 }
 
 .board .duration > button:hover {
-	background-color: var(--color-dark);
-	color: var(--color-light);
+  background-color: var(--color-dark);
+  color: var(--color-light);
 }
 
 .active {
-	background-color: var(--color-dark);
-	color: var(--color-light);
+  background-color: var(--color-dark);
+  color: var(--color-light);
 }
 
 #profile {
-	/* display: flex; */
+  /* display: flex; */
 
-	margin-top: 3em;
+  margin-top: 3em;
 }
 
 #profile .flex {
-	display: flex;
-	justify-content: space-evenly;
-	/* gap: 1em; */
-	text-align: left;
-	margin-bottom: 2em;
-	box-shadow: 1.169px 3.825px 15.66px 2.34px rgba(0, 0, 0, 0.2);
-	border-radius: 40px;
+  display: flex;
+  justify-content: space-evenly;
+  /* gap: 1em; */
+  text-align: left;
+  margin-bottom: 2em;
+  box-shadow: 1.169px 3.825px 15.66px 2.34px rgba(0, 0, 0, 0.2);
+  border-radius: 40px;
 }
 
 #profile .flex:hover {
-	background-color: rgba(0, 0, 0, 0.15);
+  background-color: rgba(0, 0, 0, 0.15);
 }
 
 #profile .flex .item {
-	display: flex;
-	align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 #profile .flex img {
-	width: 15%;
-	border-radius: 12%;
+  width: 15%;
+  border-radius: 12%;
 }
 
 #profile .flex .info {
-	padding: 1em;
+  padding: 1em;
 }
 
 .textDark {
-	color: var(--color-dark);
+  color: var(--color-dark);
 }
 
 .Buttons {
-	margin-left: px;
+  margin-left: px;
 }
 
 .Buttons div {
-	margin-top: 25%;
-	padding: 10px 20px;
+  margin-top: 25%;
+  padding: 10px 20px;
 }
