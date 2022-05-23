@@ -1,4 +1,5 @@
 import {
+	Body,
 	Controller,
 	Get,
 	Param,
@@ -79,8 +80,8 @@ export class UserController {
 		return this.userService.setUsername(Number(id), username);
 	}
 
-	@Post("/:id/setPicture/:link")
-	setPicture(@Param("id") id, @Param("link") link): Promise<User> {
-		return this.userService.setPicture(id, link);
+	@Post("/:id/setPicture")
+	setPicture(@Param("id") id, @Body() body: any): Promise<User> {
+		return this.userService.setPicture(id, body.link);
 	}
 }
