@@ -1,3 +1,6 @@
+A FAIRE :
+    - Alors deja : changer la DB pour rajouter BALL
+
 Le Backend du jeu (les mouvements des 2 players + les spec + le rendu en 0-100/0-100 x-y aspect ratio + fin de la game)
 
 L'historique ?

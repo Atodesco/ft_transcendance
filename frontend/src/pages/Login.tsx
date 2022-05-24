@@ -23,7 +23,7 @@ export default function Login() {
             process.env.REACT_APP_BACK_URL +
               ":" +
               process.env.REACT_APP_BACK_PORT +
-              "/login/42/tmp/9"
+              "/login/42/tmp/6"
           );
 
           if (Cookies.get("token") === undefined) {
@@ -45,7 +45,7 @@ export default function Login() {
             process.env.REACT_APP_BACK_URL +
               ":" +
               process.env.REACT_APP_BACK_PORT +
-              "/login/42/tmp/10"
+              "/login/42/tmp/8"
           );
           if (Cookies.get("token") === undefined) {
             const data = await rawData.json();
@@ -66,7 +66,7 @@ export default function Login() {
             process.env.REACT_APP_BACK_URL +
               ":" +
               process.env.REACT_APP_BACK_PORT +
-              "/login/42/tmp/11"
+              "/login/42/tmp/9"
           );
           if (Cookies.get("token") === undefined) {
             const data = await rawData.json();

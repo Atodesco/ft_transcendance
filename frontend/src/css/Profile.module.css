@@ -69,11 +69,13 @@
 
 .MatchHistory {
   border-style: solid;
-  border-color: darkgray;
-  width: 13%;
-  border-width: 5px;
-  overflow: hidden;
-  max-height: 380px;
+  border-color: white;
+  border-radius: 0.5vw;
+  width: 20%;
+  border-width: 0.15vw;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  max-height: 57vh;
   padding: 5px;
 }
 
@@ -84,6 +86,7 @@
   margin-right: 5px;
   border-style: solid;
   border-color: white;
+  border-radius: 0.5vw;
   border-width: 1px;
   padding: 5px;
   transition: 300ms;
@@ -101,8 +104,8 @@
   width: 15%;
   background-color: #131921b8;
   position: absolute;
-  top: 7%;
-  right: 15%;
+  top: 10%;
+  right: 37.5%;
 }
 
 .Stats .Rank {
@@ -128,20 +131,23 @@
   border-color: rgb(0, 0, 0);
   border-width: 3px;
   border-radius: 50%;
-  display: block;
-  margin: auto;
+  margin-left: 30%;
+  /* display: flex; */
+  /* margin: auto; */
   /* background-color: azure; */
 }
 
 .Stats .LevelProgress {
   display: flex;
-  justify-content: center;
+  margin-left: 10%;
+  /* justify-content: center; */
+  /* transform: translateX(50%); */
 }
 
 .Stats .LevelProgress > span {
   align-items: flex-end;
   margin-top: 15px;
-  margin-right: 15px;
+  margin-right: 1vw;
 }
 
 .SearchBar {
