@@ -10,8 +10,9 @@
 }
 
 .Header img {
-  width: 15%;
-  height: 12%;
+  width: 12vw;
+  height: 12vw;
+
   border: 3px;
   border-color: black;
   border-style: solid;
