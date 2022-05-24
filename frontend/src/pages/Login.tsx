@@ -15,6 +15,7 @@ export default function Login() {
 		navigate("/Profile");
 	}
 
+<<<<<<< HEAD
 	return (
 		<div>
 			<button
@@ -94,4 +95,85 @@ export default function Login() {
 			</a>
 		</div>
 	);
+=======
+  return (
+    <div>
+      <button
+        onClick={async () => {
+          const rawData = await fetch(
+            process.env.REACT_APP_BACK_URL +
+              ":" +
+              process.env.REACT_APP_BACK_PORT +
+              "/login/42/tmp/6"
+          );
+
+          if (Cookies.get("token") === undefined) {
+            const data = await rawData.json();
+            const paramValue = data.token;
+            if (paramValue !== null) {
+              Cookies.set("token", paramValue, { expires: 1 });
+              sessionStorage.setItem("JustLoged", "true");
+              navigate("/Profile");
+            }
+          }
+        }}
+      >
+        Compte 1
+      </button>
+      <button
+        onClick={async () => {
+          const rawData = await fetch(
+            process.env.REACT_APP_BACK_URL +
+              ":" +
+              process.env.REACT_APP_BACK_PORT +
+              "/login/42/tmp/8"
+          );
+          if (Cookies.get("token") === undefined) {
+            const data = await rawData.json();
+            const paramValue = data.token;
+            if (paramValue !== null) {
+              Cookies.set("token", paramValue, { expires: 1 });
+              sessionStorage.setItem("JustLoged", "true");
+              navigate("/Profile");
+            }
+          }
+        }}
+      >
+        Compte 2
+      </button>
+      <button
+        onClick={async () => {
+          const rawData = await fetch(
+            process.env.REACT_APP_BACK_URL +
+              ":" +
+              process.env.REACT_APP_BACK_PORT +
+              "/login/42/tmp/9"
+          );
+          if (Cookies.get("token") === undefined) {
+            const data = await rawData.json();
+            const paramValue = data.token;
+            if (paramValue !== null) {
+              Cookies.set("token", paramValue, { expires: 1 });
+              navigate("/Profile");
+            }
+          }
+        }}
+      >
+        Compte 3
+      </button>
+      <a
+        href={
+          process.env.REACT_APP_BACK_URL +
+          ":" +
+          process.env.REACT_APP_BACK_PORT +
+          "/login/42"
+        }
+      >
+        <button className={styles.button}>
+          <span>Log 42 </span>
+        </button>
+      </a>
+    </div>
+  );
+>>>>>>> 460aa4c93d93c76487490581e7682c723fe53d0d
 }
