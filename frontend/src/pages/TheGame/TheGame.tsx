@@ -256,6 +256,13 @@ export default function TheGame() {
 					/>
 				</div>
 			</Modal>
+			<button
+				onClick={() => {
+					ws.emit("stop");
+				}}
+			>
+				Exit
+			</button>
 			<div className={styles.containerGame} id="containerGame">
 				<div className={styles.score}>
 					<div id="leftScore">{score.p1}</div>

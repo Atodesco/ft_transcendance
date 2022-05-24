@@ -12,6 +12,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 
 import { context } from "../../App";
+import { channel } from "diagnostics_channel";
 
 export default function Chat() {
 	const [inputText, setInputText] = useState("");
@@ -25,6 +26,7 @@ export default function Chat() {
 	const [channelSelected, setChannelSelected] = useState(0);
 	const [searchBarState, setSearchBarState] = useState<any>();
 	const [joinChannel, setJoinChannel] = useState<any>();
+	const [autocomplete, setAutocomplete] = useState("");
 
 	const p: any = { ini: 1 };
 	const [userInfo, setUserInfo] = useState<any>(p);
@@ -52,13 +54,6 @@ export default function Chat() {
 				setMessages(JSON.parse(messagesStorage));
 			}
 			ws.on("text", (data: any) => {
-				if (
-					userInfo &&
-					userInfo.blocked &&
-					userInfo.blocked.includes(data.user.ft_id)
-				) {
-					data.message = "This user is blocked";
-				}
 				setMessages((message: any) => {
 					let newMessage = message.slice();
 					if (newMessage.length) {
@@ -102,40 +97,43 @@ export default function Chat() {
 				}
 				sessionStorage.setItem("messages", JSON.stringify(parsedMessages));
 			});
-			ws.on("joinedChannel", (data: any) => {
-				if (searchBarState.length) {
-					setSearchBarState((searchBar: any) => {
-						let newSbs = searchBar.slice();
-						const search = newSbs.filter((channel: any) => {
-							if (
-								!userInfo.channels.includes(channel.id) &&
-								data.channelId !== channel.id
-							) {
-								return channel;
-							}
-							return search;
-						});
-					});
-				}
-			});
-			ws.on("userData", (data: any) => {
-				setUserInfo(data);
-			});
-			ws.on("searchChannel", (channel: any) => {
+			ws.on("searchChannel", (channel1: any) => {
 				setDatabaseChannel((dc: any) => {
 					let newDatabaseChannel = dc.slice();
-					newDatabaseChannel.push(channel);
+					newDatabaseChannel.push(channel1);
 					return newDatabaseChannel;
 				});
 				ws.emit("GetUserData");
 			});
-			ws.on("myChannel", (channel: any) => {
-				setChannelUserJoined((cj: any) => {
-					let newChannelUserJoined = cj.slice();
-					newChannelUserJoined.push(channel);
-					return newChannelUserJoined;
-				});
+			ws.on("myChannel", (channel2: any) => {
+				const cha = {
+					channelname: channel2.channelname,
+					id: channel2.id,
+					private: channel2.private,
+				};
+				if (channel2.add === true) {
+					setChannelUserJoined((cj: any) => {
+						let newChannelUserJoined = cj.slice();
+						newChannelUserJoined.push(cha);
+						return newChannelUserJoined;
+					});
+				} else {
+					setChannelUserJoined((cj: any) => {
+						let newChannelUserJoined = cj.slice();
+						newChannelUserJoined.splice(newChannelUserJoined.indexOf(cha), 1);
+						return newChannelUserJoined;
+					});
+					setChannelSelected((v: number) => {
+						if (channel2.channelname === channelSelected) {
+							return 0;
+						}
+						return v;
+					});
+				}
 				ws.emit("GetUserData");
+			});
+			ws.on("userData", (data: any) => {
+				setUserInfo(data);
 			});
 			getChannels();
 			flag.current = {};
@@ -145,22 +143,36 @@ export default function Chat() {
 	useEffect(() => {
 		if (userInfo.ft_id) {
 			let arr: any = [];
+			console.log(databaseChannel);
+			console.log("userInfo", userInfo);
 			databaseChannel.map((value: any, index: any) => {
 				if (userInfo.channels.includes(value.id)) {
+					console.log("value", value);
 					arr.push(value);
 				}
 			});
 			setChannelUserJoined(arr);
 
-			setSearchBarState(
-				databaseChannel.filter((channel: any) => {
-					if (!userInfo.channels.includes(channel.id) && channel.dm == false) {
-						return channel.channelname;
-					}
-				})
-			);
+			let arr2: any = [];
+			databaseChannel.map((value: any, index: any) => {
+				if (!userInfo.channels.includes(value.id) && value.dm === false) {
+					arr2.push(value);
+				}
+			});
+			setSearchBarState(arr2);
+			// setSearchBarState(
+			// 	databaseChannel.filter((channel: any) => {
+			// 		if (!userInfo.channels.includes(channel.id) && channel.dm == false) {
+			// 			return channel.channelname;
+			// 		}
+			// 	})
+			// );
 		}
 	}, [databaseChannel]);
+
+	useEffect(() => {
+		getChannels();
+	}, [userInfo]);
 
 	useEffect(() => {
 		setInputText("");
@@ -192,13 +204,15 @@ export default function Chat() {
 					<Autocomplete
 						disablePortal
 						clearOnEscape={true}
+						autoHighlight
 						options={searchBarState}
 						sx={{ width: 673 }}
 						getOptionLabel={(channel: any) => {
 							return channel.channelname;
 						}}
+						inputValue={autocomplete}
 						value={searchBarState}
-						onChange={async (event, value) => {
+						onChange={(event, value) => {
 							if (value && !value.private) {
 								ws.emit("joinChannel", { channelId: value.id });
 								if (searchBarState.length) {
@@ -211,14 +225,24 @@ export default function Chat() {
 										}
 									});
 									setSearchBarState(search);
+									setAutocomplete("");
 								}
 							} else if (value && value.private) {
 								setJoinChannel(value);
 								setOpenModalJoinChannel(true);
+								setAutocomplete("");
 							}
 						}}
 						renderInput={(params) => {
-							return <TextField {...params} label="Search Channel" />;
+							return (
+								<TextField
+									onChange={(e) => {
+										setAutocomplete(e.target.value);
+									}}
+									{...params}
+									label="Search Channel"
+								/>
+							);
 						}}
 					/>
 					<Modal
@@ -237,14 +261,14 @@ export default function Chat() {
 							className={styles.boxModal}
 						>
 							<TextField
-								label="Choose a Password ..."
+								label="Type Password"
 								variant="standard"
 								type="password"
 								onChange={(e: any) => setPassword(e.target.value)}
 								value={password}
 							/>
 							<Button
-								text="Create"
+								text="Join"
 								className={styles.create}
 								onClick={async () => {
 									setOpenModalJoinChannel(false);

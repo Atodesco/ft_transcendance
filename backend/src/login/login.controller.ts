@@ -1,4 +1,11 @@
-import { Controller, Get, UseGuards, Request, Res } from "@nestjs/common";
+import {
+	Controller,
+	Get,
+	UseGuards,
+	Request,
+	Res,
+	Param,
+} from "@nestjs/common";
 import { FtOauthGuard } from "./guards/ft-oauth.guard";
 import { FtStrategy } from "./ft.strategy";
 import { Response } from "express";
@@ -31,5 +38,16 @@ export class LoginController {
 		url.searchParams.set("code", token);
 
 		response.status(302).redirect(url.href);
+	}
+
+	@Get("42/tmp/:id")
+	async ft(@Request() req, @Res() response: Response, @Param("id") id) {
+		const token = await this.ftstrategy.Tmplogin(Number(id));
+		const url = new URL(`${req.protocol}:${req.hostname}`);
+		// url.port = process.env.FRONT_PORT;
+		// url.pathname = "Profile";
+		// url.searchParams.set("code", token);
+
+		response.status(200).json({ token: token });
 	}
 }

@@ -255,7 +255,7 @@ export default function Profile() {
           src={userData.picture}
           alt="profile"
         />
-        {showButtonModifyProfile && !id && (
+        {showButtonModifyProfile && (
           <ButtonMui
             variant="contained"
             className={styles.buttonModifyProfile}
