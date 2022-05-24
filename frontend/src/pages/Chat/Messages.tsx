@@ -246,7 +246,9 @@ function Item(dataMessages: any, channelSelected: any, userInfo: any) {
 									maxWidth: "75%",
 								}}
 							>
-								{value.message}
+								{userInfo.blocked.includes(value.user.ft_id)
+									? "This user is blocked !"
+									: value.message}
 							</span>
 						</div>
 					</div>

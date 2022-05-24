@@ -37,8 +37,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 
-	private clientsId = new Map<string, number>();
-	private clientsFt = new Map<number, string>();
+	private clientsId = new Map<Socket, number>();
+	private clientsFt = new Map<number, Socket>();
 	private dfaCode = new Map<number, string>();
 
 	async handleConnection(client: Socket) {
@@ -53,8 +53,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				user.status = UserStatus.ONLINE;
 				await this.userRepository.save(user);
 
-				this.clientsId.set(client.id, Number(client.handshake.query.ft_id));
-				this.clientsFt.set(Number(client.handshake.query.ft_id), client.id);
+				this.clientsId.set(client, Number(client.handshake.query.ft_id));
+				this.clientsFt.set(Number(client.handshake.query.ft_id), client);
 			}
 		} catch (error) {
 			console.log("Error handleConnection: ", error);
@@ -63,7 +63,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	async handleDisconnect(client: Socket) {
 		console.log("Client disconnected: ", client.id);
-		const ft_id = this.clientsId.get(client.id);
+		const ft_id = this.clientsId.get(client);
 
 		const user = await this.userRepository.findOne({
 			ft_id: ft_id,
@@ -72,14 +72,14 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			user.status = UserStatus.OFFLINE;
 			await this.userRepository.save(user);
 
-			this.clientsId.delete(client.id);
+			this.clientsId.delete(client);
 			this.clientsFt.delete(ft_id);
 		}
 	}
 
 	@SubscribeMessage("2FA")
 	async change2FA(client: Socket, data: any): Promise<void> {
-		const ft_id = this.clientsId.get(client.id);
+		const ft_id = this.clientsId.get(client);
 		const user = await this.userRepository.findOne({ ft_id });
 		if (user.dfa) {
 			user.dfa = false;
@@ -92,7 +92,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage("ask2FA")
 	async ask2FA(client: Socket): Promise<void> {
-		const ft_id = this.clientsId.get(client.id);
+		const ft_id = this.clientsId.get(client);
 		if (this.dfaCode.has(ft_id)) {
 			this.dfaCode.delete(ft_id);
 		}
@@ -109,7 +109,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage("check2FA")
 	async check2FA(client: Socket, data: { code: string }): Promise<void> {
-		const ft_id = this.clientsId.get(client.id);
+		const ft_id = this.clientsId.get(client);
 		const code = this.dfaCode.get(ft_id);
 		if (!code) {
 			client.emit("check2FA", false);
@@ -128,9 +128,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const sockets: any[] = Array.from(this.server.sockets.sockets.values());
 		sockets.forEach((socket) => {
 			if (
-				channel.users.find(
-					(user) => user.ft_id === this.clientsId.get(socket.id)
-				)
+				channel.users.find((user) => user.ft_id === this.clientsId.get(socket))
 			) {
 				socket.emit(event, data);
 			}
@@ -144,7 +142,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	): Promise<void> {
 		console.log("Message received from: ", client.id);
 		console.log("Message received data: ", data);
-		const ft_id = this.clientsId.get(client.id);
+		const ft_id = this.clientsId.get(client);
 		const user = await this.userRepository.findOne({ ft_id: ft_id });
 
 		const channel = await this.channelRepository.findOne(
@@ -169,7 +167,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		client: Socket,
 		data: { channelId: number; password: string }
 	): Promise<void> {
-		const ft_id = this.clientsId.get(client.id);
+		const ft_id = this.clientsId.get(client);
 		const user = await this.userRepository.findOne({ ft_id: ft_id });
 		const channel = await this.channelRepository.findOne(
 			{
@@ -177,12 +175,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 			{ relations: ["users"] }
 		);
-		let isPassword = false;
 		if (channel && channel.private) {
-			if (!bcrypt.compare(data.password, channel.password)) {
+			if (!bcrypt.compareSync(data.password, channel.password)) {
 				return;
 			}
-			isPassword = true;
 		}
 
 		if (!user.channels) {
@@ -205,13 +201,14 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const newChannel = await this.channelRepository.findOne({ id: channel.id });
 
 		client.emit("myChannel", {
+			add: true,
 			channelname: newChannel.channelname,
 			id: newChannel.id,
 			private: newChannel.private,
 		});
-		if (isPassword) {
-			client.emit("joinedChannel", { channelId: newChannel.id });
-		}
+		// if (isPassword) {
+		// 	client.emit("joinedChannel", { channelId: newChannel.id });
+		// }
 	}
 
 	@SubscribeMessage("createChannel")
@@ -219,15 +216,16 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		client: Socket,
 		data: { channelname: string; password: string }
 	): Promise<void> {
-		const ft_id = this.clientsId.get(client.id);
+		const ft_id = this.clientsId.get(client);
 		const user = await this.userRepository.findOne({ ft_id: ft_id });
 		let channel = this.channelRepository.create();
 		channel.channelname = data.channelname;
 		channel.owner = user;
 		channel.private = data.password ? true : false;
-		const saltRounds = 10;
 		if (data.password) {
-			channel.password = await bcrypt.hash(data.password, saltRounds);
+			const saltRounds = 10;
+			const salt = bcrypt.genSaltSync(saltRounds);
+			channel.password = bcrypt.hashSync(data.password, salt);
 		}
 
 		const allChannels = await this.channelRepository.find();
@@ -259,6 +257,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		await this.userRepository.save(user);
 
 		client.emit("myChannel", {
+			add: true,
 			channelname: newChannel.channelname,
 			id: newChannel.id,
 			private: newChannel.private,
@@ -267,25 +266,96 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const sockets: any[] = Array.from(this.server.sockets.sockets.values());
 		sockets.forEach((socket) => {
 			if (socket.id !== client.id) {
-				client.emit("searchChannel", {
+				socket.emit("searchChannel", {
 					channelname: newChannel.channelname,
 					id: newChannel.id,
 					private: newChannel.private,
+					dm: newChannel.dm,
 				});
 			}
 		});
 	}
 
+	@SubscribeMessage("leaveChannel")
+	async leaveChannel(
+		client: Socket,
+		data: { channelId: number }
+	): Promise<void> {
+		const ft_id = this.clientsId.get(client);
+		const user = await this.userRepository.findOne({ ft_id: ft_id });
+		const channel = await this.channelRepository.findOne(
+			{
+				id: data.channelId,
+			},
+			{ relations: ["users"] }
+		);
+		if (channel && channel.users && channel.users.length >= 1 && user) {
+			if (channel.owner === user) {
+				channel.owner = null;
+			}
+		} else {
+			return;
+		}
+		console.log(user.channels);
+		user.channels.splice(user.channels.indexOf(data.channelId), 1);
+		channel.users.splice(channel.users.indexOf(user), 1);
+
+		console.log(user.channels);
+
+		await this.userRepository.save(user);
+		await this.channelRepository.delete({ id: channel.id });
+
+		if (channel.users.length > 0) {
+			channel.id = data.channelId;
+			await this.channelRepository.save(channel);
+
+			const newChannel = await this.channelRepository.findOne({
+				id: channel.id,
+			});
+
+			client.emit("myChannel", {
+				add: false,
+				channelname: newChannel.channelname,
+				id: newChannel.id,
+				private: newChannel.private,
+			});
+		} else {
+			console.log("delete channel", channel);
+			client.emit("myChannel", {
+				add: false,
+				channelname: channel.channelname,
+				id: channel.id,
+				private: channel.private,
+			});
+		}
+	}
+
 	@SubscribeMessage("createDm")
 	async createDm(client: Socket, data: { ft_id: number }): Promise<void> {
-		const ft_id = this.clientsId.get(client.id);
+		const ft_id = this.clientsId.get(client);
+		const otherClient = this.clientsFt.get(data.ft_id);
 
-		await this.channelService.createDm(ft_id, data.ft_id);
+		const channel = await this.channelService.createDm(ft_id, data.ft_id);
+		if (!channel) {
+			return;
+		}
+		client.emit("myChannel", {
+			add: true,
+			channelname: channel.channelname,
+			id: channel.id,
+			private: channel.private,
+		});
+		otherClient?.emit("myChannel", {
+			add: true,
+			channelname: channel.channelname,
+			id: channel.id,
+			private: channel.private,
+		});
 	}
 
 	@SubscribeMessage("GetUserData")
 	async getUserData(client: Socket): Promise<void> {
-		const ft_id = this.clientsId.get(client.id);
+		const ft_id = this.clientsId.get(client);
 		const user = await this.userRepository.findOne({ ft_id: ft_id });
 		client.emit("userData", user);
 	}
@@ -294,7 +364,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	joinQueue(client: Socket): void {
 		console.log("Queue joined", client.id);
 		const p: Player = {
-			ft_id: this.clientsId.get(client.id),
+			ft_id: this.clientsId.get(client),
 			socket: client,
 			score: 0,
 			room: null,
@@ -306,7 +376,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage("removeSocket")
 	removeSocket(client: Socket): void {
-		const ft_id = this.clientsId.get(client.id);
+		const ft_id = this.clientsId.get(client);
 		const player = this.roomService.getPlayer(ft_id);
 
 		this.roomService.removeSocket(player);
@@ -332,7 +402,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage("ready")
 	onReady(client: Socket): void {
 		const player: Player = this.roomService.getPlayer(
-			this.clientsId.get(client.id)
+			this.clientsId.get(client)
 		);
 		if (!player || !player.room) {
 			return;
@@ -344,7 +414,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage("start")
 	onStart(client: Socket): void {
 		const player: Player = this.roomService.getPlayer(
-			this.clientsId.get(client.id)
+			this.clientsId.get(client)
 		);
 		if (!player || !player.room) {
 			return;

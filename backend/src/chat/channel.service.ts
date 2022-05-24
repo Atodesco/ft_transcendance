@@ -13,8 +13,18 @@ export class ChannelService {
 		private readonly UserRepository: Repository<User>
 	) {}
 
-	getChannels() {
-		return this.channelRepository.find();
+	async getChannels() {
+		const channels = await this.channelRepository.find();
+		let c = [];
+		channels.forEach((channel) => {
+			c.push({
+				id: channel.id,
+				channelname: channel.channelname,
+				dm: channel.dm,
+				private: channel.private,
+			});
+		});
+		return c;
 	}
 
 	getChannelId(id: number) {
@@ -26,6 +36,17 @@ export class ChannelService {
 		const user = await this.UserRepository.findOne({ ft_id: user_ft_id });
 
 		const channel = new Channel();
+		const alreadyExists = await this.channelRepository.findOne({
+			dm: true,
+			channelname: `Dm ${owner.username}-${user.username}`,
+		});
+		const alreadyExists2 = await this.channelRepository.findOne({
+			dm: true,
+			channelname: `Dm ${user.username}-${owner.username}`,
+		});
+		if (alreadyExists || alreadyExists2) {
+			return;
+		}
 		channel.owner = owner;
 		channel.users = [owner, user];
 		channel.dm = true;
@@ -39,6 +60,11 @@ export class ChannelService {
 		channelId++;
 		channel.id = channelId;
 		channel.channelname = `Dm ${owner.username}-${user.username}`;
+
+		owner.channels = [...owner.channels, channelId];
+		user.channels = [...user.channels, channelId];
+		await owner.save();
+		await user.save();
 
 		return await this.channelRepository.save(channel);
 	}

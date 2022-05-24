@@ -4,19 +4,18 @@ L'historique ?
 
 La page Credit
 
-faire les dm (le bouton chat dans le profile de quelquun dautre)
+revoir le status
 
 lier le rank sur le profile
 
 lier les boutons de la modal quand on clique sur un profil dans chat au backend
 
-fix les channel qui n'apparaissent pas quand on les cree dans la search bar sans f5
-fix les channel qui n'apparaisse pas quand tu les crees
-fix quand on join un channel avec le mauvais Mdp
-fix les messages des users bloqués
 
-front modal join channel mdp a refaire
-
+Tester:
 
 
 je suis j2 je vois les noms quand je liveshare pas, je suis j1 je les vois plus
+
+
+SI ON A DU TEMPS A LA FIN :
+    - mettre les 3 petis points quand un mec ecrit dans le chat

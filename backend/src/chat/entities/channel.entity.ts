@@ -29,7 +29,7 @@ export class Channel extends BaseEntity {
 	@Column("boolean", { default: false })
 	dm: boolean;
 
-	@ManyToOne(() => User, { onDelete: "CASCADE", eager: true })
+	@ManyToOne(() => User, { onDelete: "CASCADE", eager: true, nullable: true })
 	@JoinColumn({ referencedColumnName: "ft_id" })
 	owner: User;
 
