@@ -65,7 +65,6 @@ export default function FA(props: Props) {
 						<div className={styles.Button}>
 							<button
 								onClick={() => {
-									console.log(code);
 									ws.emit("check2FA", {
 										code: code,
 									});

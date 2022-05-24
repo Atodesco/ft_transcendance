@@ -6,13 +6,15 @@ import {
 	ManyToMany,
 	JoinTable,
 	BaseEntity,
+	ManyToOne,
+	OneToMany,
 } from "typeorm";
 import { UserStatus } from "../../interfaces/user-status.enum";
 
 @Entity()
 export class User extends BaseEntity {
-	@PrimaryGeneratedColumn()
-	id: number;
+	@PrimaryGeneratedColumn("uuid")
+	id: string;
 
 	@Column({ unique: true, nullable: true })
 	ft_id: number;
@@ -41,11 +43,36 @@ export class User extends BaseEntity {
 	@Column("text", { default: UserStatus.ONLINE })
 	status: UserStatus;
 
-	@Column("int", { array: true, default: [] })
-	friends: number[];
+	@OneToMany(() => Channel, (channel) => channel.owner)
+	channel_owned: Channel[];
 
-	@Column("int", { array: true, default: [] })
-	blocked: number[];
+	@ManyToMany(() => User, (user) => user.friends)
+	@JoinTable({
+		name: "user-friend",
+		joinColumn: {
+			name: "user_id",
+			referencedColumnName: "id",
+		},
+		inverseJoinColumn: {
+			name: "user_id",
+			referencedColumnName: "id",
+		},
+	})
+	friends: User[];
+
+	@ManyToMany(() => User, (user) => user.blocked)
+	@JoinTable({
+		name: "user-blocked",
+		joinColumn: {
+			name: "user_id",
+			referencedColumnName: "id",
+		},
+		inverseJoinColumn: {
+			name: "user_id",
+			referencedColumnName: "id",
+		},
+	})
+	blocked: User[];
 
 	// @ManyToMany(() => Game)
 	// @JoinTable({
@@ -61,8 +88,8 @@ export class User extends BaseEntity {
 	// })
 	// game: Game[];
 
-	@Column("int", { array: true, default: [] })
-	channels: number[];
+	@ManyToMany((type) => Channel, (channel) => channel.users)
+	channels: Channel[];
 
 	@Column("int", { default: 0 })
 	lvl: number;

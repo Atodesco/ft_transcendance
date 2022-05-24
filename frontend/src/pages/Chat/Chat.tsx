@@ -12,7 +12,6 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 
 import { context } from "../../App";
-import { channel } from "diagnostics_channel";
 
 export default function Chat() {
 	const [inputText, setInputText] = useState("");
@@ -23,7 +22,7 @@ export default function Chat() {
 	const [channelName, setChannelName] = useState("");
 	const [databaseChannel, setDatabaseChannel] = useState<any>([]);
 	const [channelUserJoined, setChannelUserJoined] = useState<any>([]);
-	const [channelSelected, setChannelSelected] = useState(0);
+	const [channelSelected, setChannelSelected] = useState("");
 	const [searchBarState, setSearchBarState] = useState<any>();
 	const [joinChannel, setJoinChannel] = useState<any>();
 	const [autocomplete, setAutocomplete] = useState("");
@@ -123,8 +122,8 @@ export default function Chat() {
 						newChannelUserJoined.splice(newChannelUserJoined.indexOf(cha), 1);
 						return newChannelUserJoined;
 					});
-					setChannelSelected((v: number) => {
-						if (channel2.channelname === channelSelected) {
+					setChannelSelected((v: any) => {
+						if (channel2.id === channelSelected) {
 							return 0;
 						}
 						return v;
@@ -143,11 +142,8 @@ export default function Chat() {
 	useEffect(() => {
 		if (userInfo.ft_id) {
 			let arr: any = [];
-			console.log(databaseChannel);
-			console.log("userInfo", userInfo);
 			databaseChannel.map((value: any, index: any) => {
-				if (userInfo.channels.includes(value.id)) {
-					console.log("value", value);
+				if (userInfo.channels.find((c: any) => c.id === value.id)) {
 					arr.push(value);
 				}
 			});
@@ -155,18 +151,14 @@ export default function Chat() {
 
 			let arr2: any = [];
 			databaseChannel.map((value: any, index: any) => {
-				if (!userInfo.channels.includes(value.id) && value.dm === false) {
+				if (
+					!userInfo.channels.find((c: any) => c.id === value.id) &&
+					value.dm === false
+				) {
 					arr2.push(value);
 				}
 			});
 			setSearchBarState(arr2);
-			// setSearchBarState(
-			// 	databaseChannel.filter((channel: any) => {
-			// 		if (!userInfo.channels.includes(channel.id) && channel.dm == false) {
-			// 			return channel.channelname;
-			// 		}
-			// 	})
-			// );
 		}
 	}, [databaseChannel]);
 
@@ -218,7 +210,9 @@ export default function Chat() {
 								if (searchBarState.length) {
 									const search = searchBarState.filter((channel: any) => {
 										if (
-											!userInfo.channels.includes(channel.id) &&
+											!userInfo.channels.find(
+												(c: any) => c.id === channel.id
+											) &&
 											value.id !== channel.id
 										) {
 											return channel;

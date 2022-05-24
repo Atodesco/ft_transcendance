@@ -14,8 +14,8 @@ import {
 
 @Entity()
 export class Channel extends BaseEntity {
-	@PrimaryColumn()
-	id: number;
+	@PrimaryGeneratedColumn("uuid")
+	id: string;
 
 	@Column("text", { default: "" })
 	channelname: string;
@@ -29,50 +29,72 @@ export class Channel extends BaseEntity {
 	@Column("boolean", { default: false })
 	dm: boolean;
 
-	@ManyToOne(() => User, { onDelete: "CASCADE", eager: true, nullable: true })
-	@JoinColumn({ referencedColumnName: "ft_id" })
+	@ManyToOne(() => User, (user) => user.channel_owned, {
+		cascade: true,
+		nullable: true,
+	})
+	@JoinColumn({ name: "owner_id", referencedColumnName: "ft_id" })
 	owner: User;
 
-	@Column("int", { array: true, default: [] })
-	admins: number[];
-
-	@Column("int", { array: true, default: [] })
-	muted: number[];
-
-	@Column("text", { array: true, default: [] })
-	mutedUntil: Date[];
-
-	@Column("int", { array: true, default: [] })
-	banned: number[];
-
-	@Column("text", { array: true, default: [] })
-	bannedUntil: Date[];
-
-	@ManyToMany((type) => User, { cascade: true })
+	@ManyToMany(() => User, { cascade: true })
 	@JoinTable({
-		name: "user-channels", // table name for the junction table of this relation
+		name: "channel-admin",
 		joinColumn: {
-			name: "id", // name of the column in the junction table
+			name: "channel_id",
 			referencedColumnName: "id",
 		},
 		inverseJoinColumn: {
-			name: "ft_id", // name of the column in the junction table
-			referencedColumnName: "ft_id",
+			name: "user_id",
+			referencedColumnName: "id",
+		},
+	})
+	admins: User[];
+
+	@ManyToMany(() => User, { cascade: true })
+	@JoinTable({
+		name: "channel-muted",
+		joinColumn: {
+			name: "channel_id",
+			referencedColumnName: "id",
+		},
+		inverseJoinColumn: {
+			name: "user_id",
+			referencedColumnName: "id",
+		},
+	})
+	muted: User[];
+
+	// @Column("date", { array: true, default: [] })
+	// mutedUntil: Date[];
+
+	@ManyToMany(() => User, { cascade: true })
+	@JoinTable({
+		name: "channel-banned",
+		joinColumn: {
+			name: "channel_id",
+			referencedColumnName: "id",
+		},
+		inverseJoinColumn: {
+			name: "user_id",
+			referencedColumnName: "id",
+		},
+	})
+	banned: User[];
+
+	// @Column("date", { array: true, default: [] })
+	// bannedUntil: Date[];
+
+	@ManyToMany((type) => User, (user) => user.channels, { cascade: true })
+	@JoinTable({
+		name: "channel-user",
+		joinColumn: {
+			name: "channel_id",
+			referencedColumnName: "id",
+		},
+		inverseJoinColumn: {
+			name: "user_id",
+			referencedColumnName: "id",
 		},
 	})
 	users: User[];
-
-	@ManyToMany((type) => User, { cascade: true })
-	@JoinTable({
-		name: "muteduser-channel", // table name for the junction table of this relation
-		joinColumn: {
-			name: "id", // name of the column in the junction table
-			referencedColumnName: "id",
-		},
-		inverseJoinColumn: {
-			name: "ft_id", // name of the column in the junction table
-			referencedColumnName: "ft_id",
-		},
-	})
-	mutedusers: User[];
 }

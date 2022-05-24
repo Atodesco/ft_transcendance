@@ -1,6 +1,6 @@
 import styles from "../../css/Chat.module.css";
 import Button from "@mui/material/Button";
-import { useState, useEffect, useRef, useContext } from "react";
+import { useContext } from "react";
 import { context } from "../../App";
 
 export default function channels({
@@ -25,7 +25,6 @@ function Item(dataChannels: any, setChannelState: any, channelState: any) {
 	return (
 		<>
 			{dataChannels.map((value: any, index: any) => {
-				console.log("value:", value);
 				return (
 					<div
 						className={styles.flex}
@@ -33,11 +32,9 @@ function Item(dataChannels: any, setChannelState: any, channelState: any) {
 						id={index.toString()}
 						onClick={() => {
 							if (value.id !== channelState) {
-								console.log("Je set SelectedChannel à:", value.id);
 								setChannelState(value.id);
 							} else {
-								console.log("Je set SelectedChannel à: 0");
-								setChannelState(0);
+								setChannelState("");
 							}
 						}}
 						style={{
@@ -51,7 +48,6 @@ function Item(dataChannels: any, setChannelState: any, channelState: any) {
 							variant="contained"
 							color="error"
 							onClick={() => {
-								console.log("Je quitte le channel:", value);
 								ws.emit("leaveChannel", { channelId: value.id });
 							}}
 						>

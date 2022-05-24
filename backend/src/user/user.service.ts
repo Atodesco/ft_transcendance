@@ -1,74 +1,82 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Channel } from "src/chat/entities/channel.entity";
-import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
 
 @Injectable()
 export class UserService {
-	constructor(
-		@InjectRepository(User)
-		private readonly userRepository: Repository<User>,
-		@InjectRepository(Channel)
-		private readonly channelRepository: Repository<Channel>
-	) {}
-
 	async getAllUsers(): Promise<User[]> {
-		return this.userRepository.find();
+		return User.find();
 	}
 
 	async getUser(id: number): Promise<User> {
-		return await this.userRepository.findOne({ ft_id: id });
+		let user: any = await User.findOne(
+			{ ft_id: id },
+			{ relations: ["channels", "friends", "blocked"] }
+		);
+
+		user.channels = user.channels.map((channel, index) => {
+			return {
+				id: channel.id,
+				channelname: channel.channelname,
+				dm: channel.dm,
+				private: channel.private,
+			};
+		});
+
+		return user;
 	}
 
 	async addFriend(id: number, friendId: number): Promise<User> {
-		const user = await this.userRepository.findOne({ ft_id: id });
-		user.friends.push(friendId);
-		await this.userRepository.save(user);
+		const user = await User.findOne({ ft_id: id }, { relations: ["friends"] });
+		const friend = await User.findOne({ ft_id: friendId });
+		user.friends.push(friend);
+		await user.save();
 		return user;
 	}
 
 	async removeFriend(id: number, friendId: number): Promise<User> {
-		const user = await this.userRepository.findOne({ ft_id: id });
-		user.friends = user.friends.filter((friend) => friend !== friendId);
-		await this.userRepository.save(user);
+		const user = await User.findOne({ ft_id: id }, { relations: ["friends"] });
+		const friend = await User.findOne({ ft_id: friendId });
+		user.friends = user.friends.filter((f) => f !== friend);
+		await user.save();
 		return user;
 	}
 
 	async blockUser(id: number, blockedId: number): Promise<User> {
-		const user = await this.userRepository.findOne({ ft_id: id });
-		user.blocked.push(blockedId);
-		await this.userRepository.save(user);
+		const user = await User.findOne({ ft_id: id }, { relations: ["blocked"] });
+		const blocked = await User.findOne({ ft_id: blockedId });
+		user.blocked.push(blocked);
+		await user.save();
 		return user;
 	}
 
 	async unblockUser(id: number, unblockedId: number): Promise<User> {
-		const user = await this.userRepository.findOne({ ft_id: id });
+		const user = await User.findOne({ ft_id: id }, { relations: ["blocked"] });
+		const blocked = await User.findOne({ ft_id: unblockedId });
 		user.blocked = user.blocked.filter(
-			(blockedUser) => blockedUser !== unblockedId
+			(blockedUser) => blockedUser !== blocked
 		);
-		await this.userRepository.save(user);
+		await user.save();
 		return user;
 	}
 
 	async setElo(id: number, elo: number): Promise<User> {
-		const user = await this.userRepository.findOne({ ft_id: id });
+		const user = await User.findOne({ ft_id: id });
 		user.elo = elo;
-		await this.userRepository.save(user);
+		await user.save();
 		return user;
 	}
 
 	async setUsername(id: number, username: string): Promise<User> {
-		const user = await this.userRepository.findOne({ ft_id: id });
+		const user = await User.findOne({ ft_id: id });
 		user.username = username;
-		await this.userRepository.save(user);
+		await user.save();
 		return user;
 	}
 
 	async setPicture(id: number, link: string): Promise<User> {
-		const user = await this.userRepository.findOne({ ft_id: id });
+		const user = await User.findOne({ ft_id: id });
 		user.picture = link;
-		await this.userRepository.save(user);
+		await user.save();
 		return user;
 	}
 }

@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 
 interface Props {
 	myMessages: any;
-	channelSelected: number;
+	channelSelected: string;
 	userInfo: any;
 }
 
@@ -42,10 +42,6 @@ function Item(dataMessages: any, channelSelected: any, userInfo: any) {
 	const navigate = useNavigate();
 	// const user_id = 1;
 	const user_id = userInfo.ft_id;
-
-	useEffect(() => {
-		console.log(valueTimeMute);
-	}, [valueTimeMute]);
 
 	return (
 		<>
@@ -246,7 +242,7 @@ function Item(dataMessages: any, channelSelected: any, userInfo: any) {
 									maxWidth: "75%",
 								}}
 							>
-								{userInfo.blocked.includes(value.user.ft_id)
+								{userInfo.blocked.includes(value.user)
 									? "This user is blocked !"
 									: value.message}
 							</span>

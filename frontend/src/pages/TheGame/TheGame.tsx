@@ -43,7 +43,6 @@ export default function TheGame() {
 		ws.emit("ready");
 		ws.on("ball", (data: { x: number; y: number }) => {
 			const ball = document.getElementById("ball");
-			console.log("ici");
 			if (ball) {
 				ball.style.setProperty("--x", data.x + "%");
 				ball.style.setProperty("--y", data.y + "%");
