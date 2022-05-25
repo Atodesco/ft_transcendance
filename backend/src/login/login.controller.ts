@@ -42,7 +42,7 @@ export class LoginController {
 
 	@Get("42/tmp/:id")
 	async ft(@Request() req, @Res() response: Response, @Param("id") id) {
-		const token = await this.ftstrategy.Tmplogin(Number(id));
+		const token = await this.ftstrategy.Tmplogin(id);
 		const url = new URL(`${req.protocol}:${req.hostname}`);
 		// url.port = process.env.FRONT_PORT;
 		// url.pathname = "Profile";

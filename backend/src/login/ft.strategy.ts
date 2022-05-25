@@ -63,7 +63,7 @@ export class FtStrategy extends PassportStrategy(Strategy, "42") {
 		return this.jwtService.sign(payload);
 	}
 
-	async Tmplogin(id: number): Promise<string> {
+	async Tmplogin(id: any): Promise<string> {
 		const db_user = await this.userRepository.findOne({
 			where: { id },
 		});
