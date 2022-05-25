@@ -118,12 +118,11 @@ export default function Chat() {
 					});
 				} else {
 					setChannelUserJoined((cj: any) => {
-						let newChannelUserJoined = cj.slice();
-						newChannelUserJoined.splice(newChannelUserJoined.indexOf(cha), 1);
+						const newChannelUserJoined = cj.filter((c: any) => c.id !== cha.id);
 						return newChannelUserJoined;
 					});
 					setChannelSelected((v: any) => {
-						if (channel2.id === channelSelected) {
+						if (v === cha.id) {
 							return 0;
 						}
 						return v;

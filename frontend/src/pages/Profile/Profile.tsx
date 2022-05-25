@@ -34,8 +34,8 @@ interface User {
 	ft_id: number;
 	username: string;
 	status: string;
-	friends: number[];
-	blocked: number[];
+	friends: any[];
+	blocked: any[];
 	picture: string;
 	win: number;
 	lose: number;
@@ -231,12 +231,12 @@ export default function Profile() {
 	useEffect(() => {
 		setAddFriend(
 			myData.friends && myData.friends.length > 0
-				? !myData.friends.includes(userData.ft_id)
+				? !myData.friends.find((u: any) => u.ft_id === userData.ft_id)
 				: true
 		);
 		setBlockedUser(
 			myData.blocked && myData.blocked.length > 0
-				? !myData.blocked.includes(userData.ft_id)
+				? !myData.blocked.find((u: any) => u.ft_id === userData.ft_id)
 				: true
 		);
 	}, [myData]);

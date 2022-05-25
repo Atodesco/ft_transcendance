@@ -23,7 +23,7 @@ export default function Login() {
 						process.env.REACT_APP_BACK_URL +
 							":" +
 							process.env.REACT_APP_BACK_PORT +
-							"/login/42/tmp/6"
+							"/login/42/tmp/5ea71532-188f-495b-be2b-21c3f03ddab7"
 					);
 
 					if (Cookies.get("token") === undefined) {
@@ -45,7 +45,7 @@ export default function Login() {
 						process.env.REACT_APP_BACK_URL +
 							":" +
 							process.env.REACT_APP_BACK_PORT +
-							"/login/42/tmp/8"
+							"/login/42/tmp/76cc4e25-fb64-4216-a2a2-0512ae2cd517"
 					);
 					if (Cookies.get("token") === undefined) {
 						const data = await rawData.json();
@@ -66,7 +66,7 @@ export default function Login() {
 						process.env.REACT_APP_BACK_URL +
 							":" +
 							process.env.REACT_APP_BACK_PORT +
-							"/login/42/tmp/9"
+							"/login/42/tmp/cab7b7a2-1a1f-4533-ac91-319a50019dfd"
 					);
 					if (Cookies.get("token") === undefined) {
 						const data = await rawData.json();

@@ -242,7 +242,7 @@ function Item(dataMessages: any, channelSelected: any, userInfo: any) {
 									maxWidth: "75%",
 								}}
 							>
-								{userInfo.blocked.includes(value.user)
+								{userInfo.blocked.find((bl: any) => bl.id === value.id)
 									? "This user is blocked !"
 									: value.message}
 							</span>

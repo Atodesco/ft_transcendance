@@ -34,7 +34,7 @@ function List(props: Props) {
 			if (
 				el.ft_id !== myData.ft_id &&
 				myData.friends &&
-				myData.friends.includes(el.ft_id)
+				myData.friends.find((u: any) => u.ft_id === el.ft_id)
 			) {
 				if (props.input === "") {
 					return el;
