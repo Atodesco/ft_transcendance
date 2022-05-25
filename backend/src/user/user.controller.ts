@@ -8,6 +8,7 @@ import {
 	Request,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import { identity } from "rxjs";
 import { User } from "./entities/user.entity";
 import { UserService } from "./user.service";
 
@@ -83,5 +84,10 @@ export class UserController {
 	@Post("/:id/setPicture")
 	setPicture(@Param("id") id, @Body() body: any): Promise<User> {
 		return this.userService.setPicture(id, body.link);
+	}
+
+	@Post("/:id/setBall")
+	setBall(@Param("id") id, @Body() body: any): Promise<User> {
+		return this.userService.setBall(id, body.link);
 	}
 }

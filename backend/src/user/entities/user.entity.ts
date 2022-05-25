@@ -40,6 +40,9 @@ export class User extends BaseEntity {
 	@Column("int", { default: 0 })
 	lose: number;
 
+	@Column("text", {default: "" })
+	ball: string;
+
 	@Column("text", { default: UserStatus.ONLINE })
 	status: UserStatus;
 
