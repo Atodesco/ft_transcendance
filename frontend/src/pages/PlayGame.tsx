@@ -200,14 +200,14 @@ export default function PlayGame() {
                   Normal
                 </MenuItem>
               </Select>
+              <div
+                id="ball"
+                style={{
+                  content: "url(" + ballUrl + ")",
+                }}
+                className={styles.ball}
+              ></div>
             </FormControl>
-            <div
-              id="ball"
-              style={{
-                content: "url(" + ballUrl + ")",
-              }}
-              className={styles.ball}
-            ></div>
           </Stack>
         </div>
       </div>
