@@ -23,7 +23,7 @@ const bcrypt = require("bcrypt");
 		origin: "*",
 	},
 })
-export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
 	constructor(
 		private readonly roomService: RoomService,
 		private readonly channelService: ChannelService,
@@ -72,6 +72,11 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.clientsFt.delete(ft_id);
 		}
 	}
+
+	async afterInit(server: any) {
+		// setInterval(this.roomService.loop, 1000);
+	}
+
 
 	@SubscribeMessage("2FA")
 	async change2FA(client: Socket, data: any): Promise<void> {
@@ -348,6 +353,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.roomService.removeSocket(player);
 	}
 
+
 	// @SubscribeMessage("room")
 	// joinRoom(client: Socket, code?: string): void {
 	// 	let room: Room = this.roomService.getRoom(code);
@@ -366,14 +372,25 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	// }
 
 	@SubscribeMessage("ready")
-	onReady(client: Socket): void {
+	async onReady(client: Socket): Promise<void> {
 		const player: Player = this.roomService.getPlayer(
 			this.clientsId.get(client)
 		);
 		if (!player || !player.room) {
 			return;
 		}
-
+		const room = player.room;
+		const p1Username = await User.findOne({
+			ft_id: room.players[0].ft_id,
+		});
+		const p2Username = await User.findOne({
+			ft_id: room.players[1].ft_id,
+		});
+		client.emit("room", {
+			code: room.code,
+			p1Username: p1Username.username,
+			p2Username: p2Username.username,
+		});
 		this.roomService.startGame(player.room);
 	}
 

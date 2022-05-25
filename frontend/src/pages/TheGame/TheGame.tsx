@@ -17,15 +17,12 @@ export default function TheGame() {
   const handleOpen1 = () => setOpen1(true);
   const handleClose1 = () => setOpen1(false);
   const [open2, setOpen2] = React.useState(false);
-  const handleOpen2 = () => setOpen2(true);
-  const handleClose2 = () => {
-    ws.emit("start");
-    setOpen2(false);
-  };
+
   const [userInfo, setUserInfo] = React.useState<any>();
 
   const [usernames, setUsernames] = React.useState({ p1: "", p2: "" });
   const [score, setScore] = React.useState({ p1: 0, p2: 0 });
+  const flagReadyOnetimeOnly = React.useRef<any>({ ini: 1 });
 
   const ws = React.useContext(context);
 
@@ -43,28 +40,39 @@ export default function TheGame() {
   };
 
   React.useEffect(() => {
-    const ball = document.getElementById("ball");
-    ws.on(
-      "room",
-      (data: { code: string; p1Username: string; p2Username: string }) => {
-        setUsernames({ p1: data.p1Username, p2: data.p2Username });
-      }
-    );
-    ws.on("ball", () => {});
-    ws.on("score", (data: { p1: number; p2: number }) => {
-      setScore({ p1: data.p1, p2: data.p2 });
-    });
-    ws.emit("ready");
-    ws.on("ball", (data: { x: number; y: number }) => {
+    if (flagReadyOnetimeOnly.current.ini) {
       const ball = document.getElementById("ball");
-      console.log("ici");
-      if (ball) {
-        ball.style.setProperty("--x", data.x + "%");
-        ball.style.setProperty("--y", data.y + "%");
-        console.log(data.x, data.y);
-      }
-    });
-    getUserInfo();
+      ws.emit("ready");
+      ws.on(
+        "room",
+        (data: { code: string; p1Username: string; p2Username: string }) => {
+          setUsernames({ p1: data.p1Username, p2: data.p2Username });
+        }
+      );
+      ws.on("score", (data: { p1: number; p2: number }) => {
+        setScore({ p1: data.p1, p2: data.p2 });
+      });
+      ws.on("ball", (data: { x: number; y: number }) => {
+        const ball = document.getElementById("ball");
+        // console.log("update ball");
+        if (ball) {
+          ball.style.top = data.y + "%";
+          ball.style.left = data.x + "%";
+          //   requestAnimationFrame(() => {
+          //     ball.style.setProperty("--x", data.x.toString());
+          //     ball.style.setProperty("--y", data.y.toString());
+          //   });
+          // console.log("ball position:", data.x, data.y);
+        }
+      });
+      ws.on("ready", (data: any) => {
+        console.log("on a recu");
+        setOpen2(true);
+      });
+
+      getUserInfo();
+      flagReadyOnetimeOnly.current = {};
+    }
   }, []);
 
   const renderer = ({ formatted: { hours, minutes, seconds } }: any) => {
@@ -193,12 +201,6 @@ export default function TheGame() {
       >
         GOAL
       </button>
-      <button
-        className={`${styles.buttons} ${styles.countdown}`}
-        onClick={handleOpen2}
-      >
-        Countdown
-      </button>
       <Modal disableEscapeKeyDown open={open2}>
         <div className={`${styles.endscreen} ${styles.endscreenCountdown}`}>
           <Countdown
@@ -206,7 +208,7 @@ export default function TheGame() {
             daysInHours={true}
             zeroPadTime={1}
             onComplete={() => {
-              handleClose2();
+              setOpen2(false);
               ws.emit("start");
             }}
             renderer={renderer}

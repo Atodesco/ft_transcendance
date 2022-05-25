@@ -33,7 +33,7 @@ export class PongService {
 		};
 		// sides + score
 		if (next.x - room.ball.radius < 0 || next.x + room.ball.radius > 100) {
-			if (next.x > room.ball.radius) {
+			if (next.x > room.ball.radius)  {
 				++room.players[0].score;
 			} else {
 				++room.players[1].score;
