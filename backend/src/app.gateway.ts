@@ -243,34 +243,42 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 			{ relations: ["users"] }
 		);
-		if (channel.owner === user) {
+		if (!channel) return;
+		if (channel.owner && channel.owner === user) {
 			channel.owner = null;
 		}
-		channel.users.splice(channel.users.indexOf(user), 1);
+		channel.users = channel.users.filter((u) => u.id !== user.id);
 
-		if (channel.users.length > 0) {
-			channel.id = data.channelId;
-			await channel.save();
-
+		if (channel.users.length > 0 && !channel.dm) {
 			client.emit("myChannel", {
 				add: false,
 				channelname: channel.channelname,
 				id: channel.id,
 				private: channel.private,
+				dm: channel.dm,
 			});
+			await channel.save();
 		} else if (channel.users.length === 0 || channel.dm) {
-			// TODO: Refaire ça
-
-			await Channel.delete({ id: channel.id });
 			for (let u of channel.users) {
 				const sock = this.clientsFt.get(u.ft_id);
-				sock.emit("myChannel", {
-					add: false,
-					channelname: channel.channelname,
-					id: channel.id,
-					private: channel.private,
-				});
+				if (sock.id !== client.id) {
+					sock.emit("myChannel", {
+						add: false,
+						channelname: channel.channelname,
+						id: channel.id,
+						private: channel.private,
+						dm: channel.dm,
+					});
+				}
 			}
+			client.emit("myChannel", {
+				add: false,
+				channelname: channel.channelname,
+				id: channel.id,
+				private: channel.private,
+				dm: channel.dm,
+			});
+			await Channel.delete({ id: channel.id });
 		}
 	}
 

@@ -6,7 +6,6 @@ import { useState } from "react";
 export default function Friendlist() {
 	const [inputText, setInputText] = useState("");
 	let inputHandler = (e: any) => {
-		//convert input text to lower case
 		var lowerCase = e.target.value.toLowerCase();
 		setInputText(lowerCase);
 	};

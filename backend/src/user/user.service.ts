@@ -36,7 +36,7 @@ export class UserService {
 	async removeFriend(id: number, friendId: number): Promise<User> {
 		const user = await User.findOne({ ft_id: id }, { relations: ["friends"] });
 		const friend = await User.findOne({ ft_id: friendId });
-		user.friends = user.friends.filter((f) => f !== friend);
+		user.friends = user.friends.filter((f) => f.id !== friend.id);
 		await user.save();
 		return user;
 	}
@@ -53,7 +53,7 @@ export class UserService {
 		const user = await User.findOne({ ft_id: id }, { relations: ["blocked"] });
 		const blocked = await User.findOne({ ft_id: unblockedId });
 		user.blocked = user.blocked.filter(
-			(blockedUser) => blockedUser !== blocked
+			(blockedUser) => blockedUser.id !== blocked.id
 		);
 		await user.save();
 		return user;
