@@ -79,4 +79,11 @@ export class UserService {
 		await user.save();
 		return user;
 	}
+
+	async setBall(id: number, link: string): Promise<User> {
+		const user = await User.findOne({ ft_id: id });
+		user.ball = link;
+		await user.save();
+		return user;
+	}
 }

@@ -21,13 +21,34 @@ export default function PlayGame() {
   const { seconds, minutes, start, reset } = useStopwatch({ autoStart: false });
   const [booleanButton, setBooleanButton] = useState(true);
   const [ball, setBall] = useState("");
+  const [ballUrl, setBallUrl] = useState("");
+  const [userInfo, setUserInfo] = useState<any>();
   const navigate = useNavigate();
+
+  const getUserInfo = async () => {
+    const myData = await fetch(
+      process.env.REACT_APP_BACK_URL +
+        ":" +
+        process.env.REACT_APP_BACK_PORT +
+        "/user/me/",
+      {
+        credentials: "include",
+      }
+    );
+    setUserInfo(await myData.json());
+  };
 
   useEffect(() => {
     ws.on("gameFound", () => {
       navigate("/TheGame");
     });
+
+    getUserInfo();
   }, []);
+
+  useEffect(() => {
+    if (userInfo) setBallUrl(userInfo.ball);
+  }, [userInfo]);
 
   return (
     <>
@@ -89,7 +110,7 @@ export default function PlayGame() {
               style={{ backgroundColor: "darkgrey", borderRadius: "0.2vw" }}
               fullWidth
             >
-              <InputLabel color="success">Age</InputLabel>
+              <InputLabel>Ball Type</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 value={ball}
@@ -98,88 +119,92 @@ export default function PlayGame() {
                   setBall(e.target.value);
                 }}
               >
-                <MenuItem value={10}>FootBall</MenuItem>
-                <MenuItem value={20}>VolleyBall</MenuItem>
-                <MenuItem value={30}>BasketBall</MenuItem>
-                <MenuItem value={30}>Normal</MenuItem>
+                <MenuItem
+                  value={ball}
+                  onClick={async () => {
+                    await fetch(
+                      "http://localhost:3000/user/" +
+                        (await userInfo.ft_id) +
+                        "/setBall",
+                      {
+                        headers: { "Content-Type": "application/json" },
+                        method: "POST",
+                        body: JSON.stringify({
+                          link: "https://www.pngmart.com/files/21/Football-PNG-Isolated-HD.png",
+                        }),
+                      }
+                    );
+                    getUserInfo();
+                  }}
+                >
+                  FootBall
+                </MenuItem>
+                <MenuItem
+                  value={ball}
+                  onClick={async () => {
+                    await fetch(
+                      "http://localhost:3000/user/" +
+                        (await userInfo.ft_id) +
+                        "/setBall",
+                      {
+                        headers: { "Content-Type": "application/json" },
+                        method: "POST",
+                        body: JSON.stringify({
+                          link: "https://cdn.pixabay.com/photo/2019/11/05/21/32/ball-4604616_1280.png",
+                        }),
+                      }
+                    );
+                    getUserInfo();
+                  }}
+                >
+                  VolleyBall
+                </MenuItem>
+                <MenuItem
+                  value={ball}
+                  onClick={async () => {
+                    await fetch(
+                      "http://localhost:3000/user/" +
+                        (await userInfo.ft_id) +
+                        "/setBall",
+                      {
+                        headers: { "Content-Type": "application/json" },
+                        method: "POST",
+                        body: JSON.stringify({
+                          link: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Basketball_Clipart.svg/768px-Basketball_Clipart.svg.png",
+                        }),
+                      }
+                    );
+                    getUserInfo();
+                  }}
+                >
+                  BasketBall
+                </MenuItem>
+                <MenuItem
+                  value={ball}
+                  onClick={async () => {
+                    await fetch(
+                      "http://localhost:3000/user/" +
+                        (await userInfo.ft_id) +
+                        "/setBall",
+                      {
+                        headers: { "Content-Type": "application/json" },
+                        method: "POST",
+                        body: JSON.stringify({
+                          link: "",
+                        }),
+                      }
+                    );
+                    getUserInfo();
+                  }}
+                >
+                  Normal
+                </MenuItem>
               </Select>
             </FormControl>
-            {/* <Divider variant="middle" /> */}
-            {/* <DropdownButton
-              className={`${styles.buttons} ${styles.customBall}`}
-              id="dropdown-basic-button"
-              title="Customize the Ball"
-            >
-              <Dropdown.Item
-                as="button"
-                onClick={() => {
-                  document
-                    .getElementById("ball")
-                    ?.classList.add(styles.football);
-                  document
-                    .getElementById("ball")
-                    ?.classList.remove(styles.basketball);
-                  document
-                    .getElementById("ball")
-                    ?.classList.remove(styles.volleyball);
-                }}
-              >
-                Footall
-              </Dropdown.Item>
-              <Dropdown.Item
-                as="button"
-                onClick={() => {
-                  document
-                    .getElementById("ball")
-                    ?.classList.add(styles.basketball);
-                  document
-                    .getElementById("ball")
-                    ?.classList.remove(styles.volleyball);
-                  document
-                    .getElementById("ball")
-                    ?.classList.remove(styles.football);
-                }}
-              >
-                BasketBall
-              </Dropdown.Item>
-              <Dropdown.Item
-                as="button"
-                onClick={() => {
-                  document
-                    .getElementById("ball")
-                    ?.classList.add(styles.volleyball);
-                  document
-                    .getElementById("ball")
-                    ?.classList.remove(styles.basketball);
-                  document
-                    .getElementById("ball")
-                    ?.classList.remove(styles.football);
-                }}
-              >
-                Volley
-              </Dropdown.Item>
-              <Dropdown.Item
-                as="button"
-                onClick={() => {
-                  document
-                    .getElementById("ball")
-                    ?.classList.remove(styles.volleyball);
-                  document
-                    .getElementById("ball")
-                    ?.classList.remove(styles.basketball);
-                  document
-                    .getElementById("ball")
-                    ?.classList.remove(styles.football);
-                }}
-              >
-                Normal
-              </Dropdown.Item>
-            </DropdownButton> */}
             <div
               id="ball"
               style={{
-                content:
-                  "url(https://www.pngmart.com/files/21/Football-PNG-Isolated-HD.png)",
+                content: "url(" + ballUrl + ")",
               }}
               className={styles.ball}
             ></div>
