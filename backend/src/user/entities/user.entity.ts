@@ -40,7 +40,7 @@ export class User extends BaseEntity {
 	@Column("int", { default: 0 })
 	lose: number;
 
-	@Column("text", {default: "" })
+	@Column("text", { default: "" })
 	ball: string;
 
 	@Column("text", { default: UserStatus.ONLINE })
@@ -76,20 +76,6 @@ export class User extends BaseEntity {
 		},
 	})
 	blocked: User[];
-
-	// @ManyToMany(() => Game)
-	// @JoinTable({
-	// 	name: "user-game", // table name for the junction table of this relation
-	// 	joinColumn: {
-	// 		name: "ft_id", // name of the column in the junction table
-	// 		referencedColumnName: "ft_id",
-	// 	},
-	// 	inverseJoinColumn: {
-	// 		name: "id", // name of the column in the junction table
-	// 		referencedColumnName: "id",
-	// 	},
-	// })
-	// game: Game[];
 
 	@ManyToMany((type) => Channel, (channel) => channel.users)
 	channels: Channel[];

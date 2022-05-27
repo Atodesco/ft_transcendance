@@ -17,6 +17,7 @@ export enum State {
 	STARTING,
 	COUNTDOWN,
 	INGAME,
+	GOAL,
 	END,
 }
 
@@ -27,6 +28,7 @@ export interface Player {
 	score: number;
 	room: Room;
 	heightFromCenter: number;
+	player_speed: number;
 }
 
 export interface Room {
@@ -36,4 +38,5 @@ export interface Room {
 	players: Array<Player>;
 	spectators?: Array<Socket>;
 	maxScore: number;
+	normal_ball_speed: number;
 }

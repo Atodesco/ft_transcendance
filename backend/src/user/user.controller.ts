@@ -9,6 +9,8 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { identity } from "rxjs";
+import { Game } from "src/Pong/entities/game.entity";
+import { PongService } from "src/Pong/pong.service";
 import { User } from "./entities/user.entity";
 import { UserService } from "./user.service";
 
@@ -89,5 +91,35 @@ export class UserController {
 	@Post("/:id/setBall")
 	setBall(@Param("id") id, @Body() body: any): Promise<User> {
 		return this.userService.setBall(id, body.link);
+	}
+
+	@Get("/:id/getHistory")
+	async getHistory(@Param("id", ParseIntPipe) id: number) {
+		// const games = await Game.find({
+		// 	where: [{ winner: id }, { looser: id }],
+		// 	relations: ["winner", "looser"],
+		// });
+
+		const games = await Game.find({
+			relations: ["winner", "looser"],
+			where: [{ winner: { ft_id: id } }, { looser: { ft_id: id } }],
+		});
+
+		// console.log(games);
+
+		// const gameLose = await Game.find({
+		// 	where: [{ looser: id }],
+		// 	relations: ["looser"],
+		// });
+
+		// const gameWin = await Game.find({
+		// 	where: [{ winner: id }],
+		// 	relations: ["winner"],
+		// });
+
+		// console.log(gameLose);
+		// console.log(gameWin);
+
+		return games;
 	}
 }

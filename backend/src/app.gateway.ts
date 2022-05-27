@@ -7,9 +7,7 @@ import {
 	OnGatewayDisconnect,
 } from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
-import { InjectRepository } from "@nestjs/typeorm";
 import { Channel } from "./chat/entities/channel.entity";
-import { Repository } from "typeorm";
 import { Player } from "./Pong/interfaces/room.interface";
 import { RoomService } from "./Pong/room.service";
 import { ChannelService } from "./chat/channel.service";
@@ -23,7 +21,7 @@ const bcrypt = require("bcrypt");
 		origin: "*",
 	},
 })
-export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
+export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	constructor(
 		private readonly roomService: RoomService,
 		private readonly channelService: ChannelService,
@@ -72,11 +70,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect, OnG
 			this.clientsFt.delete(ft_id);
 		}
 	}
-
-	async afterInit(server: any) {
-		// setInterval(this.roomService.loop, 1000);
-	}
-
 
 	@SubscribeMessage("2FA")
 	async change2FA(client: Socket, data: any): Promise<void> {
@@ -339,8 +332,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect, OnG
 			socket: client,
 			score: 0,
 			room: null,
-			position: { x: 0, y: 0 },
-			heightFromCenter: 5,
+			position: { x: 0, y: 50 },
+			heightFromCenter: 8.1,
+			player_speed: 0.9,
 		};
 		this.roomService.addQueue(p);
 	}
@@ -352,24 +346,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect, OnG
 
 		this.roomService.removeSocket(player);
 	}
-
-
-	// @SubscribeMessage("room")
-	// joinRoom(client: Socket, code?: string): void {
-	// 	let room: Room = this.roomService.getRoom(code);
-	// 	if (!room) {
-	// 		room = this.roomService.createRoom(code);
-	// 	}
-	// 	const p: Player = {
-	// 		ft_id: this.clientsId.get(client.id),
-	// 		socket: client,
-	// 		room: null,
-	// 		score: 0,
-	// 		position: { x: 0, y: 50 },
-	// 	};
-
-	// 	this.roomService.joinRoom(room, p);
-	// }
 
 	@SubscribeMessage("ready")
 	async onReady(client: Socket): Promise<void> {
@@ -403,5 +379,29 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect, OnG
 			return;
 		}
 		this.roomService.startCalc(player.room);
+	}
+
+	@SubscribeMessage("move")
+	onMove(client: Socket, data: { code: string; direction: number }): void {
+		// const room = this.roomService.getRoom(data.code);
+		const player: Player = this.roomService.getPlayer(
+			this.clientsId.get(client)
+		);
+		if (!player || !player.room) return;
+
+		if (
+			(player.position.y + player.heightFromCenter < 100 &&
+				player.position.y - player.heightFromCenter > 0) ||
+			(player.position.y + player.heightFromCenter > 100 &&
+				data.direction === -1)
+		) {
+			player.position.y += player.player_speed * data.direction;
+		} else if (
+			(player.position.y - player.heightFromCenter > 0 &&
+				player.position.y + player.heightFromCenter < 100) ||
+			(player.position.y - player.heightFromCenter < 0 && data.direction === 1)
+		) {
+			player.position.y += player.player_speed * data.direction;
+		}
 	}
 }
