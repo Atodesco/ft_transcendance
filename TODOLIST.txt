@@ -15,6 +15,7 @@ lier les boutons de la modal quand on clique sur un profil dans chat au backend
 
 Fix le countdown qui apparait 5/6 fois
 
+modal provock duel
 
 Tester:
 
