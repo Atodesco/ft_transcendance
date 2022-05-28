@@ -60,6 +60,7 @@ export default function Profile() {
 	const [showModalModifyProfile, setShowModalModifyProfile] = useState(false);
 	const [changeAvatarUrl, setChangeAvatarUrl] = useState("");
 	const [changeProfileUsername, setChangeProfileUsername] = useState("");
+	const [lightTheme, setLightTheme] = useState(1);
 	const [rank, setRank] = useState<any>();
 	const ws = useContext(context);
 	const navigate = useNavigate();
@@ -487,18 +488,16 @@ export default function Profile() {
 					>
 						{history.map((item: any, index: any) => {
 							let other: any;
-							// let win = false;
 							let myscore = "";
 							let otherscore = "";
-
-							let col = "red";
+							let cl: any;
 							if (item.winner.ft_id === userData.ft_id) {
-								col = "green";
 								other = item.looser;
-								// win = true;
 								myscore = item.winner_score;
 								otherscore = item.looser_score;
+								cl = styles.gameLoose;
 							} else {
+								cl = styles.gameWin;
 								other = item.winner;
 								myscore = item.looser_score;
 								otherscore = item.winner_score;
@@ -507,12 +506,21 @@ export default function Profile() {
 								<div
 									key={index}
 									style={{
-										backgroundColor: col,
 										flexDirection: "column",
 										display: "flex",
 									}}
+									className={cl}
 								>
-									<Link to={"/Profile/" + other.ft_id}>
+									<Link
+										to={"/Profile/" + other.ft_id}
+										className={styles.linkToProfileHistory}
+										onMouseEnter={() => {
+											setLightTheme(0.5);
+										}}
+										onMouseLeave={() => {
+											setLightTheme(1);
+										}}
+									>
 										<div style={{ alignSelf: "flex-start" }}>
 											{other.username}
 										</div>

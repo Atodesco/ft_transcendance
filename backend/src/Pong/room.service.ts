@@ -196,6 +196,11 @@ export class RoomService {
 		if (room.state != State.COUNTDOWN) {
 			return;
 		}
+		if (this.spectatorQueue.length > 0) {
+			room.spectators.push(...this.spectatorQueue);
+			this.spectatorQueue = [];
+			this.emitSpectator(room, "gameFound");
+		}
 
 		this.pongService.resetBall(room);
 		room.state = State.INGAME;
@@ -259,7 +264,7 @@ export class RoomService {
 		if (roomToJoin) {
 			this.joinRoom(roomToJoin, undefined, spectator);
 		} else {
-			// join Spectator queue if no game is running yet (no room) or if there is a game but no player is connected yet (no player)
+			this.spectatorQueue.push(spectator);
 		}
 	}
 }

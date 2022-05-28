@@ -92,7 +92,40 @@
 	transition: 300ms;
 }
 
-.MatchHistory > div:hover {
+/* .MatchHistory > div:hover {
+	background-color: rgba(0, 128, 0, 0.281) !important;
+	background-color: --col_back !important;
+} */
+
+.MatchHistory > a {
+	cursor: pointer;
+}
+
+.gameWin {
+	background-color: rgba(0, 128, 0, 1);
+}
+
+.gameWin:hover {
+	background-color: rgba(0, 128, 0, 0.681);
+}
+
+.gameLoose {
+	background-color: rgba(255, 0, 0, 1);
+}
+
+.gameLoose:hover {
+	background-color: rgba(255, 0, 0, 0.681);
+}
+
+.linkToProfileHistory {
+	color: white;
+	transition: 300ms;
+	text-decoration: none;
+}
+
+.linkToProfileHistory:hover {
+	color: white;
+	text-decoration: none;
 }
 
 .Stats {

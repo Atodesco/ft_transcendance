@@ -13,13 +13,11 @@ import { useNavigate } from "react-router";
 export default function TheGame() {
 	const navigate = useNavigate();
 	const [open, setOpen] = React.useState(false);
-	const handleOpen = () => setOpen(true);
 	const handleClose = () => {
 		setOpen(false);
 		navigate("/Profile");
 	};
 	const [open1, setOpen1] = React.useState(false);
-	const handleOpen1 = () => setOpen1(true);
 	const handleClose1 = () => {
 		setOpen1(false);
 		navigate("/Profile");
@@ -50,6 +48,15 @@ export default function TheGame() {
 
 	React.useEffect(() => {
 		if (flagReadyOnetimeOnly.current.ini) {
+			var up = false;
+			var down = false;
+			const intervale = setInterval(() => {
+				if (up) {
+					ws.emit("move", { room: roomCode.current, direction: -1 });
+				} else if (down) {
+					ws.emit("move", { room: roomCode.current, direction: 1 });
+				}
+			}, 1000 / 60);
 			ws.emit("ready");
 			ws.on(
 				"room",
@@ -78,12 +85,15 @@ export default function TheGame() {
 				}
 			});
 			ws.on("win", (data: any) => {
+				clearInterval(intervale);
 				setOpen(true);
 			});
 			ws.on("lose", (data: any) => {
+				clearInterval(intervale);
 				setOpen1(true);
 			});
 			ws.on("stop", (data: any) => {
+				clearInterval(intervale);
 				navigate("/PlayGame");
 			});
 			ws.on("ready", (data: any) => {
@@ -100,15 +110,6 @@ export default function TheGame() {
 					p2.style.top = data.p2 + "%";
 				}
 			});
-			var up = false;
-			var down = false;
-			setInterval(() => {
-				if (up) {
-					ws.emit("move", { room: roomCode.current, direction: -1 });
-				} else if (down) {
-					ws.emit("move", { room: roomCode.current, direction: 1 });
-				}
-			}, 1000 / 60);
 			document.addEventListener("keydown", (e) => {
 				if (e.key === "ArrowUp") {
 					up = true;

@@ -381,16 +381,20 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (!room) {
 			return;
 		}
-		const p1Username = await User.findOne({
+		const p1 = await User.findOne({
 			ft_id: room.players[0].ft_id,
 		});
-		const p2Username = await User.findOne({
+		const p2 = await User.findOne({
 			ft_id: room.players[1].ft_id,
 		});
+		let p1Username = "";
+		let p2Username = "";
+		if (p1) p1Username = p1.username;
+		if (p2) p2Username = p2.username;
 		client.emit("room", {
 			code: room.code,
-			p1Username: p1Username.username,
-			p2Username: p2Username.username,
+			p1Username: p1Username,
+			p2Username: p2Username,
 		});
 		this.roomService.startGame(room);
 	}
@@ -413,6 +417,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 		if (!player || !player.room) return;
 
+		const pos = player.position.y;
 		if (
 			(player.position.y + player.heightFromCenter < 100 &&
 				player.position.y - player.heightFromCenter > 0) ||

@@ -1,26 +1,17 @@
 A FAIRE :
-    - Alors deja : changer la DB pour rajouter BALL
+    I FRONT: 
+        - HISTORIQUE MOCHE // fini ?
+        - Page Credit
+        - Fix la responsivite de la page Profil et autres 
+		- La page Credit
 
+    II BACK :
+        - 
 
-L'historique ?
+    III FULL-STACK :
+        - Modal profil dans chat pas finie
+        - Countdown bug (Apparait des fois/ game demarre avant fin du countdown/ ...)
 
-La page Credit
-
-revoir le status
-
-lier le rank sur le profile
-
-lier les boutons de la modal quand on clique sur un profil dans chat au backend
-
-Fix le countdown qui apparait 5/6 fois
-
-modal provock duel
-
-Tester:
-
-
-je suis j2 je vois les noms quand je liveshare pas, je suis j1 je les vois plus
-
-
-SI ON A DU TEMPS A LA FIN :
-    - mettre les 3 petis points quand un mec ecrit dans le chat
+    IV TESTER EN PROFONDEUR :
+        - Status Online/Offline
+        - modal Duel 
