@@ -52,26 +52,6 @@ interface History {
 	win: boolean;
 }
 
-// const history: History[] = [
-//   { username: "Rledrin", score: "5:7", win: false },
-//   { username: "Atodesco", score: "7:0", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-//   { username: "Jake", score: "7:1", win: true },
-// ] = useState();
-
 export default function Profile() {
 	const aVar: any = [{}];
 	const [inputText, setInputText] = useState("");
@@ -80,6 +60,7 @@ export default function Profile() {
 	const [showModalModifyProfile, setShowModalModifyProfile] = useState(false);
 	const [changeAvatarUrl, setChangeAvatarUrl] = useState("");
 	const [changeProfileUsername, setChangeProfileUsername] = useState("");
+	const [rank, setRank] = useState<any>();
 	const ws = useContext(context);
 	const navigate = useNavigate();
 
@@ -144,8 +125,8 @@ export default function Profile() {
 			picture: data.picture,
 			win: data.win,
 			lose: data.lose,
-			currentLevel: data.lvl / 100,
-			nextLevel: data.lvl / 100 + 1,
+			currentLevel: Math.floor(data.lvl / 100),
+			nextLevel: Math.floor(data.lvl / 100 + 1),
 			levelProgress: data.lvl % 100,
 			elo: data.elo,
 		};
@@ -203,8 +184,8 @@ export default function Profile() {
 			picture: data.picture,
 			win: data.win,
 			lose: data.lose,
-			currentLevel: data.lvl / 100,
-			nextLevel: data.lvl / 100 + 1,
+			currentLevel: Math.floor(data.lvl / 100),
+			nextLevel: Math.floor(data.lvl / 100 + 1),
 			levelProgress: data.lvl % 100,
 			elo: data.elo,
 		};
@@ -222,6 +203,27 @@ export default function Profile() {
 		getMyData();
 	};
 
+	const getRank = async () => {
+		const rawData = await fetch(
+			process.env.REACT_APP_BACK_URL +
+				":" +
+				process.env.REACT_APP_BACK_PORT +
+				"/user/",
+			{
+				credentials: "include",
+			}
+		);
+		const data = await rawData.json();
+		data.sort((a: { elo: number }, b: { elo: number }) => {
+			return b.elo - a.elo;
+		});
+		data.forEach((item: any, indice: any) => {
+			if (item.ft_id === userData.ft_id) {
+				setRank(indice + 1);
+			}
+		});
+	};
+
 	useEffect(() => {
 		if (sessionStorage.getItem("JustLoged")) {
 			sessionStorage.removeItem("JustLoged");
@@ -232,6 +234,10 @@ export default function Profile() {
 	useEffect(() => {
 		getData(Number(id));
 	}, [id]);
+
+	useEffect(() => {
+		getRank();
+	}, [userData]);
 
 	useEffect(() => {
 		setAddFriend(
@@ -431,23 +437,27 @@ export default function Profile() {
 				</div>
 				<div className={styles.Stats}>
 					<div className={styles.Rank}>
-						<h2>Rank: 1 er</h2>
+						<h2>
+							Rank: {rank} {rank === 1 ? "er" : "ème"}
+						</h2>
 					</div>
 					<div className={styles.LevelProgress}>
 						<span>{userData.currentLevel}</span>
-						<ProgressBar
-							className={styles.Level}
-							width="200px"
-							height="10px"
-							rect
-							fontColor="gray"
-							percentage={userData.levelProgress.toString()}
-							rectPadding="1px"
-							rectBorderRadius="20px"
-							trackPathColor="transparent"
-							bgColor="#333333"
-							trackBorderColor="grey"
-						/>
+						{userData && userData.levelProgress && (
+							<ProgressBar
+								className={styles.Level}
+								width="200px"
+								height="10px"
+								rect
+								fontColor="gray"
+								percentage={userData.levelProgress}
+								rectPadding="1px"
+								rectBorderRadius="20px"
+								trackPathColor="transparent"
+								bgColor="#333333"
+								trackBorderColor="grey"
+							/>
+						)}
 						<span>{userData.nextLevel}</span>
 					</div>
 

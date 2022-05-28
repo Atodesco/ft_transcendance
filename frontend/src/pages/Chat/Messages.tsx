@@ -14,7 +14,8 @@ import {
 } from "@mui/icons-material";
 
 import { useNavigate } from "react-router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { context } from "../../App";
 
 interface Props {
 	myMessages: any;
@@ -39,9 +40,20 @@ function Item(dataMessages: any, channelSelected: any, userInfo: any) {
 	const [valueTimeBan, setValueTimeBan] = useState(0);
 	const [booleanButtonMakeAdmin, setBooleanButtonMakeAdmin] = useState(true);
 
+	const ws = useContext(context);
+
 	const navigate = useNavigate();
 	// const user_id = 1;
 	const user_id = userInfo.ft_id;
+
+	useEffect(() => {
+		ws.on("cancelDuelProposal", (data: any) => {
+			setModalDuel(false);
+		});
+		ws.on("gameFound", (data: any) => {
+			navigate("/TheGame");
+		});
+	}, []);
 
 	return (
 		<>
@@ -178,6 +190,10 @@ function Item(dataMessages: any, channelSelected: any, userInfo: any) {
 															variant="contained"
 															endIcon={<SportsEsports />}
 															onClick={() => {
+																ws.emit("duelProposal", {
+																	opponent_ft_id: value.user.ft_id,
+																	opponent_username: value.user.username,
+																});
 																setModalDuel(true);
 															}}
 														>
@@ -204,6 +220,7 @@ function Item(dataMessages: any, channelSelected: any, userInfo: any) {
 																			variant="contained"
 																			color="error"
 																			onClick={() => {
+																				ws.emit("cancelDuelProposal");
 																				setModalDuel(false);
 																			}}
 																			endIcon={<Block />}

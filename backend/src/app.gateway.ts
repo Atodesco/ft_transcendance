@@ -14,6 +14,7 @@ import { ChannelService } from "./chat/channel.service";
 import { User } from "./user/entities/user.entity";
 import { UserStatus } from "./interfaces/user-status.enum";
 import { DoubleAuthService } from "./2FA/doubleAuth.service";
+import { SocketReadyState } from "net";
 const bcrypt = require("bcrypt");
 
 @WebSocketGateway({
@@ -34,6 +35,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private clientsId = new Map<Socket, number>();
 	private clientsFt = new Map<number, Socket>();
 	private dfaCode = new Map<number, string>();
+	private duelRequestArray = new Array<{ sender: Socket; receiver: Socket }>();
 
 	async handleConnection(client: Socket) {
 		try {
@@ -58,6 +60,20 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	async handleDisconnect(client: Socket) {
 		console.log("Client disconnected: ", client.id);
 		const ft_id = this.clientsId.get(client);
+
+		const someoneDisconnected = this.duelRequestArray.find((disconnected) => {
+			if (disconnected.sender === client || disconnected.receiver === client) {
+				return true;
+			} else return false;
+		});
+
+		if (someoneDisconnected) {
+			if (someoneDisconnected.receiver === client) {
+				someoneDisconnected.sender.emit("cancelDuelProposal");
+			} else if (someoneDisconnected.sender === client) {
+				someoneDisconnected.receiver.emit("cancelDuelProposal");
+			}
+		}
 
 		const user = await User.findOne({
 			ft_id: ft_id,
@@ -340,11 +356,15 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage("removeSocket")
-	removeSocket(client: Socket): void {
+	removeSocket(client: Socket, data: any): void {
 		const ft_id = this.clientsId.get(client);
 		const player = this.roomService.getPlayer(ft_id);
 
-		this.roomService.removeSocket(player);
+		if (data && data.spectate) {
+			this.roomService.removeSocket(undefined, client);
+		} else {
+			this.roomService.removeSocket(player);
+		}
 	}
 
 	@SubscribeMessage("ready")
@@ -352,10 +372,15 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const player: Player = this.roomService.getPlayer(
 			this.clientsId.get(client)
 		);
-		if (!player || !player.room) {
+		let room = undefined;
+		if (player && player.room) {
+			room = player.room;
+		} else {
+			room = this.roomService.getRoomForSpectators(client);
+		}
+		if (!room) {
 			return;
 		}
-		const room = player.room;
 		const p1Username = await User.findOne({
 			ft_id: room.players[0].ft_id,
 		});
@@ -367,7 +392,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			p1Username: p1Username.username,
 			p2Username: p2Username.username,
 		});
-		this.roomService.startGame(player.room);
+		this.roomService.startGame(room);
 	}
 
 	@SubscribeMessage("start")
@@ -383,7 +408,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage("move")
 	onMove(client: Socket, data: { code: string; direction: number }): void {
-		// const room = this.roomService.getRoom(data.code);
 		const player: Player = this.roomService.getPlayer(
 			this.clientsId.get(client)
 		);
@@ -403,5 +427,70 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		) {
 			player.position.y += player.player_speed * data.direction;
 		}
+	}
+
+	@SubscribeMessage("duelProposal")
+	async onDuelProposal(
+		client: Socket,
+		data: { opponent_ft_id: number; opponent_username: string }
+	): Promise<void> {
+		const receiver = this.clientsFt.get(data.opponent_ft_id);
+		const sender = this.clientsId.get(client);
+
+		if (!receiver || !sender) {
+			return;
+		}
+		this.duelRequestArray.push({ sender: client, receiver });
+
+		const username = await (await User.findOne({ ft_id: sender })).username;
+
+		receiver.emit("duelProposal", { username });
+	}
+
+	@SubscribeMessage("cancelDuelProposal")
+	async onCancelDuelProposal(client: Socket): Promise<void> {
+		const receiver = this.duelRequestArray.find((receiver) => {
+			return receiver.sender === client || receiver.receiver === client;
+		});
+		if (receiver && receiver.sender && receiver.sender === client) {
+			receiver.receiver.emit("cancelDuelProposal");
+		} else if (receiver && receiver.receiver && receiver.receiver === client) {
+			receiver.sender.emit("cancelDuelProposal");
+		}
+	}
+
+	@SubscribeMessage("acceptDuel")
+	async onAcceptDuel(client: Socket): Promise<void> {
+		const players = this.duelRequestArray.find((players) => {
+			return players.sender === client || players.receiver === client;
+		});
+		if (players) {
+			const roomCode = this.roomService.createRoom();
+			const p1: Player = {
+				ft_id: this.clientsId.get(players.sender),
+				socket: players.sender,
+				score: 0,
+				room: null,
+				position: { x: 0, y: 50 },
+				heightFromCenter: 8.1,
+				player_speed: 0.9,
+			};
+			const p2: Player = {
+				ft_id: this.clientsId.get(players.receiver),
+				socket: players.receiver,
+				score: 0,
+				room: null,
+				position: { x: 0, y: 50 },
+				heightFromCenter: 8.1,
+				player_speed: 0.9,
+			};
+			this.roomService.joinRoom(roomCode, p1);
+			this.roomService.joinRoom(roomCode, p2);
+		}
+	}
+
+	@SubscribeMessage("queueSpectate")
+	async onQueueSpectate(client: Socket): Promise<void> {
+		this.roomService.findRoomToSpectate(client);
 	}
 }

@@ -3,58 +3,83 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { Block, TaskAlt } from "@mui/icons-material";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { context } from "../App";
 
-export default function ModalDuelAccept() {
-  const [modalDuelAccept, setModalDuelAccept] = useState(false);
-  const navigate = useNavigate();
-  return (
-    <>
-      <Button
-        onClick={() => {
-          setModalDuelAccept(true);
-        }}
-      >
-        CLICK ME
-      </Button>
-      <Modal
-        open={modalDuelAccept}
-        onClose={(event, reason) => {
-          if (reason && reason == "backdropClick") return;
-          setModalDuelAccept(false);
-        }}
-        disableEscapeKeyDown={true}
-      >
-        <Box className={styles.boxModalDuelAccept}>
-          <div style={{ margin: "10% 0 0 30%", fontSize: "1vw" }}>
-            Lacruype has challenged you to play Pong !
-          </div>
-          <Button
-            style={{ margin: "15% 0 0 40%" }}
-            variant="contained"
-            color="success"
-            onClick={() => {
-              setModalDuelAccept(false);
-              navigate("/thegame");
-            }}
-            endIcon={<TaskAlt />}
-          >
-            Accept Duel
-          </Button>
-          <Button
-            style={{ margin: "5% 0 0 40%" }}
-            variant="contained"
-            color="error"
-            onClick={() => {
-              setModalDuelAccept(false);
-            }}
-            endIcon={<Block />}
-          >
-            Refuse Duel
-          </Button>
-        </Box>
-      </Modal>
-    </>
-  );
+interface Props {
+	setOpen: any;
+	open: boolean;
+}
+
+export default function ModalDuelAccept(props: Props) {
+	const navigate = useNavigate();
+	const ws = useContext(context);
+	const [username, setUsername] = useState(false);
+
+	useEffect(() => {
+		ws.on("duelProposal", (data: any) => {
+			console.log("duelProposal");
+			console.log("duelProposal", data);
+			setUsername(data.username);
+			props.setOpen(true);
+		});
+		ws.on("cancelDuelProposal", (data: any) => {
+			props.setOpen(false);
+		});
+		ws.on("gameFound", (data: any) => {
+			navigate("/TheGame");
+		});
+	}),
+		[];
+
+	return (
+		<>
+			{/* <Button
+				onClick={() => {
+					setModalDuelAccept(true);
+				}}
+			>
+				CLICK ME
+			</Button> */}
+			<Modal
+				open={props.open}
+				onClose={(event, reason) => {
+					if (reason && reason == "backdropClick") return;
+					props.setOpen(false);
+				}}
+				disableEscapeKeyDown={true}
+			>
+				<Box className={styles.boxModalDuelAccept}>
+					<div style={{ margin: "10% 0 0 30%", fontSize: "1vw" }}>
+						{username} has challenged you to play Pong !
+					</div>
+					<Button
+						style={{ margin: "15% 0 0 40%" }}
+						variant="contained"
+						color="success"
+						onClick={() => {
+							props.setOpen(false);
+							ws.emit("acceptDuel");
+						}}
+						endIcon={<TaskAlt />}
+					>
+						Accept Duel
+					</Button>
+					<Button
+						style={{ margin: "5% 0 0 40%" }}
+						variant="contained"
+						color="error"
+						onClick={() => {
+							props.setOpen(false);
+							ws.emit("cancelDuelProposal");
+						}}
+						endIcon={<Block />}
+					>
+						Refuse Duel
+					</Button>
+				</Box>
+			</Modal>
+		</>
+	);
 }

@@ -4,11 +4,8 @@ import {
 	HttpStatus,
 	Injectable,
 } from "@nestjs/common";
-import { Interval } from "@nestjs/schedule";
-import { InjectRepository } from "@nestjs/typeorm";
 import { Socket } from "socket.io";
 import { User } from "src/user/entities/user.entity";
-import { Repository } from "typeorm";
 import { Player, Room, State } from "./interfaces/room.interface";
 import { PongService } from "./pong.service";
 
@@ -18,6 +15,7 @@ export class RoomService {
 
 	rooms: Map<string, Room> = new Map();
 	queue: Array<Player> = [];
+	spectatorQueue: Array<Socket> = [];
 
 	createRoom(code: string = null): Room {
 		while (!code) {
@@ -32,6 +30,7 @@ export class RoomService {
 			code,
 			state: State.WAITING,
 			players: [],
+			spectators: [],
 			ball: {
 				position: { x: 0, y: 0 },
 				velocity: { x: 0, y: 0 },
@@ -64,21 +63,47 @@ export class RoomService {
 		return this.queue.find((player) => player.ft_id == ft_id);
 	}
 
-	getRoomForUser(ft_id: number): Room {
+	// getSpectator(spec: Socket): Socket {
+	// 	for (const room of this.rooms.values()) {
+	// 		for (const spectator of room.spectators) {
+	// 			if (spec === spectator) return spectator;
+	// 		}
+	// 	}
+	// 	return this.spectatorQueue.find((spectator) => spectator === spec);
+	// }
+
+	getRoomForSpectators(spec: Socket): Room {
 		const rooms = Array.from(this.rooms.values());
 		const room = rooms.find(
-			(room) => !!room.players.find((player) => player.ft_id == ft_id)
+			(room) => !room.spectators.find((spectator) => spectator === spec)
 		);
-		if (!room) throw new HttpException("Room not found", HttpStatus.NOT_FOUND);
 
 		return room;
 	}
+
+	// getRoomForUser(ft_id: number): Room {
+	// 	const rooms = Array.from(this.rooms.values());
+	// 	const room = rooms.find(
+	// 		(room) => !room.players.find((player) => player.ft_id == ft_id)
+	// 	);
+	// 	if (!room) throw new HttpException("Room not found", HttpStatus.NOT_FOUND);
+
+	// 	return room;
+	// }
 
 	emit(room: Room, event: string, ...args: any): void {
 		for (const player of room.players) {
 			player.socket.emit(event, ...args);
 		}
-		if (room.spectators) {
+		if (room.spectators && room.spectators.length > 0) {
+			for (const spectator of room.spectators) {
+				spectator.emit(event, ...args);
+			}
+		}
+	}
+
+	emitSpectator(room: Room, event: string, ...args: any): void {
+		if (room.spectators && room.spectators.length > 0) {
 			for (const spectator of room.spectators) {
 				spectator.emit(event, ...args);
 			}
@@ -147,28 +172,13 @@ export class RoomService {
 			if (room.players.length == 2) {
 				room.state = State.STARTING;
 				room.players.map((p) => {
-					p.socket.emit("gameFound", {});
+					p.socket.emit("gameFound");
 				});
 			}
 		} else {
-			if (!room.spectators) {
-				room.spectators = [];
-			}
 			if (spectator) {
 				room.spectators.push(spectator);
-				const p1Username = await User.findOne({
-					ft_id: room.players[0].ft_id,
-				});
-				const p2Username = await User.findOne({
-					ft_id: room.players[1].ft_id,
-				});
-
 				spectator.emit("gameFound");
-				spectator.emit("room", {
-					code: room.code,
-					p1Username: p1Username.username,
-					p2Username: p2Username.username,
-				});
 			}
 		}
 	}
@@ -208,26 +218,26 @@ export class RoomService {
 				(player1) => player1.ft_id != player.ft_id
 			);
 			const winner = player;
-			let score = room.players.map((player) => player.score);
-
-			// setElo
 
 			const winner_user = await User.findOne({ ft_id: winner.ft_id });
 			const looser_user = await User.findOne({ ft_id: looser.ft_id });
+
+			winner_user.lvl += 20;
+			looser_user.lvl += 10;
+
+			winner_user.elo += 5;
+			looser_user.elo -= 5;
+
 			winner_user.win++;
 			looser_user.lose++;
-			//What a dinguerie Copilot
-			// winner_user.elo = this.eloService.calculate(winner_user.elo, looser_user.elo, 1);
-			// looser_user.elo = this.eloService.calculate(looser_user.elo, winner_user.elo, 0);
 			await winner_user.save();
 			await looser_user.save();
 
-			score.sort();
 			this.pongService.createGame(
 				winner.ft_id,
-				score.pop(),
+				winner.score,
 				looser.ft_id,
-				score.pop()
+				looser.score
 			);
 
 			winner.socket.emit("win");
@@ -235,7 +245,21 @@ export class RoomService {
 		} else {
 			player.socket.emit("win");
 		}
+		this.emitSpectator(room, "stop");
 		this.removeRoom(room.code);
-		// this.emit(room, "stop", player);
+	}
+
+	async findRoomToSpectate(spectator: Socket) {
+		let roomToJoin;
+		for (const room of this.rooms.values()) {
+			if (room.state === State.INGAME) {
+				roomToJoin = room;
+			}
+		}
+		if (roomToJoin) {
+			this.joinRoom(roomToJoin, undefined, spectator);
+		} else {
+			// join Spectator queue if no game is running yet (no room) or if there is a game but no player is connected yet (no player)
+		}
 	}
 }

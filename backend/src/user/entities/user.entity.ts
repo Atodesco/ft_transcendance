@@ -80,6 +80,6 @@ export class User extends BaseEntity {
 	@ManyToMany((type) => Channel, (channel) => channel.users)
 	channels: Channel[];
 
-	@Column("int", { default: 0 })
+	@Column("int", { default: 101 })
 	lvl: number;
 }

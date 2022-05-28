@@ -83,7 +83,9 @@ export default function TheGame() {
 			ws.on("lose", (data: any) => {
 				setOpen1(true);
 			});
-
+			ws.on("stop", (data: any) => {
+				navigate("/PlayGame");
+			});
 			ws.on("ready", (data: any) => {
 				console.log("on a recu");
 				setOpen2(true);

@@ -36,7 +36,7 @@ export interface Room {
 	state: State;
 	ball: Ball;
 	players: Array<Player>;
-	spectators?: Array<Socket>;
+	spectators: Array<Socket>;
 	maxScore: number;
 	normal_ball_speed: number;
 }

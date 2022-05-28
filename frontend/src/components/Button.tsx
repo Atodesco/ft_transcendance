@@ -5,7 +5,6 @@ interface Props {
 	className?: string;
 	id?: string;
 	onClick?: () => void;
-	disabled?: boolean;
 	children?: React.ReactNode;
 }
 

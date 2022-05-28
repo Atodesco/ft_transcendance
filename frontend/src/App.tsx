@@ -31,6 +31,7 @@ function App() {
 	const p = { ini: 1 };
 
 	const [userInfo, setUserInfo] = useState<any>();
+	const [openModalDuel, setOpenModalDuel] = useState(false);
 	const [ws, setWs] = useState<any>(p);
 	const [ready, setReady] = useState(false);
 
@@ -147,8 +148,10 @@ function App() {
 	return (
 		<>
 			<BrowserRouter>
-				<ModalDuelAccept />
 				<context.Provider value={ws}>
+					{ready && (
+						<ModalDuelAccept setOpen={setOpenModalDuel} open={openModalDuel} />
+					)}
 					<Routes>
 						<Route path="/Login" element={<Login />} />
 						<Route path="*" element={<DefaultRoutes />} />
