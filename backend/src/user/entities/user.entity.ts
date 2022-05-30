@@ -43,6 +43,9 @@ export class User extends BaseEntity {
 	@Column("text", { default: "" })
 	ball: string;
 
+	@Column("text", { default: "" })
+	map: string;
+
 	@Column("text", { default: UserStatus.ONLINE })
 	status: UserStatus;
 

@@ -25,7 +25,11 @@ export default function TheGame() {
 	const [open2, setOpen2] = React.useState(true);
 	const [numberCountdown, setNumberCountdown] = React.useState(3);
 
-	const [userInfo, setUserInfo] = React.useState<any>();
+	const [userInfo, setUserInfo] = React.useState<any>({
+		lvl: 101,
+		win: 1,
+		lose: 1,
+	});
 
 	const [usernames, setUsernames] = React.useState({ p1: "", p2: "" });
 	const [score, setScore] = React.useState({ p1: 0, p2: 0 });
@@ -63,7 +67,6 @@ export default function TheGame() {
 				"room",
 				(data: { code: string; p1Username: string; p2Username: string }) => {
 					roomCode.current = data.code;
-					console.log("LES NOMS SONT :", data.p1Username, data.p2Username);
 					setUsernames({ p1: data.p1Username, p2: data.p2Username });
 				}
 			);
@@ -89,10 +92,12 @@ export default function TheGame() {
 			ws.on("win", (data: any) => {
 				clearInterval(intervale);
 				setOpen(true);
+				getUserInfo();
 			});
 			ws.on("lose", (data: any) => {
 				clearInterval(intervale);
 				setOpen1(true);
+				getUserInfo();
 			});
 			ws.on("stop", (data: any) => {
 				clearInterval(intervale);
@@ -113,7 +118,6 @@ export default function TheGame() {
 				}
 			});
 			ws.on("countdown", (data: number) => {
-				// setOpen2(true);
 				setNumberCountdown(data);
 			});
 			document.addEventListener("keydown", (e) => {
@@ -136,10 +140,6 @@ export default function TheGame() {
 		}
 	}, []);
 
-	const renderer = ({ formatted: { hours, minutes, seconds } }: any) => {
-		return <span>{seconds}</span>;
-	};
-
 	return (
 		<div className={styles.page}>
 			<Modal open={open} onClose={handleClose}>
@@ -154,11 +154,12 @@ export default function TheGame() {
 						<div className={styles.stats}>STATS</div>
 						<div className={styles.level}>
 							<ProgressBar
-								trackWidth="0.5vh"
+								// trackWidth="0.5vh"
+								width="100%"
 								height="3vh"
 								rect
 								fontColor="white"
-								percentage={70}
+								percentage={(userInfo.lvl % 100).toString()}
 								rectPadding="0.1vh"
 								rectBorderRadius="2vh"
 								trackPathColor="transparent"
@@ -166,7 +167,9 @@ export default function TheGame() {
 								trackBorderColor="white"
 							/>
 						</div>
-						<div className={styles.fromlevel}>From Level 3</div>
+						<div className={styles.fromlevel}>
+							From Level {Math.floor(userInfo.lvl / 100) + 1}
+						</div>
 						<div className={styles.ratioWinLoose}>
 							<PieChart
 								lineWidth={60}
@@ -180,8 +183,8 @@ export default function TheGame() {
 									pointerEvents: "none",
 								}}
 								data={[
-									{ title: "Win", value: 10, color: "green" },
-									{ title: "Lose", value: 5, color: "red" },
+									{ title: "Win", value: userInfo.win, color: "green" },
+									{ title: "Lose", value: userInfo.lose, color: "red" },
 								]}
 							/>
 						</div>
@@ -203,11 +206,12 @@ export default function TheGame() {
 						<div className={styles.stats}>STATS</div>
 						<div className={styles.level}>
 							<ProgressBar
-								trackWidth="0.5vh"
+								// trackWidth="0.5vh"
+								width="100%"
 								height="3vh"
 								rect
 								fontColor="white"
-								percentage={70}
+								percentage={(userInfo.lvl % 100).toString()}
 								rectPadding="0.1vh"
 								rectBorderRadius="2vh"
 								trackPathColor="transparent"
@@ -215,7 +219,9 @@ export default function TheGame() {
 								trackBorderColor="white"
 							/>
 						</div>
-						<div className={styles.fromlevel}>From Level 3</div>
+						<div className={styles.fromlevel}>
+							From Level {Math.floor(userInfo.lvl / 100) + 1}
+						</div>
 						<div className={styles.ratioWinLoose}>
 							<PieChart
 								lineWidth={60}
@@ -229,8 +235,8 @@ export default function TheGame() {
 									pointerEvents: "none",
 								}}
 								data={[
-									{ title: "Win", value: 10, color: "green" },
-									{ title: "Lose", value: 5, color: "red" },
+									{ title: "Win", value: userInfo.win, color: "green" },
+									{ title: "Lose", value: userInfo.lose, color: "red" },
 								]}
 							/>
 						</div>
@@ -240,52 +246,44 @@ export default function TheGame() {
 					</div>
 				</div>
 			</Modal>
-			{/* <Modal disableEscapeKeyDown open={open2}>
-				<div className={`${styles.endscreen} ${styles.endscreenCountdown}`}>
-					<Countdown
-						date={Date.now() + 3000}
-						daysInHours={true}
-						zeroPadTime={1}
-						onComplete={() => {
-							setOpen2(false);
-							ws.emit("start");
-						}}
-						renderer={renderer}
-					/>
-				</div>
-			</Modal> */}
 			<Modal disableEscapeKeyDown open={open2}>
 				<div className={styles.endscreen}>
 					<div className={styles.endscreenCountdown}>{numberCountdown}</div>
 				</div>
 			</Modal>
-			<div className={styles.containerGame} id="containerGame">
-				<div className={styles.score}>
-					<div id="leftScore">{score.p1}</div>
-					<div id="rightScore">{score.p2}</div>
-				</div>
-				<div className={`${styles.names} ${styles.leftName}`}>
-					{usernames.p1}
-				</div>
-				<div className={`${styles.names} ${styles.rightName}`}>
-					{usernames.p2}
-				</div>
-				{userInfo && (
+			{userInfo && (
+				<div
+					className={styles.containerGame}
+					id="containerGame"
+					style={{
+						backgroundImage: "url(" + userInfo.map + ")",
+					}}
+				>
+					<div className={styles.score}>
+						<div id="leftScore">{score.p1}</div>
+						<div id="rightScore">{score.p2}</div>
+					</div>
+					<div className={`${styles.names} ${styles.leftName}`}>
+						{usernames.p1}
+					</div>
+					<div className={`${styles.names} ${styles.rightName}`}>
+						{usernames.p2}
+					</div>
 					<div
 						id="ball"
 						className={styles.ball}
 						style={{ content: "url(" + userInfo.ball + ")" }}
+					/>
+					<div
+						id="leftPaddle"
+						className={`${styles.paddle} ${styles.leftPaddle}`}
 					></div>
-				)}
-				<div
-					id="leftPaddle"
-					className={`${styles.paddle} ${styles.leftPaddle}`}
-				></div>
-				<div
-					id="rightPaddle"
-					className={`${styles.paddle} ${styles.rightPaddle}`}
-				></div>
-			</div>
+					<div
+						id="rightPaddle"
+						className={`${styles.paddle} ${styles.rightPaddle}`}
+					></div>
+				</div>
+			)}
 		</div>
 	);
 }

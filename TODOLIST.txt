@@ -3,18 +3,16 @@ A FAIRE :
         - HISTORIQUE MOCHE // fini ?
         - Page Credit
         - Fix la responsivite de la page Profil et autres 
-		- La page Credit
-        - Regler les erreurs dans la console f12 de Mui (ou autres)
-        - Page Credit
 	
 
     II BACK :
+		- Quit channel ✔️
 
     III FULL-STACK :
         - Modal profil dans chat pas finie
         - Rendre les Noms d'utilisateurs UNIQUES
-        - Customisation du background
-        - Status en temps réel
+        - Customisation du background ✔️
+        - Status en temps réel ✔️
 
     IV TESTER EN PROFONDEUR :
         - Status Online/Offline

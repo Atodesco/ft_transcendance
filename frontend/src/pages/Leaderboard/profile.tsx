@@ -1,11 +1,33 @@
 import styles from "../../css/Leaderboard.module.css";
 import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { context } from "../../App";
 
 export default function profiles({ Leaderboard }: any) {
 	return <div id={styles.profile}>{Item(Leaderboard)}</div>;
 }
 
 function Item(data: any[]) {
+	const [status, setStatus] = useState<any>([]);
+	const ws = useContext(context);
+
+	useEffect(() => {
+		let tmpStatus: any = [];
+		data.forEach((item: any) => {
+			tmpStatus.push(item.status);
+		});
+		setStatus(tmpStatus);
+		ws.on("status", (d: any) => {
+			if (data.find((x: any) => x.ft_id === d.ft_id)) {
+				setStatus((status: any) => {
+					let tmp = status.slice();
+					tmp[data.findIndex((x: any) => x.ft_id === d.ft_id)] = d.status;
+					return tmp;
+				});
+			}
+		});
+	}, [data]);
+
 	return (
 		<>
 			{data.map((value, index) => {
@@ -26,7 +48,7 @@ function Item(data: any[]) {
 								</Link>
 							</div>
 							<div className={styles.status} style={{ color: color }}>
-								<span>{value.status}</span>
+								<span>{status[index]}</span>
 							</div>
 
 							<div className={styles.elo}>

@@ -100,14 +100,22 @@ TEMPORAIRES LE SITE EST ETERNEL */
 	display: flex;
 	flex-direction: column;
 	margin: 0;
-
-	padding: 3% 0% 0% 0%;
 }
 
 .containerGame {
 	position: absolute;
-	align-self: center;
+	/* align-self: center; */
 	background-color: var(--colorBackground);
+
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+
 	margin: 0;
 
 	width: 90vw;

@@ -235,6 +235,11 @@ export default function Profile() {
 
 	useEffect(() => {
 		getRank();
+		ws.on("status", (data: any) => {
+			if (userData && userData.ft_id && data.ft_id === userData.ft_id) {
+				setStatus(data.status);
+			}
+		});
 	}, [userData]);
 
 	useEffect(() => {
@@ -448,7 +453,7 @@ export default function Profile() {
 								height="10px"
 								rect
 								fontColor="gray"
-								percentage={userData.levelProgress}
+								percentage={userData.levelProgress.toString()}
 								rectPadding="1px"
 								rectBorderRadius="20px"
 								trackPathColor="transparent"

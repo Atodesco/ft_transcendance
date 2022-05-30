@@ -67,7 +67,6 @@ function Item(
 			navigate("/TheGame");
 		});
 		ws.on("getChannelAdmin", (data: any) => {
-			console.log(undefined);
 			setAdmins(data.admins);
 		});
 	}, []);
@@ -79,7 +78,6 @@ function Item(
 		} else if (admins && !admins.find((x: any) => x.ft_id === user.ft_id)) {
 			setBooleanButtonMakeAdmin(true);
 		}
-		console.log(admins);
 	}, [user, admins]);
 
 	useEffect(() => {
@@ -104,31 +102,29 @@ function Item(
 						);
 					})
 				) {
-					return <></>;
+					return;
 				}
 				msg.push(value);
 				return (
-					<div style={{ marginTop: "5%" }}>
+					<div style={{ marginTop: "5%" }} key={index}>
 						{value.user.ft_id !== user_id && (
-							<>
-								<div className={styles.chatAvatar}>
-									<Avatar
-										style={{ cursor: "pointer" }}
-										className={styles.chatAvatar}
-										name={value.user.username}
-										size="25pt"
-										round="30px"
-										src={value.user.picture}
-										onClick={() => {
-											setUser(value.user);
-											ws.emit("getChannelAdmin", {
-												channelId: channelInfo.id,
-											});
-											setModalProfile(true);
-										}}
-									/>
-								</div>
-							</>
+							<div className={styles.chatAvatar}>
+								<Avatar
+									style={{ cursor: "pointer" }}
+									className={styles.chatAvatar}
+									name={value.user.username}
+									size="25pt"
+									round="30px"
+									src={value.user.picture}
+									onClick={() => {
+										setUser(value.user);
+										ws.emit("getChannelAdmin", {
+											channelId: channelInfo.id,
+										});
+										setModalProfile(true);
+									}}
+								/>
+							</div>
 						)}
 						<div
 							style={{
@@ -138,8 +134,7 @@ function Item(
 						>
 							<span
 								className={styles.singleMessage}
-								key={index}
-								id={index.toString()}
+								// id={index.toString()}
 								style={{
 									backgroundColor:
 										value.user.ft_id === user_id ? "lightGreen" : "lightBlue",

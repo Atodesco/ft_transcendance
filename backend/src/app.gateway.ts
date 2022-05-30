@@ -51,6 +51,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 				this.clientsId.set(client, Number(client.handshake.query.ft_id));
 				this.clientsFt.set(Number(client.handshake.query.ft_id), client);
+				this.server.emit("status", { ft_id: user.ft_id, status: user.status });
 			}
 		} catch (error) {
 			console.log("Error handleConnection: ", error);
@@ -84,6 +85,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 			this.clientsId.delete(client);
 			this.clientsFt.delete(ft_id);
+			this.server.emit("status", { ft_id: user.ft_id, status: user.status });
 		}
 	}
 
@@ -260,7 +262,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			{
 				id: data.channelId,
 			},
-			{ relations: ["users"] }
+			{ relations: ["users", "admins"] }
 		);
 		if (!channel) return;
 		if (channel.owner && channel.owner === user) {
@@ -497,7 +499,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			p1Username: p1Username,
 			p2Username: p2Username,
 		});
-		this.roomService.startGame(room);
+		this.roomService.startGame(room, this.server);
 	}
 
 	@SubscribeMessage("start")

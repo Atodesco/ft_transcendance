@@ -91,4 +91,11 @@ export class UserService {
 		await user.save();
 		return user;
 	}
+
+	async setMap(id: number, link: string): Promise<User> {
+		const user = await User.findOne({ ft_id: id });
+		user.map = link;
+		await user.save();
+		return user;
+	}
 }

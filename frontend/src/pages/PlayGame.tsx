@@ -22,6 +22,7 @@ export default function PlayGame() {
 	const [booleanButton, setBooleanButton] = useState(true);
 	const [booleanButton2, setBooleanButton2] = useState(true);
 	const [ball, setBall] = useState("");
+	const [map, setMap] = useState("");
 	const [ballUrl, setBallUrl] = useState("");
 	const [userInfo, setUserInfo] = useState<any>();
 	const navigate = useNavigate();
@@ -119,7 +120,7 @@ export default function PlayGame() {
 					</div>
 				</div>
 				<div className={styles.customization}>
-					<Stack className={styles.stackButton}>
+					<Stack spacing={6} className={styles.stackButton}>
 						<h1
 							style={{
 								fontSize: "1.5vw",
@@ -243,6 +244,113 @@ export default function PlayGame() {
 								}}
 								className={styles.ball}
 							></div>
+						</FormControl>
+						<FormControl
+							style={{ backgroundColor: "darkgrey", borderRadius: "0.2vw" }}
+							fullWidth
+						>
+							<InputLabel>Map Style</InputLabel>
+							<Select
+								labelId="demo-simple-select-label"
+								value={map}
+								label="Map Type"
+								onChange={(e) => {
+									setMap(e.target.value);
+								}}
+							>
+								<MenuItem
+									value={map}
+									onClick={async () => {
+										await fetch(
+											process.env.REACT_APP_BACK_URL +
+												":" +
+												process.env.REACT_APP_BACK_PORT +
+												"/user/" +
+												(await userInfo.ft_id) +
+												"/setMap",
+											{
+												headers: { "Content-Type": "application/json" },
+												method: "POST",
+												body: JSON.stringify({
+													link: "https://imgs.search.brave.com/kpKdEplHVzxISeFCc8sdntHirpex89lf-l2CwNciQro/rs:fit:1200:675:1/g:ce/aHR0cDovL3d3dy5j/b25jZXB0ZHJhdy5j/b20vSG93LVRvLUd1/aWRlL3BpY3R1cmUv/U3BvcnQtQmFza2V0/YmFsbC1jb3VydC1j/b2xvci1UZW1wbGF0/ZS5wbmc",
+												}),
+											}
+										);
+										getUserInfo();
+									}}
+								>
+									BasketBall
+								</MenuItem>
+								<MenuItem
+									value={map}
+									onClick={async () => {
+										await fetch(
+											process.env.REACT_APP_BACK_URL +
+												":" +
+												process.env.REACT_APP_BACK_PORT +
+												"/user/" +
+												(await userInfo.ft_id) +
+												"/setMap",
+											{
+												headers: { "Content-Type": "application/json" },
+												method: "POST",
+												body: JSON.stringify({
+													link: "https://media1.thehungryjpeg.com/thumbs2/ori_3607477_n0uvrq0vuyn9ppdsdlr6u18hddmgbm3tkdur2w2u_sea-beach-landscape-cartoon-summer-sunny-day-ocean-view-horizontal-p.jpg",
+												}),
+											}
+										);
+										getUserInfo();
+									}}
+								>
+									Beach
+								</MenuItem>
+								<MenuItem
+									value={map}
+									onClick={async () => {
+										await fetch(
+											process.env.REACT_APP_BACK_URL +
+												":" +
+												process.env.REACT_APP_BACK_PORT +
+												"/user/" +
+												(await userInfo.ft_id) +
+												"/setMap",
+											{
+												headers: { "Content-Type": "application/json" },
+												method: "POST",
+												body: JSON.stringify({
+													link: "https://imgs.search.brave.com/sFDGCuAEpBaFWOMKRSaFMxJC1o7TSjWjjf5RDidUZ34/rs:fit:852:480:1/g:ce/aHR0cHM6Ly9hazYu/cGljZG4ubmV0L3No/dXR0ZXJzdG9jay92/aWRlb3MvMTQyMjc5/MTYvdGh1bWIvMS5q/cGc",
+												}),
+											}
+										);
+										getUserInfo();
+									}}
+								>
+									SynthWave
+								</MenuItem>
+								<MenuItem
+									value={map}
+									onClick={async () => {
+										await fetch(
+											process.env.REACT_APP_BACK_URL +
+												":" +
+												process.env.REACT_APP_BACK_PORT +
+												"/user/" +
+												(await userInfo.ft_id) +
+												"/setMap",
+											{
+												headers: { "Content-Type": "application/json" },
+												method: "POST",
+												body: JSON.stringify({
+													link: "",
+												}),
+											}
+										);
+										getUserInfo();
+									}}
+								>
+									Normal
+								</MenuItem>
+							</Select>
 						</FormControl>
 					</Stack>
 				</div>

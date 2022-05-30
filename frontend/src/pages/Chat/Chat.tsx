@@ -178,7 +178,6 @@ export default function Chat() {
 			{ credentials: "include" }
 		);
 		const data = await rawData.json();
-		console.log(data);
 		setDatabaseChannel(data);
 	};
 	const handleOpenModal = () => {
@@ -197,13 +196,13 @@ export default function Chat() {
 						disablePortal
 						clearOnEscape={true}
 						autoHighlight
-						options={searchBarState}
+						options={searchBarState ? searchBarState : []}
 						sx={{ width: 673 }}
 						getOptionLabel={(channel: any) => {
 							return channel.channelname;
 						}}
 						inputValue={autocomplete}
-						value={searchBarState}
+						// value={searchBarState}
 						onChange={(event, value) => {
 							if (value && !value.private) {
 								ws.emit("joinChannel", { channelId: value.id });
@@ -288,7 +287,7 @@ export default function Chat() {
 								(c: any) => c.id === channelSelected
 							)}
 							userInfo={userInfo}
-						></Messages>
+						/>
 					)}
 				</div>
 				<div className={styles.chatBar}>

@@ -4,7 +4,7 @@ import {
 	HttpStatus,
 	Injectable,
 } from "@nestjs/common";
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { UserStatus } from "src/interfaces/user-status.enum";
 import { User } from "src/user/entities/user.entity";
 import { Player, Room, State } from "./interfaces/room.interface";
@@ -17,6 +17,7 @@ export class RoomService {
 	rooms: Map<string, Room> = new Map();
 	queue: Array<Player> = [];
 	spectatorQueue: Array<Socket> = [];
+	server: Server;
 
 	createRoom(code: string = null): Room {
 		while (!code) {
@@ -65,15 +66,6 @@ export class RoomService {
 		return this.queue.find((player) => player.ft_id == ft_id);
 	}
 
-	// getSpectator(spec: Socket): Socket {
-	// 	for (const room of this.rooms.values()) {
-	// 		for (const spectator of room.spectators) {
-	// 			if (spec === spectator) return spectator;
-	// 		}
-	// 	}
-	// 	return this.spectatorQueue.find((spectator) => spectator === spec);
-	// }
-
 	getRoomForSpectators(spec: Socket): Room {
 		const rooms = Array.from(this.rooms.values());
 		const room = rooms.find((room) =>
@@ -82,16 +74,6 @@ export class RoomService {
 
 		return room;
 	}
-
-	// getRoomForUser(ft_id: number): Room {
-	// 	const rooms = Array.from(this.rooms.values());
-	// 	const room = rooms.find(
-	// 		(room) => !room.players.find((player) => player.ft_id == ft_id)
-	// 	);
-	// 	if (!room) throw new HttpException("Room not found", HttpStatus.NOT_FOUND);
-
-	// 	return room;
-	// }
 
 	emit(room: Room, event: string, ...args: any): void {
 		for (const player of room.players) {
@@ -185,7 +167,8 @@ export class RoomService {
 		}
 	}
 
-	async startGame(room: Room): Promise<void> {
+	async startGame(room: Room, server: Server): Promise<void> {
+		this.server = server;
 		if (room.state !== State.STARTING && room.state !== State.COUNTDOWN) {
 			return;
 		}
@@ -201,6 +184,9 @@ export class RoomService {
 		p2.status = UserStatus.INGAME;
 		await p1.save();
 		await p2.save();
+
+		this.server.emit("status", { ft_id: p1.ft_id, status: p1.status });
+		this.server.emit("status", { ft_id: p2.ft_id, status: p2.status });
 
 		this.emit(room, "countdown", 3);
 		await setTimeout(() => {
@@ -263,6 +249,15 @@ export class RoomService {
 
 			await winner_user.save();
 			await looser_user.save();
+
+			this.server.emit("status", {
+				ft_id: winner_user.ft_id,
+				status: winner_user.status,
+			});
+			this.server.emit("status", {
+				ft_id: looser_user.ft_id,
+				status: looser_user.status,
+			});
 
 			this.pongService.createGame(
 				winner.ft_id,
