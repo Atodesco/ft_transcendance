@@ -13,6 +13,7 @@ A FAIRE :
         - Rendre les Noms d'utilisateurs UNIQUES
         - Customisation du background ✔️
         - Status en temps réel ✔️
+        - Quit Channel provoque des warnings dans f12
 
     IV TESTER EN PROFONDEUR :
         - Status Online/Offline
