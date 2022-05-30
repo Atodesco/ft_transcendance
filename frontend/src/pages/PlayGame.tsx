@@ -147,7 +147,10 @@ export default function PlayGame() {
 									value={ball}
 									onClick={async () => {
 										await fetch(
-											"http://localhost:3000/user/" +
+											process.env.REACT_APP_BACK_URL +
+												":" +
+												process.env.REACT_APP_BACK_PORT +
+												"/user/" +
 												(await userInfo.ft_id) +
 												"/setBall",
 											{
@@ -167,7 +170,10 @@ export default function PlayGame() {
 									value={ball}
 									onClick={async () => {
 										await fetch(
-											"http://localhost:3000/user/" +
+											process.env.REACT_APP_BACK_URL +
+												":" +
+												process.env.REACT_APP_BACK_PORT +
+												"/user/" +
 												(await userInfo.ft_id) +
 												"/setBall",
 											{
@@ -187,7 +193,10 @@ export default function PlayGame() {
 									value={ball}
 									onClick={async () => {
 										await fetch(
-											"http://localhost:3000/user/" +
+											process.env.REACT_APP_BACK_URL +
+												":" +
+												process.env.REACT_APP_BACK_PORT +
+												"/user/" +
 												(await userInfo.ft_id) +
 												"/setBall",
 											{
@@ -207,7 +216,10 @@ export default function PlayGame() {
 									value={ball}
 									onClick={async () => {
 										await fetch(
-											"http://localhost:3000/user/" +
+											process.env.REACT_APP_BACK_URL +
+												":" +
+												process.env.REACT_APP_BACK_PORT +
+												"/user/" +
 												(await userInfo.ft_id) +
 												"/setBall",
 											{

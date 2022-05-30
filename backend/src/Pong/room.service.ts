@@ -5,6 +5,7 @@ import {
 	Injectable,
 } from "@nestjs/common";
 import { Socket } from "socket.io";
+import { UserStatus } from "src/interfaces/user-status.enum";
 import { User } from "src/user/entities/user.entity";
 import { Player, Room, State } from "./interfaces/room.interface";
 import { PongService } from "./pong.service";
@@ -37,6 +38,7 @@ export class RoomService {
 				speed: 0.8,
 				radius: 1.5,
 			},
+			ready: false,
 			normal_ball_speed: 0.8,
 			maxScore: 3,
 		};
@@ -74,8 +76,8 @@ export class RoomService {
 
 	getRoomForSpectators(spec: Socket): Room {
 		const rooms = Array.from(this.rooms.values());
-		const room = rooms.find(
-			(room) => !room.spectators.find((spectator) => spectator === spec)
+		const room = rooms.find((room) =>
+			room.spectators.find((spectator) => spectator === spec)
 		);
 
 		return room;
@@ -183,13 +185,33 @@ export class RoomService {
 		}
 	}
 
-	startGame(room: Room): void {
-		if (room.state != State.STARTING) {
+	async startGame(room: Room): Promise<void> {
+		if (room.state !== State.STARTING && room.state !== State.COUNTDOWN) {
 			return;
 		}
 		room.state = State.COUNTDOWN;
+		if (!room.ready) {
+			room.ready = true;
+			return;
+		}
 
-		this.emit(room, "ready");
+		const p1 = await User.findOne({ ft_id: room.players[0].ft_id });
+		const p2 = await User.findOne({ ft_id: room.players[1].ft_id });
+		p1.status = UserStatus.INGAME;
+		p2.status = UserStatus.INGAME;
+		await p1.save();
+		await p2.save();
+
+		this.emit(room, "countdown", 3);
+		await setTimeout(() => {
+			this.emit(room, "countdown", 2);
+		}, 1000);
+		await setTimeout(() => {
+			this.emit(room, "countdown", 1);
+		}, 2000);
+		await setTimeout(() => {
+			this.emit(room, "ready");
+		}, 3000);
 	}
 
 	startCalc(room: Room): void {
@@ -235,6 +257,10 @@ export class RoomService {
 
 			winner_user.win++;
 			looser_user.lose++;
+
+			winner_user.status = UserStatus.ONLINE;
+			looser_user.status = UserStatus.ONLINE;
+
 			await winner_user.save();
 			await looser_user.save();
 

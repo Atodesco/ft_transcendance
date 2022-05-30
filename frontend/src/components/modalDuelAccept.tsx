@@ -19,10 +19,12 @@ export default function ModalDuelAccept(props: Props) {
 
 	useEffect(() => {
 		ws.on("duelProposal", (data: any) => {
-			console.log("duelProposal");
-			console.log("duelProposal", data);
-			setUsername(data.username);
-			props.setOpen(true);
+			if (window.location.pathname !== "/TheGame") {
+				setUsername(data.username);
+				props.setOpen(true);
+			} else {
+				ws.emit("cancelDuelProposal");
+			}
 		});
 		ws.on("cancelDuelProposal", (data: any) => {
 			props.setOpen(false);

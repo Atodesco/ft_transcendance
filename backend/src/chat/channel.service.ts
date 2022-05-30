@@ -1,13 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/user/entities/user.entity";
-import { Repository } from "typeorm";
 import { Channel } from "./entities/channel.entity";
 
 @Injectable()
 export class ChannelService {
 	async getChannels() {
-		const channels = await Channel.find();
+		const channels = await Channel.find({ relations: ["admins"] });
 		let c = [];
 		channels.forEach((channel) => {
 			c.push({
@@ -15,6 +13,7 @@ export class ChannelService {
 				channelname: channel.channelname,
 				dm: channel.dm,
 				private: channel.private,
+				admins: channel.admins,
 			});
 		});
 		return c;

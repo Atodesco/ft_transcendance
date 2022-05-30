@@ -178,6 +178,7 @@ export default function Chat() {
 			{ credentials: "include" }
 		);
 		const data = await rawData.json();
+		console.log(data);
 		setDatabaseChannel(data);
 	};
 	const handleOpenModal = () => {
@@ -283,6 +284,9 @@ export default function Chat() {
 						<Messages
 							myMessages={messages}
 							channelSelected={channelSelected}
+							channelInfo={channelUserJoined.find(
+								(c: any) => c.id === channelSelected
+							)}
 							userInfo={userInfo}
 						></Messages>
 					)}

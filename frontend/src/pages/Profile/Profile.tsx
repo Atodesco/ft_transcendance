@@ -132,10 +132,6 @@ export default function Profile() {
 			elo: data.elo,
 		};
 		setMyData(user);
-		ws.on("userData", (data: any) => {
-			setStatus(data.status);
-		});
-		ws.emit("GetUserData");
 	};
 
 	const filteredData = users.filter((el: any) => {
@@ -190,6 +186,7 @@ export default function Profile() {
 			levelProgress: data.lvl % 100,
 			elo: data.elo,
 		};
+		setStatus(data.status);
 		setUserData(user);
 		link =
 			process.env.REACT_APP_BACK_URL +
@@ -495,9 +492,9 @@ export default function Profile() {
 								other = item.looser;
 								myscore = item.winner_score;
 								otherscore = item.looser_score;
-								cl = styles.gameLoose;
-							} else {
 								cl = styles.gameWin;
+							} else {
+								cl = styles.gameLoose;
 								other = item.winner;
 								myscore = item.looser_score;
 								otherscore = item.winner_score;

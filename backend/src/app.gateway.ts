@@ -168,6 +168,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				user: user,
 				date: data.date,
 				channelId: data.channelId,
+				admins: channel.admins,
 			});
 		}
 	}
@@ -200,6 +201,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			channelname: channel.channelname,
 			id: channel.id,
 			private: channel.private,
+			admins: channel.admins,
 		});
 	}
 
@@ -213,6 +215,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		let channel = new Channel();
 		channel.channelname = data.channelname;
 		channel.owner = user;
+		channel.admins = [user];
 		channel.private = data.password ? true : false;
 		if (data.password) {
 			const saltRounds = 10;
@@ -229,6 +232,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			channelname: channel.channelname,
 			id: channel.id,
 			private: channel.private,
+			admins: channel.admins,
 		});
 
 		const sockets: any[] = Array.from(this.server.sockets.sockets.values());
@@ -239,6 +243,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					id: channel.id,
 					private: channel.private,
 					dm: channel.dm,
+					admins: channel.admins,
 				});
 			}
 		});
@@ -262,6 +267,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			channel.owner = null;
 		}
 		channel.users = channel.users.filter((u) => u.id !== user.id);
+		channel.admins = channel.admins.filter((u) => u.id !== user.id);
 
 		if (channel.users.length > 0 && !channel.dm) {
 			client.emit("myChannel", {
@@ -270,6 +276,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				id: channel.id,
 				private: channel.private,
 				dm: channel.dm,
+				admins: channel.admins,
 			});
 			await channel.save();
 		} else if (channel.users.length === 0 || channel.dm) {
@@ -282,6 +289,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 						id: channel.id,
 						private: channel.private,
 						dm: channel.dm,
+						admins: channel.admins,
 					});
 				}
 			}
@@ -291,8 +299,93 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				id: channel.id,
 				private: channel.private,
 				dm: channel.dm,
+				admins: channel.admins,
 			});
 			await Channel.delete({ id: channel.id });
+		}
+	}
+
+	@SubscribeMessage("getChannelAdmin")
+	async getChannelAdmin(
+		client: Socket,
+		data: { channelId: string }
+	): Promise<void> {
+		const channel = await Channel.findOne(
+			{
+				id: data.channelId,
+			},
+			{ relations: ["admins"] }
+		);
+		if (!channel) return;
+		client.emit("getChannelAdmin", {
+			admins: channel.admins,
+		});
+	}
+
+	@SubscribeMessage("makeAdmin")
+	async makeAdmin(client: Socket, data: any): Promise<void> {
+		const ft_id = this.clientsId.get(client);
+		const user = await User.findOne({ ft_id: ft_id });
+		const userToMakeAdmin = await User.findOne({ ft_id: data.user_id });
+		const uSocket = this.clientsFt.get(data.user_id);
+		console.log("add, user: ", userToMakeAdmin.username);
+
+		const channel = await Channel.findOne(
+			{
+				id: data.channel_id,
+			},
+			{ relations: ["admins"] }
+		);
+		if (!channel || !userToMakeAdmin || !user) return;
+		if (
+			channel.admins.find((u) => u.id === user.id) &&
+			!channel.admins.find((u) => u.id === userToMakeAdmin.id)
+		) {
+			channel.admins.push(userToMakeAdmin);
+			await channel.save();
+			if (uSocket) {
+				console.log("uSocket: ", channel.channelname);
+				uSocket.emit("getChannelAdmin", {
+					admins: channel.admins,
+				});
+			}
+			console.log("user: ", userToMakeAdmin.username, " is now admin");
+		}
+	}
+
+	@SubscribeMessage("removeAdmin")
+	async removeAdmin(client: Socket, data: any): Promise<void> {
+		const ft_id = this.clientsId.get(client);
+		const user = await User.findOne({ ft_id: ft_id });
+		const userToRemoveAdmin = await User.findOne({ ft_id: data.user_id });
+		const uSocket = this.clientsFt.get(data.user_id);
+		console.log("remove, user: ", userToRemoveAdmin.username);
+		const channel = await Channel.findOne(
+			{
+				id: data.channel_id,
+			},
+			{ relations: ["admins"] }
+		);
+		if (!channel || !userToRemoveAdmin || !user) return;
+		if (
+			channel.admins.find((u) => u.id === user.id) &&
+			channel.admins.find((u) => u.id === userToRemoveAdmin.id)
+		) {
+			channel.admins = channel.admins.filter(
+				(u) => u.id !== userToRemoveAdmin.id
+			);
+			console.log(
+				"user: ",
+				userToRemoveAdmin.username,
+				" is not admin anymore"
+			);
+			await channel.save();
+			if (uSocket) {
+				console.log("uSocket: ", channel.channelname);
+				uSocket.emit("getChannelAdmin", {
+					admins: channel.admins,
+				});
+			}
 		}
 	}
 
@@ -310,12 +403,14 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			channelname: channel.channelname,
 			id: channel.id,
 			private: channel.private,
+			admins: channel.admins,
 		});
 		otherClient?.emit("myChannel", {
 			add: true,
 			channelname: channel.channelname,
 			id: channel.id,
 			private: channel.private,
+			admins: channel.admins,
 		});
 	}
 
@@ -334,6 +429,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				channelname: channel.channelname,
 				private: channel.private,
 				dm: channel.dm,
+				admins: channel.admins,
 			};
 		});
 
@@ -353,6 +449,11 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			player_speed: 0.9,
 		};
 		this.roomService.addQueue(p);
+	}
+
+	@SubscribeMessage("queueSpectate")
+	async onQueueSpectate(client: Socket): Promise<void> {
+		this.roomService.findRoomToSpectate(client);
 	}
 
 	@SubscribeMessage("removeSocket")
@@ -492,10 +593,5 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.roomService.joinRoom(roomCode, p1);
 			this.roomService.joinRoom(roomCode, p2);
 		}
-	}
-
-	@SubscribeMessage("queueSpectate")
-	async onQueueSpectate(client: Socket): Promise<void> {
-		this.roomService.findRoomToSpectate(client);
 	}
 }

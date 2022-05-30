@@ -22,7 +22,8 @@ export default function TheGame() {
 		setOpen1(false);
 		navigate("/Profile");
 	};
-	const [open2, setOpen2] = React.useState(false);
+	const [open2, setOpen2] = React.useState(true);
+	const [numberCountdown, setNumberCountdown] = React.useState(3);
 
 	const [userInfo, setUserInfo] = React.useState<any>();
 
@@ -62,6 +63,7 @@ export default function TheGame() {
 				"room",
 				(data: { code: string; p1Username: string; p2Username: string }) => {
 					roomCode.current = data.code;
+					console.log("LES NOMS SONT :", data.p1Username, data.p2Username);
 					setUsernames({ p1: data.p1Username, p2: data.p2Username });
 				}
 			);
@@ -97,8 +99,8 @@ export default function TheGame() {
 				navigate("/PlayGame");
 			});
 			ws.on("ready", (data: any) => {
-				console.log("on a recu");
-				setOpen2(true);
+				setOpen2(false);
+				ws.emit("start");
 			});
 			ws.on("player", (data: { p1: number; p2: number }) => {
 				const p1 = document.getElementById("leftPaddle");
@@ -109,6 +111,10 @@ export default function TheGame() {
 				if (p2) {
 					p2.style.top = data.p2 + "%";
 				}
+			});
+			ws.on("countdown", (data: number) => {
+				// setOpen2(true);
+				setNumberCountdown(data);
 			});
 			document.addEventListener("keydown", (e) => {
 				if (e.key === "ArrowUp") {
@@ -234,17 +240,7 @@ export default function TheGame() {
 					</div>
 				</div>
 			</Modal>
-			<button
-				className={`${styles.buttons} ${styles.goal}`}
-				onClick={() => {
-					document
-						.getElementById("containerGame")
-						?.classList.toggle(styles.clignoter);
-				}}
-			>
-				GOAL
-			</button>
-			<Modal disableEscapeKeyDown open={open2}>
+			{/* <Modal disableEscapeKeyDown open={open2}>
 				<div className={`${styles.endscreen} ${styles.endscreenCountdown}`}>
 					<Countdown
 						date={Date.now() + 3000}
@@ -256,6 +252,11 @@ export default function TheGame() {
 						}}
 						renderer={renderer}
 					/>
+				</div>
+			</Modal> */}
+			<Modal disableEscapeKeyDown open={open2}>
+				<div className={styles.endscreen}>
+					<div className={styles.endscreenCountdown}>{numberCountdown}</div>
 				</div>
 			</Modal>
 			<div className={styles.containerGame} id="containerGame">

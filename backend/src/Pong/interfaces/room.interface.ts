@@ -34,6 +34,7 @@ export interface Player {
 export interface Room {
 	code: string;
 	state: State;
+	ready: boolean;
 	ball: Ball;
 	players: Array<Player>;
 	spectators: Array<Socket>;

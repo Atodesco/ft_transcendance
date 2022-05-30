@@ -4,14 +4,22 @@ A FAIRE :
         - Page Credit
         - Fix la responsivite de la page Profil et autres 
 		- La page Credit
+        - Regler les erreurs dans la console f12 de Mui (ou autres)
+        - Page Credit
+	
 
     II BACK :
-        - 
 
     III FULL-STACK :
         - Modal profil dans chat pas finie
-        - Countdown bug (Apparait des fois/ game demarre avant fin du countdown/ ...)
+        - Rendre les Noms d'utilisateurs UNIQUES
+        - Customisation du background
+        - Status en temps réel
 
     IV TESTER EN PROFONDEUR :
         - Status Online/Offline
         - modal Duel 
+        - Injections SQl
+        - Tester le Chat en profondeur
+        - Tester le blocage
+        - Deconnexions pendant match
