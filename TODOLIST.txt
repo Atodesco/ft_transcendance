@@ -2,7 +2,8 @@ A FAIRE :
     I FRONT: 
         - HISTORIQUE MOCHE // fini ?
         - Page Credit
-        - Fix la responsivite de la page Profil et autres 
+        - Fix la responsivite de la page Profil et autres
+		- ne pas afficher le onHover pour modifier login sur les autre profile
 	
 
     II BACK :
