@@ -103,7 +103,7 @@ export default function PlayGame() {
 										queueTimer.style.opacity = "0";
 									}
 								}
-								if (booleanButton) {
+								if (booleanButton2) {
 									ws.emit("queueSpectate");
 								} else {
 									ws.emit("removeSocket", { spectate: true });

@@ -597,10 +597,12 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const player: Player = this.roomService.getPlayer(
 			this.clientsId.get(client)
 		);
+		let spec = false;
 		let room = undefined;
 		if (player && player.room) {
 			room = player.room;
 		} else {
+			spec = true;
 			room = this.roomService.getRoomForSpectators(client);
 		}
 		if (!room) {
@@ -616,6 +618,12 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		let p2Username = "";
 		if (p1) p1Username = p1.username;
 		if (p2) p2Username = p2.username;
+		if (spec) {
+			client.emit("score", {
+				p1: room.players[0].score,
+				p2: room.players[1].score,
+			});
+		}
 		client.emit("room", {
 			code: room.code,
 			p1Username: p1Username,

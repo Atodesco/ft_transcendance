@@ -99,13 +99,23 @@ export class RoomService {
 			return this.queue.splice(this.queue.indexOf(player), 1);
 		}
 
+		if (this.spectatorQueue.indexOf(spectator) !== -1) {
+			return this.spectatorQueue.splice(
+				this.spectatorQueue.indexOf(spectator),
+				1
+			);
+		}
+
 		for (const room of this.rooms.values()) {
 			if (
 				room.spectators &&
 				spectator &&
 				room.spectators.indexOf(spectator) !== -1
 			) {
-				return room.spectators.splice(room.spectators.indexOf(spectator), 1);
+				room.spectators = room.spectators.filter(
+					(spectator) => spectator !== spectator
+				);
+				return room;
 			}
 
 			for (const p of room.players) {
@@ -149,7 +159,7 @@ export class RoomService {
 		player?: Player,
 		spectator?: Socket
 	): Promise<void> {
-		if (room.state == State.WAITING && player) {
+		if (room.state == State.WAITING && player !== undefined) {
 			player.room = room;
 			room.players.push(player);
 

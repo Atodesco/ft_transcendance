@@ -22,7 +22,7 @@ export default function TheGame() {
 		setOpen1(false);
 		navigate("/Profile");
 	};
-	const [open2, setOpen2] = React.useState(true);
+	const [open2, setOpen2] = React.useState(false);
 	const [numberCountdown, setNumberCountdown] = React.useState(3);
 
 	const [userInfo, setUserInfo] = React.useState<any>({
@@ -118,6 +118,7 @@ export default function TheGame() {
 				}
 			});
 			ws.on("countdown", (data: number) => {
+				setOpen2(true);
 				setNumberCountdown(data);
 			});
 			document.addEventListener("keydown", (e) => {
