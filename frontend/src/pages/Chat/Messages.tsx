@@ -187,97 +187,104 @@ function Item(
 								{admins.find((e: any) => {
 									return e.ft_id === userInfo.ft_id;
 								}) && (
-									<Button
-										variant="contained"
-										color={!booleanButtonMakeAdmin ? "error" : "success"}
-										endIcon={<AdminPanelSettings />}
-										onClick={() => {
-											if (booleanButtonMakeAdmin) {
-												ws.emit("makeAdmin", {
-													user_id: user.ft_id,
-													channel_id: channelSelected,
-												});
-											} else {
-												ws.emit("removeAdmin", {
-													user_id: user.ft_id,
-													channel_id: channelSelected,
-												});
-											}
+									<>
+										<Button
+											variant="contained"
+											color={!booleanButtonMakeAdmin ? "error" : "success"}
+											endIcon={<AdminPanelSettings />}
+											onClick={() => {
+												if (booleanButtonMakeAdmin) {
+													ws.emit("makeAdmin", {
+														user_id: user.ft_id,
+														channel_id: channelSelected,
+													});
+												} else {
+													ws.emit("removeAdmin", {
+														user_id: user.ft_id,
+														channel_id: channelSelected,
+													});
+												}
 
-											setBooleanButtonMakeAdmin(!booleanButtonMakeAdmin);
-										}}
-									>
-										{!booleanButtonMakeAdmin ? "Remove Admin" : "Make Admin"}
-									</Button>
-								)}
-								<Button
-									title="Mute"
-									variant="contained"
-									color="error"
-									endIcon={<VolumeOff />}
-									onClick={() => {
-										if (!showDropdownMute) {
-											setValueTimeMute(0);
-										}
-										setShowDropdownMute(!showDropdownMute);
-									}}
-								>
-									Mute
-								</Button>
-								{showDropdownMute && (
-									<Form.Control
-										type="number"
-										placeholder="Time staying banned (in seconds)"
-										onChange={(e) => setValueTimeMute(Number(e.target.value))}
-										onKeyDown={(e) => {
-											if (e.key === "Enter") {
-												ws.emit("mute", {
-													user_id: user.ft_id,
-													channel_id: channelSelected,
-													endOfMute: new Date(
-														new Date().getTime() + valueTimeMute * 1000
-													),
-												});
-											}
-										}}
-										value={valueTimeMute}
-										className={styles.dropdownButtonMute}
-									/>
-								)}
-								<Button
-									variant="contained"
-									color="error"
-									endIcon={<Block />}
-									onClick={() => {
-										if (!showDropdownBan) {
-											setValueTimeBan(0);
-										}
-										setShowDropdownBan(!showDropdownBan);
-									}}
-								>
-									Ban
-								</Button>
-								{showDropdownBan && (
-									<Form.Control
-										type="number"
-										placeholder="Time staying banned (in seconds)"
-										onChange={(e) => setValueTimeBan(Number(e.target.value))}
-										onKeyDown={(e) => {
-											if (e.key === "Enter") {
-												ws.emit("ban", {
-													user_id: user.ft_id,
-													channel_id: channelSelected,
-													endOfBan: new Date(
-														new Date().getTime() + valueTimeBan * 1000
-													),
-												});
-											}
-										}}
-										value={valueTimeBan}
-										className={styles.dropdownButtonBan}
-									/>
+												setBooleanButtonMakeAdmin(!booleanButtonMakeAdmin);
+											}}
+										>
+											{!booleanButtonMakeAdmin ? "Remove Admin" : "Make Admin"}
+										</Button>
+										<Button
+											title="Mute"
+											variant="contained"
+											color="error"
+											endIcon={<VolumeOff />}
+											onClick={() => {
+												if (!showDropdownMute) {
+													setValueTimeMute(0);
+												}
+												setShowDropdownMute(!showDropdownMute);
+											}}
+										>
+											Mute
+										</Button>
+										{showDropdownMute && (
+											<Form.Control
+												type="number"
+												placeholder="Time staying banned (in seconds)"
+												onChange={(e) =>
+													setValueTimeMute(Number(e.target.value))
+												}
+												onKeyDown={(e) => {
+													if (e.key === "Enter") {
+														ws.emit("mute", {
+															user_id: user.ft_id,
+															channel_id: channelSelected,
+															endOfMute: new Date(
+																new Date().getTime() + valueTimeMute * 1000
+															),
+														});
+													}
+												}}
+												value={valueTimeMute}
+												className={styles.dropdownButtonMute}
+											/>
+										)}
+										<Button
+											variant="contained"
+											color="error"
+											endIcon={<Block />}
+											onClick={() => {
+												if (!showDropdownBan) {
+													setValueTimeBan(0);
+												}
+												setShowDropdownBan(!showDropdownBan);
+											}}
+										>
+											Ban
+										</Button>
+										{showDropdownBan && (
+											<Form.Control
+												type="number"
+												placeholder="Time staying banned (in seconds)"
+												onChange={(e) =>
+													setValueTimeBan(Number(e.target.value))
+												}
+												onKeyDown={(e) => {
+													if (e.key === "Enter") {
+														ws.emit("ban", {
+															user_id: user.ft_id,
+															channel_id: channelSelected,
+															endOfBan: new Date(
+																new Date().getTime() + valueTimeBan * 1000
+															),
+														});
+													}
+												}}
+												value={valueTimeBan}
+												className={styles.dropdownButtonBan}
+											/>
+										)}
+									</>
 								)}
 							</Stack>
+
 							<Stack className={styles.boxButtons} spacing={15} direction="row">
 								<Button
 									variant="contained"
