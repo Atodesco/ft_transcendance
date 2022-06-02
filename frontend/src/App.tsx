@@ -6,10 +6,8 @@ import {
 	Navigate,
 	useLocation,
 } from "react-router-dom";
-import { useNavigate } from "react-router";
 import Chat from "./pages/Chat/Chat";
 import Profile from "./pages/Profile/Profile";
-import Credits from "./pages/Credits";
 import Friendlist from "./pages/Friendlist/Friendlist";
 import Leaderboard from "./pages/Leaderboard/Leaderboard";
 import Login from "./pages/Login";
@@ -69,7 +67,6 @@ function App() {
 								<Route path="/Leaderboard" element={<Leaderboard />} />
 								<Route path="/Friendlist" element={<Friendlist />} />
 								<Route path="/Chat" element={<Chat />} />
-								<Route path="/Credits" element={<Credits />} />
 								<Route path="/Settings" element={<Settings />} />
 								<Route path="/" element={<Navigate replace to="/Profile" />} />
 								<Route path="/2FA" element={<Navigate replace to="/2FA" />} />

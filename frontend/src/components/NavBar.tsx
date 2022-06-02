@@ -25,10 +25,6 @@ export default function NavBar() {
 					<Link to="/Chat">CHAT</Link>
 					<hr />
 				</div>
-				<div>
-					<Link to="/Credits">CREDITS</Link>
-					<hr />
-				</div>
 			</div>
 			<div className={styles.Settings}>
 				<hr className={styles.LongHR} />
