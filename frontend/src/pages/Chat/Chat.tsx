@@ -23,7 +23,16 @@ export default function Chat() {
 	const [databaseChannel, setDatabaseChannel] = useState<any>([]);
 	const [channelUserJoined, setChannelUserJoined] = useState<any>([]);
 	const [channelSelected, setChannelSelected] = useState("");
-	const [searchBarState, setSearchBarState] = useState<any>();
+	const [searchBarState, setSearchBarState] = useState<any>([
+		{
+			id: "3447da86-56e7-4ee8-bbca-d7ba2eaec085",
+			channelname: "un Autre channel",
+			dm: false,
+			private: false,
+			admins: [],
+			users: [],
+		},
+	]);
 	const [joinChannel, setJoinChannel] = useState<any>();
 	const [autocomplete, setAutocomplete] = useState("");
 
@@ -199,31 +208,21 @@ export default function Chat() {
 						options={searchBarState ? searchBarState : []}
 						sx={{ width: 673 }}
 						getOptionLabel={(channel: any) => {
-							return channel.channelname;
+							if (channel && channel.channelname) {
+								return channel.channelname;
+							} else return "";
 						}}
 						inputValue={autocomplete}
-						// value={searchBarState}
-						onChange={(event, value) => {
+						isOptionEqualToValue={(option: any, value: any) => {
+							return true;
+						}}
+						value={searchBarState}
+						onChange={(_, value) => {
 							if (value && !value.private) {
 								ws.emit("joinChannel", { channelId: value.id });
-								if (searchBarState.length) {
-									const search = searchBarState.filter((channel: any) => {
-										if (
-											!userInfo.channels.find(
-												(c: any) => c.id === channel.id
-											) &&
-											value.id !== channel.id
-										) {
-											return channel;
-										}
-									});
-									setSearchBarState(search);
-									setAutocomplete("");
-								}
 							} else if (value && value.private) {
 								setJoinChannel(value);
 								setOpenModalJoinChannel(true);
-								setAutocomplete("");
 							}
 						}}
 						renderInput={(params) => {

@@ -4,17 +4,18 @@ A FAIRE :
         - Page Credit
         - Fix la responsivite de la page Profil et autres
 		- ne pas afficher le onHover pour modifier login sur les autre profile
+		- Autocomplete prend 50% du textfield sur grand ecran
 	
 
     II BACK :
 		- Quit channel ✔️
 
     III FULL-STACK :
-        - Modal profil dans chat pas finie
-        - Rendre les Noms d'utilisateurs UNIQUES
+        - Modal profil dans chat pas finie ✔️
+        - Rendre les Noms d'utilisateurs UNIQUES ✔️
         - Customisation du background ✔️
         - Status en temps réel ✔️
-        - Quit Channel provoque des warnings dans f12
+        - Quit Channel provoque des warnings dans f12 ✔️
 
     IV TESTER EN PROFONDEUR :
         - Status Online/Offline

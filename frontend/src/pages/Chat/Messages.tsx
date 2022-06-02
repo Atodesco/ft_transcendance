@@ -134,7 +134,6 @@ function Item(
 						>
 							<span
 								className={styles.singleMessage}
-								// id={index.toString()}
 								style={{
 									backgroundColor:
 										value.user.ft_id === user_id ? "lightGreen" : "lightBlue",
@@ -217,8 +216,10 @@ function Item(
 									color="error"
 									endIcon={<VolumeOff />}
 									onClick={() => {
-										if (showDropdownMute === false) setShowDropdownMute(true);
-										else setShowDropdownMute(false);
+										if (!showDropdownMute) {
+											setValueTimeMute(0);
+										}
+										setShowDropdownMute(!showDropdownMute);
 									}}
 								>
 									Mute
@@ -228,6 +229,17 @@ function Item(
 										type="number"
 										placeholder="Time staying banned (in seconds)"
 										onChange={(e) => setValueTimeMute(Number(e.target.value))}
+										onKeyDown={(e) => {
+											if (e.key === "Enter") {
+												ws.emit("mute", {
+													user_id: user.ft_id,
+													channel_id: channelSelected,
+													endOfMute: new Date(
+														new Date().getTime() + valueTimeMute * 1000
+													),
+												});
+											}
+										}}
 										value={valueTimeMute}
 										className={styles.dropdownButtonMute}
 									/>
@@ -237,8 +249,10 @@ function Item(
 									color="error"
 									endIcon={<Block />}
 									onClick={() => {
-										if (showDropdownBan === false) setShowDropdownBan(true);
-										else setShowDropdownBan(false);
+										if (!showDropdownBan) {
+											setValueTimeBan(0);
+										}
+										setShowDropdownBan(!showDropdownBan);
 									}}
 								>
 									Ban
@@ -248,6 +262,17 @@ function Item(
 										type="number"
 										placeholder="Time staying banned (in seconds)"
 										onChange={(e) => setValueTimeBan(Number(e.target.value))}
+										onKeyDown={(e) => {
+											if (e.key === "Enter") {
+												ws.emit("ban", {
+													user_id: user.ft_id,
+													channel_id: channelSelected,
+													endOfBan: new Date(
+														new Date().getTime() + valueTimeBan * 1000
+													),
+												});
+											}
+										}}
 										value={valueTimeBan}
 										className={styles.dropdownButtonBan}
 									/>

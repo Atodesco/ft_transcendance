@@ -1,20 +1,20 @@
 import {
 	SubscribeMessage,
 	WebSocketGateway,
-	OnGatewayInit,
 	WebSocketServer,
 	OnGatewayConnection,
 	OnGatewayDisconnect,
 } from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
 import { Channel } from "./chat/entities/channel.entity";
+import { MutedUser } from "./chat/entities/mutedUser.entity";
+import { BannedUser } from "./chat/entities/bannedUser.entity";
 import { Player } from "./Pong/interfaces/room.interface";
 import { RoomService } from "./Pong/room.service";
 import { ChannelService } from "./chat/channel.service";
 import { User } from "./user/entities/user.entity";
 import { UserStatus } from "./interfaces/user-status.enum";
 import { DoubleAuthService } from "./2FA/doubleAuth.service";
-import { SocketReadyState } from "net";
 const bcrypt = require("bcrypt");
 
 @WebSocketGateway({
@@ -161,8 +161,25 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			{
 				id: data.channelId,
 			},
-			{ relations: ["users"] }
+			{ relations: ["users", "muted"] }
 		);
+		if (channel.muted.find((muted) => muted.user.ft_id === ft_id)) {
+			const mutedUser = channel.muted.find(
+				(muted) => muted.user.ft_id === ft_id
+			);
+			if (mutedUser) {
+				if (mutedUser.endOfMute.getTime() < Date.now()) {
+					channel.muted = channel.muted.filter(
+						(muted) => muted.user.ft_id !== ft_id
+					);
+					await channel.save();
+				} else {
+					return;
+				}
+			} else {
+				return;
+			}
+		}
 
 		if (channel && channel.users) {
 			this.emitChannel(channel, "text", {
@@ -186,8 +203,26 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			{
 				id: data.channelId,
 			},
-			{ relations: ["users"] }
+			{ relations: ["users", "banned"] }
 		);
+		if (channel.banned.find((banned) => banned.user.ft_id === ft_id)) {
+			const bannedUser = channel.banned.find(
+				(banned) => banned.user.ft_id === ft_id
+			);
+			if (bannedUser) {
+				if (bannedUser.endOfBan.getTime() < Date.now()) {
+					channel.banned = channel.banned.filter(
+						(banned) => banned.user.ft_id !== ft_id
+					);
+					await channel.save();
+				} else {
+					return;
+				}
+			} else {
+				return;
+			}
+		}
+
 		if (channel && channel.private) {
 			if (!bcrypt.compareSync(data.password, channel.password)) {
 				return;
@@ -388,6 +423,93 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					admins: channel.admins,
 				});
 			}
+		}
+	}
+
+	@SubscribeMessage("mute")
+	async mute(
+		client: Socket,
+		data: { endOfMute: Date; channel_id: string; user_id: number }
+	): Promise<void> {
+		const ft_id = this.clientsId.get(client);
+		const user = await User.findOne({ ft_id: ft_id });
+		const userToMute = await User.findOne({ ft_id: data.user_id });
+		const uSocket = this.clientsFt.get(data.user_id);
+		console.log("mute, user: ", userToMute.username);
+		const channel = await Channel.findOne(
+			{
+				id: data.channel_id,
+			},
+			{ relations: ["users", "admins", "muted"] }
+		);
+		if (!channel || !userToMute || !user) return;
+		if (
+			channel.admins.find((u) => u.id === user.id) &&
+			!channel.muted.find((u) => u.id === userToMute.id)
+		) {
+			const muted = new MutedUser();
+			muted.user = userToMute;
+			muted.endOfMute = new Date(data.endOfMute);
+			muted.channel = channel;
+			await muted.save();
+			console.log(
+				"user: ",
+				userToMute.username,
+				" is now muted until: ",
+				muted.endOfMute
+			);
+		}
+	}
+
+	@SubscribeMessage("ban")
+	async ban(
+		client: Socket,
+		data: { endOfBan: Date; channel_id: string; user_id: number }
+	): Promise<void> {
+		const ft_id = this.clientsId.get(client);
+		const user = await User.findOne({ ft_id: ft_id });
+		const userToBan = await User.findOne({ ft_id: data.user_id });
+		const uSocket = this.clientsFt.get(data.user_id);
+		console.log("ban, user: ", userToBan.username);
+		const channel = await Channel.findOne(
+			{
+				id: data.channel_id,
+			},
+			{ relations: ["users", "admins", "banned"] }
+		);
+		if (!channel || !userToBan || !user) return;
+		if (
+			channel.admins.find((u) => u.id === user.id) &&
+			!channel.banned.find((u) => u.id === userToBan.id)
+		) {
+			const banned = new BannedUser();
+			banned.user = userToBan;
+			banned.endOfBan = new Date(data.endOfBan);
+			banned.channel = channel;
+			channel.banned.push(banned);
+			await banned.save();
+			channel.users = channel.users.filter((u) => u.id !== userToBan.id);
+			channel.admins = channel.admins.filter((u) => u.id !== userToBan.id);
+			if (channel.owner && channel.owner.ft_id === userToBan.ft_id) {
+				channel.owner = null;
+			}
+			await channel.save();
+			if (uSocket) {
+				uSocket.emit("myChannel", {
+					add: false,
+					channelname: channel.channelname,
+					id: channel.id,
+					private: channel.private,
+					dm: channel.dm,
+					admins: channel.admins,
+				});
+			}
+			console.log(
+				"user: ",
+				userToBan.username,
+				" is now banned until: ",
+				banned.endOfBan
+			);
 		}
 	}
 

@@ -7,10 +7,11 @@ import {
 	JoinTable,
 	JoinColumn,
 	ManyToMany,
-	OneToMany,
-	PrimaryColumn,
 	BaseEntity,
+	OneToMany,
 } from "typeorm";
+import { BannedUser } from "./bannedUser.entity";
+import { MutedUser } from "./mutedUser.entity";
 
 @Entity()
 export class Channel extends BaseEntity {
@@ -50,39 +51,13 @@ export class Channel extends BaseEntity {
 	})
 	admins: User[];
 
-	@ManyToMany(() => User, { cascade: true })
-	@JoinTable({
-		name: "channel-muted",
-		joinColumn: {
-			name: "channel_id",
-			referencedColumnName: "id",
-		},
-		inverseJoinColumn: {
-			name: "user_id",
-			referencedColumnName: "id",
-		},
+	@OneToMany(() => MutedUser, (mutedUser) => mutedUser.channel)
+	muted: MutedUser[];
+
+	@OneToMany(() => BannedUser, (bannedUser) => bannedUser.channel, {
+		eager: true,
 	})
-	muted: User[];
-
-	// @Column("date", { array: true, default: [] })
-	// mutedUntil: Date[];
-
-	@ManyToMany(() => User, { cascade: true })
-	@JoinTable({
-		name: "channel-banned",
-		joinColumn: {
-			name: "channel_id",
-			referencedColumnName: "id",
-		},
-		inverseJoinColumn: {
-			name: "user_id",
-			referencedColumnName: "id",
-		},
-	})
-	banned: User[];
-
-	// @Column("date", { array: true, default: [] })
-	// bannedUntil: Date[];
+	banned: BannedUser[];
 
 	@ManyToMany((type) => User, (user) => user.channels, { cascade: true })
 	@JoinTable({
