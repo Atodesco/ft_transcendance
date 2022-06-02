@@ -71,11 +71,15 @@ export class UserService {
 		return user;
 	}
 
-	async setUsername(id: number, username: string): Promise<User> {
+	async setUsername(id: number, username: string): Promise<any> {
+		const checkUserName = await User.findOne({ username });
+		if (checkUserName) {
+			return { success: false };
+		}
 		const user = await User.findOne({ ft_id: id });
 		user.username = username;
 		await user.save();
-		return user;
+		return { success: true };
 	}
 
 	async setPicture(id: number, link: string): Promise<User> {

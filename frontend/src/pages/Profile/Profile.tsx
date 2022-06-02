@@ -46,12 +46,6 @@ interface User {
 	elo: number;
 }
 
-interface History {
-	username: string;
-	score: string;
-	win: boolean;
-}
-
 export default function Profile() {
 	const aVar: any = [{}];
 	const [inputText, setInputText] = useState("");
@@ -60,7 +54,6 @@ export default function Profile() {
 	const [showModalModifyProfile, setShowModalModifyProfile] = useState(false);
 	const [changeAvatarUrl, setChangeAvatarUrl] = useState("");
 	const [changeProfileUsername, setChangeProfileUsername] = useState("");
-	const [lightTheme, setLightTheme] = useState(1);
 	const [rank, setRank] = useState<any>();
 	const ws = useContext(context);
 	const navigate = useNavigate();
@@ -362,7 +355,12 @@ export default function Profile() {
 											method: "POST",
 										}
 									);
-									getData();
+									const data = await rawData.json();
+									if (data && data.success === true) {
+										getData();
+									} else {
+										alert("Username already taken");
+									}
 								}}
 							>
 								Modify
@@ -516,18 +514,11 @@ export default function Profile() {
 									<Link
 										to={"/Profile/" + other.ft_id}
 										className={styles.linkToProfileHistory}
-										onMouseEnter={() => {
-											setLightTheme(0.5);
-										}}
-										onMouseLeave={() => {
-											setLightTheme(1);
-										}}
 									>
 										<div style={{ alignSelf: "flex-start" }}>
 											{other.username}
 										</div>
 									</Link>
-									{/* <div>{item.win}</div> */}
 									<div style={{ alignSelf: "flex-end" }}>
 										{myscore} : {otherscore}
 									</div>
