@@ -2,11 +2,8 @@ import styles from "../../css/TheGame.module.css";
 import * as React from "react";
 import Modal from "@mui/material/Modal";
 import "animate.css";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
 import ProgressBar from "react-animated-progress-bar";
 import { PieChart } from "react-minimal-pie-chart";
-import Countdown from "react-countdown";
 import { context } from "../../App";
 import { useNavigate } from "react-router";
 
@@ -30,6 +27,7 @@ export default function TheGame() {
 		win: 1,
 		lose: 1,
 	});
+	const [lvl, setLvl] = React.useState(0);
 
 	const [usernames, setUsernames] = React.useState({ p1: "", p2: "" });
 	const [score, setScore] = React.useState({ p1: 0, p2: 0 });
@@ -51,10 +49,31 @@ export default function TheGame() {
 		setUserInfo(await myData.json());
 	};
 
+	const getLevel = async () => {
+		const myData = await fetch(
+			process.env.REACT_APP_BACK_URL +
+				":" +
+				process.env.REACT_APP_BACK_PORT +
+				"/user/me/",
+			{
+				credentials: "include",
+			}
+		);
+		const data = await myData.json();
+		setLvl(data.lvl);
+	};
+
+	React.useEffect(() => {
+		console.log(lvl);
+	}, [lvl]);
+
 	React.useEffect(() => {
 		if (flagReadyOnetimeOnly.current.ini) {
 			var up = false;
 			var down = false;
+			const timeout = setTimeout(() => {
+				navigate("/Profile");
+			}, 300);
 			const intervale = setInterval(() => {
 				if (up) {
 					ws.emit("move", { room: roomCode.current, direction: -1 });
@@ -66,6 +85,7 @@ export default function TheGame() {
 			ws.on(
 				"room",
 				(data: { code: string; p1Username: string; p2Username: string }) => {
+					clearTimeout(timeout);
 					roomCode.current = data.code;
 					setUsernames({ p1: data.p1Username, p2: data.p2Username });
 				}
@@ -93,11 +113,13 @@ export default function TheGame() {
 				clearInterval(intervale);
 				setOpen(true);
 				getUserInfo();
+				getLevel();
 			});
 			ws.on("lose", (data: any) => {
 				clearInterval(intervale);
 				setOpen1(true);
 				getUserInfo();
+				getLevel();
 			});
 			ws.on("stop", (data: any) => {
 				clearInterval(intervale);
@@ -153,24 +175,28 @@ export default function TheGame() {
 					</div>
 					<div className={styles.endscreenStats}>
 						<div className={styles.stats}>STATS</div>
-						<div className={styles.level}>
-							<ProgressBar
-								// trackWidth="0.5vh"
-								width="100%"
-								height="3vh"
-								rect
-								fontColor="white"
-								percentage={(userInfo.lvl % 100).toString()}
-								rectPadding="0.1vh"
-								rectBorderRadius="2vh"
-								trackPathColor="transparent"
-								bgColor="#333333"
-								trackBorderColor="white"
-							/>
-						</div>
-						<div className={styles.fromlevel}>
-							From Level {Math.floor(userInfo.lvl / 100) + 1}
-						</div>
+						{lvl !== 0 && (
+							<>
+								<div className={styles.level}>
+									<ProgressBar
+										// trackWidth="0.5vh"
+										width="100%"
+										height="3vh"
+										rect
+										fontColor="white"
+										percentage={(lvl % 100).toString()}
+										rectPadding="0.1vh"
+										rectBorderRadius="2vh"
+										trackPathColor="transparent"
+										bgColor="#333333"
+										trackBorderColor="white"
+									/>
+								</div>
+								<div className={styles.fromlevel}>
+									From Level {Math.floor(lvl / 100) + 1}
+								</div>
+							</>
+						)}
 						<div className={styles.ratioWinLoose}>
 							<PieChart
 								lineWidth={60}
@@ -205,24 +231,28 @@ export default function TheGame() {
 					</div>
 					<div className={styles.endscreenStats}>
 						<div className={styles.stats}>STATS</div>
-						<div className={styles.level}>
-							<ProgressBar
-								// trackWidth="0.5vh"
-								width="100%"
-								height="3vh"
-								rect
-								fontColor="white"
-								percentage={(userInfo.lvl % 100).toString()}
-								rectPadding="0.1vh"
-								rectBorderRadius="2vh"
-								trackPathColor="transparent"
-								bgColor="#333333"
-								trackBorderColor="white"
-							/>
-						</div>
-						<div className={styles.fromlevel}>
-							From Level {Math.floor(userInfo.lvl / 100) + 1}
-						</div>
+						{lvl !== 0 && (
+							<>
+								<div className={styles.level}>
+									<ProgressBar
+										// trackWidth="0.5vh"
+										width="100%"
+										height="3vh"
+										rect
+										fontColor="white"
+										percentage={(lvl % 100).toString()}
+										rectPadding="0.1vh"
+										rectBorderRadius="2vh"
+										trackPathColor="transparent"
+										bgColor="#333333"
+										trackBorderColor="white"
+									/>
+								</div>
+								<div className={styles.fromlevel}>
+									From Level {Math.floor(lvl / 100) + 1}
+								</div>
+							</>
+						)}
 						<div className={styles.ratioWinLoose}>
 							<PieChart
 								lineWidth={60}

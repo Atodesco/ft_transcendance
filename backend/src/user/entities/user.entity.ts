@@ -6,7 +6,6 @@ import {
 	ManyToMany,
 	JoinTable,
 	BaseEntity,
-	ManyToOne,
 	OneToMany,
 } from "typeorm";
 import { UserStatus } from "../../interfaces/user-status.enum";

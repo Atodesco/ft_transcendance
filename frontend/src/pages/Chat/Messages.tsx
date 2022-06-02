@@ -144,7 +144,9 @@ function Item(
 									maxWidth: "75%",
 								}}
 							>
-								{userInfo.blocked.find((bl: any) => bl.id === value.id)
+								{userInfo.blocked.find(
+									(bl: any) => bl.ft_id === value.user.ft_id
+								)
 									? "This user is blocked !"
 									: value.message}
 							</span>

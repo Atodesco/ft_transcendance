@@ -15,7 +15,7 @@ interface Props {
 export default function ModalDuelAccept(props: Props) {
 	const navigate = useNavigate();
 	const ws = useContext(context);
-	const [username, setUsername] = useState(false);
+	const [username, setUsername] = useState("");
 
 	useEffect(() => {
 		ws.on("duelProposal", (data: any) => {
@@ -37,13 +37,6 @@ export default function ModalDuelAccept(props: Props) {
 
 	return (
 		<>
-			{/* <Button
-				onClick={() => {
-					setModalDuelAccept(true);
-				}}
-			>
-				CLICK ME
-			</Button> */}
 			<Modal
 				open={props.open}
 				onClose={(event, reason) => {

@@ -24,6 +24,7 @@ export default function PlayGame() {
 	const [ball, setBall] = useState("");
 	const [map, setMap] = useState("");
 	const [ballUrl, setBallUrl] = useState("");
+	const [mapUrl, setMapUrl] = useState("");
 	const [userInfo, setUserInfo] = useState<any>();
 	const navigate = useNavigate();
 
@@ -49,7 +50,10 @@ export default function PlayGame() {
 	}, []);
 
 	useEffect(() => {
-		if (userInfo) setBallUrl(userInfo.ball);
+		if (userInfo) {
+			setBallUrl(userInfo.ball);
+			setMapUrl(userInfo.map);
+		}
 	}, [userInfo]);
 
 	return (
@@ -351,6 +355,13 @@ export default function PlayGame() {
 									Normal
 								</MenuItem>
 							</Select>
+							<div
+								id="map"
+								style={{
+									content: "url(" + mapUrl + ")",
+								}}
+								className={styles.map}
+							></div>
 						</FormControl>
 					</Stack>
 				</div>

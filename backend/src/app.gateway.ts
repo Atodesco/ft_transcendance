@@ -76,6 +76,14 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			}
 		}
 
+		const player = this.roomService.getPlayer(ft_id);
+		const spectator = this.roomService.getSpectator(client.id);
+		if (player) {
+			this.roomService.removeSocket(player);
+		} else if (spectator) {
+			this.roomService.removeSocket(undefined, client);
+		}
+
 		const user = await User.findOne({
 			ft_id: ft_id,
 		});
@@ -163,19 +171,14 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 			{ relations: ["users", "muted"] }
 		);
-		if (channel.muted.find((muted) => muted.user.ft_id === ft_id)) {
-			const mutedUser = channel.muted.find(
-				(muted) => muted.user.ft_id === ft_id
-			);
-			if (mutedUser) {
-				if (mutedUser.endOfMute.getTime() < Date.now()) {
-					channel.muted = channel.muted.filter(
-						(muted) => muted.user.ft_id !== ft_id
-					);
-					await channel.save();
-				} else {
-					return;
-				}
+		const mutedUser = await MutedUser.findOne({
+			user: user,
+			channel: channel,
+		});
+
+		if (mutedUser) {
+			if (mutedUser.endOfMute.getTime() < Date.now()) {
+				await mutedUser.remove();
 			} else {
 				return;
 			}
@@ -205,19 +208,16 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 			{ relations: ["users", "banned"] }
 		);
-		if (channel.banned.find((banned) => banned.user.ft_id === ft_id)) {
-			const bannedUser = channel.banned.find(
-				(banned) => banned.user.ft_id === ft_id
-			);
-			if (bannedUser) {
-				if (bannedUser.endOfBan.getTime() < Date.now()) {
-					channel.banned = channel.banned.filter(
-						(banned) => banned.user.ft_id !== ft_id
-					);
-					await channel.save();
-				} else {
-					return;
-				}
+		const bannedUser = await BannedUser.findOne(
+			{
+				user: user,
+				channel: channel,
+			},
+			{ relations: ["user", "channel"] }
+		);
+		if (bannedUser) {
+			if (bannedUser.endOfBan.getTime() < Date.now()) {
+				await bannedUser.remove();
 			} else {
 				return;
 			}
@@ -330,7 +330,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					});
 				}
 			}
-			client.emit("myChannel", {
+			this.server.emit("myChannel", {
 				add: false,
 				channelname: channel.channelname,
 				id: channel.id,
@@ -678,6 +678,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (!receiver || !sender) {
 			return;
 		}
+		if (this.duelRequestArray.find((e) => e.receiver === receiver)) {
+			client.emit("cancelDuelProposal");
+			return;
+		}
 		this.duelRequestArray.push({ sender: client, receiver });
 
 		const username = await (await User.findOne({ ft_id: sender })).username;
@@ -690,6 +694,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const receiver = this.duelRequestArray.find((receiver) => {
 			return receiver.sender === client || receiver.receiver === client;
 		});
+		this.duelRequestArray = this.duelRequestArray.filter(
+			(e) => e.sender !== receiver.sender || e.receiver !== receiver.receiver
+		);
 		if (receiver && receiver.sender && receiver.sender === client) {
 			receiver.receiver.emit("cancelDuelProposal");
 		} else if (receiver && receiver.receiver && receiver.receiver === client) {

@@ -66,6 +66,17 @@ export class RoomService {
 		return this.queue.find((player) => player.ft_id == ft_id);
 	}
 
+	getSpectator(clientId: string): Socket {
+		for (const room of this.rooms.values()) {
+			for (const spectator of room.spectators) {
+				if (spectator.id === clientId) {
+					return spectator;
+				}
+			}
+		}
+		return this.spectatorQueue.find((spectator) => spectator.id === clientId);
+	}
+
 	getRoomForSpectators(spec: Socket): Room {
 		const rooms = Array.from(this.rooms.values());
 		const room = rooms.find((room) =>
@@ -112,9 +123,12 @@ export class RoomService {
 				spectator &&
 				room.spectators.indexOf(spectator) !== -1
 			) {
+				console.log("spectator removed");
+				console.log("room.spectators", room.spectators);
 				room.spectators = room.spectators.filter(
-					(spectator) => spectator !== spectator
+					(spec) => spec.id !== spectator.id
 				);
+				console.log("room.spectators", room.spectators);
 				return room;
 			}
 
