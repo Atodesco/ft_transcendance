@@ -17,7 +17,7 @@ export class DoubleAuthService {
 		secure: true, // true for 465, false for other ports
 		auth: {
 			user: "fttranscendence42paris@gmail.com",
-			pass: "3yHiZ0&LXK3&MJ4eD#2V",
+			pass: "yqvybnxjnhdldacz",
 		},
 	});
 
